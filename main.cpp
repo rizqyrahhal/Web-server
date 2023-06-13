@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 #include "web_serv.hpp" 
 
 // int main() {
@@ -134,3 +136,4 @@ int main(int ac, char **av)
         std::cout<<"ERROR: "<<e.what()<<std::endl;
     }
 }
+>>>>>>> 13023849b4a6f6bb65138951cf982fd7860f47d2

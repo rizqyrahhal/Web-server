@@ -14,7 +14,12 @@ void    location_serv(std::string line, server & server)
     for (size_t i = 0 ; i < vector.size(); i++){
         std::stringstream tmp1;
         tmp1 >> str;
-        if (str == "root")
+        if (str == "location")
+        {
+            tmp1 >> str;
+            location.name = str;
+        }
+        else if (str == "root")
         {
             tmp1 >> str;
             location.root = str;
@@ -82,6 +87,7 @@ void    parce_server(std::string line, global & global)
     std::vector<std::string> vector;
     std::stringstream tmp(line);
     std::string str;
+    server::maxfd = 0;
     while (std::getline(tmp, str))
     {
         vector.push_back(str);
