@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 #include "web_serv.hpp" 
 
 // int main() {
@@ -130,10 +128,10 @@ int main(int ac, char **av)
         global global;
         ft_parce_config(av, global);
         std::cout<<"hello l3awny\n";
+        std::cout<<"hello new virsion\n";
     }
     catch(const std::exception& e)
     {
         std::cout<<"ERROR: "<<e.what()<<std::endl;
     }
 }
->>>>>>> 13023849b4a6f6bb65138951cf982fd7860f47d2
