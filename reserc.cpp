@@ -74,10 +74,10 @@ int maine() {
         // }
     }
 
-    close(serverSocket);
+//     close(serverSocket);
 
-    return 0;
-}
+//     return 0;
+// }
 
         // sockaddr_in clientAddress;
         // socklen_t clientAddressLength = sizeof(clientAddress);

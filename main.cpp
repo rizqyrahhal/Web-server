@@ -1,119 +1,105 @@
 #include "web_serv.hpp" 
 
-// int main() {
-//     // Create a socket
-//     int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-//     if (serverSocket == -1) {
-//         std::cerr << "Failed to create socket" << std::endl;
-//         return 1;
-//     }
+void    creat_socket_and_bind(global & glob)
+{
+    for (size_t i = 0; i < glob.server.size(); i++)
+    {
+        server &serv = glob.server[i];
 
-//     // Bind the socket to a specific address and port
-//     sockaddr_in serverAddress;
-//     serverAddress.sin_family = AF_INET;
-//     serverAddress.sin_port = htons(8080); // Port number
-//     serverAddress.sin_addr.s_addr = INADDR_ANY; // Bind to any available network interface
+        serv.fd_server = socket(AF_INET, SOCK_STREAM, 0);
+        if (serv.fd_server == -1) {
+        std::cerr << "Failed to create socket" << std::endl;
+        exit(1);
+        }
 
-//     if (bind(serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) == -1) {
-//         std::cerr << "Failed to bind socket" << std::endl;
-//         close(serverSocket);
-//         return 1;
-//     }
+        bzero(&serv.address, sizeof(serv.address));
+        serv.address.sin_family = AF_INET;
+        serv.address.sin_port = htons(serv.port);
+        if (inet_pton(AF_INET, serv.ip_address.c_str(), &(serv.address.sin_addr)) <= 0) {
+        perror("Invalid IP address");
+        exit(EXIT_FAILURE);
+        }
 
-//     // Listen for incoming connections
-//     if (listen(serverSocket, 5) == -1) {
-//         std::cerr << "Failed to listen for connections" << std::endl;
-//         close(serverSocket);
-//         return 1;
-//     }
+        FD_SET(serv.fd_server, &server::current);
+        server::maxfd = std::max(serv.fd_server, server::maxfd);
+        if (bind(serv.fd_server, (struct sockaddr*)&serv.address, sizeof(serv.address)) == -1) {
+        std::cerr << "Failed to bind socket" << std::endl;
+        close(serv.fd_server);
+        exit(1);
+        }
 
-//     std::cout << "Server listening on port 8080..." << std::endl;
-//     char buffer[1024];
-//     char *header = "HTTP/1.1 200 OK\r\n"
-//                     "Content-Type: video/mp4\r\n"
-//                     "Content-Length: 9973881\r\n"
-//                     "Connection: closed\r\n\r\n";
+    }
+    
+}
 
-//     // Accept incoming connections
-//     std::vector<int> cliaccept;
-//     int max_socketfd = 1;
-//     fd_set current;
-//     fd_set readclientstruct;
-//     fd_set writeclientstruct;
-//     FD_ZERO(&current);
-//     FD_SET(serverSocket, &current);
-//     while (1) {
-//         int i = 0;
-//         while(i < cliaccept.size()){
-//             FD_SET(cliaccept[i], current);
-//             i++;
-//         }
-//         FD_ZERO(&readclientstruct);
-//         FD_ZERO(&writeclientstruct);
-//         readclientstruct = current;
-//         writeclientstruct = current;
-//         select(max_socketfd + 1, &readclientstruct, &writeclientstruct ,null);
-//         // while(i < servervec.size())
-//         // {
-//             if (FD_ISSET(serverSocket, &readclientstruct))
-//             {
-//                 //accept new connection
-//                 int client = accept(serverSocket, (struct sockaddr*)&clientAddress, &clientAddressLength)
-//             }
-//             while(client)
-//             {
-//                 if (FD_ISSET(CLINNET_ID,  &readclientstruct))
-//                 {
-//                     //UNCOMMING REQUESST
-//                 }
-//                 else if (FD_ISSET(CLINNET_ID, &writeclientstruct))
-//                 {
-//                     //You have to send Response
+void     listen_new_connection(global & glob)
+{
+    for (size_t i = 0; i < glob.server.size(); i++)
+    {
+        if (listen(glob.server[i].fd_server, 100) == -1) {
+            std::cerr << "Failed to listen for connections" << std::endl;
+            close(glob.server[i].fd_server);
+            exit(1);
+        }
+	std::cout<<"the server "<< glob.server[i].fd_server << " in listen mode "<< "with port "<< glob.server[i].port<<std::endl;
+    }
+
+}
+
+client accept_new_connection(server& serv)
+{
+    client client;
+	client.fd_client = accept(serv.fd_server, (struct sockaddr *)&client.client_address, &client.clientaddrlenght);
+	if (client.fd_client == -1)
+	{
+	   std::cerr<<"failed accept method."<<std::endl;
+		exit(EXIT_FAILURE);
+	}
+	if (server::maxfd < client.fd_client)
+		server::maxfd = client.fd_client;
+	FD_SET(client.fd_client, &server::current);
+	return (client);
+}
+
+void    run_servers(global & glob)
+{
+    int tmp = 0;
+	while (1)
+	{
+		fd_set writable = server::current;
+		fd_set readable = server::current;
+		tmp = select(server::maxfd + 1, &readable, &writable, nullptr, 0);
+		if (tmp < 0) {
+			std::perror("select() Error ");
+			continue;
+		}
+		if (!tmp)
+			continue;
+		for (int  j = 0; j < glob.server.size(); j++)
+		{
+			server &server = glob.server[j];
+			if (FD_ISSET(server.fd_server, &readable))
+			{
+				server.client.push_back(accept_new_connection(server));
+			}
+			for (int i = 0; i < server.client.size() ; i++)
+			{
+				client &client = server.client[i];
+				// IF statement for Request.
+				if (FD_ISSET(client.fd_client, &readable))
+				{
+					fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
+					
+				}
+				// IF statement for Response.
+				else if(i >= 0  && FD_ISSET(client.fd_client, &writable))
+				{
                     
-//                 }
-//             }
- 
-//         // }
-//     }
-
-//     close(serverSocket);
-
-//     return 0;
-// }
-
-//         sockaddr_in clientAddress;
-//         socklen_t clientAddressLength = sizeof(clientAddress);
-
-//         int clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddress, &clientAddressLength);
-
-//         if (clientSocket == -1) {
-//             std::cerr << "Failed to accept connection" << std::endl;
-//             close(serverSocket);
-//             return 1;
-//         }
-//         std::cout << "Client connected: " << clientSocket << std::endl;
-
-//         std::cout << "Header: " << header << " Header length: " << strlen(header) << std::endl;
-//         if (send(clientSocket, header, strlen(header), 0) <= 0) {
-//             std::cout << "Failed to send header" << std::endl;
-//             close(clientSocket);
-//            return 1;
-//         }
-
-//         int fd = open("./Music.mp4", O_RDONLY);
-//         struct stat info;
-//         fstat(fd, &info);
-//         char *bufff = new char[1024];
-//         while (read(fd, bufff, 1024) != 0)
-//         {
-//         // int rd = read(fd, bufff, info.st_size);
-//         // Send the image data
-//         send(clientSocket, bufff, 1024, 0);
-//         }
-
-
-//         close(clientSocket);
-
+				}
+			}
+		}
+	}
+}
 
 int main(int ac, char **av)
 {
@@ -127,8 +113,9 @@ int main(int ac, char **av)
     {
         global global;
         ft_parce_config(av, global);
-        std::cout<<"hello l3awny\n";
-        std::cout<<"hello new virsion\n";
+        creat_socket_and_bind(global);
+        listen_new_connection(global);
+        run_servers(global);
     }
     catch(const std::exception& e)
     {
