@@ -6,12 +6,12 @@
 #    By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/17 16:07:04 by rarahhal          #+#    #+#              #
-#    Updated: 2023/06/14 21:47:20 by rarahhal         ###   ########.fr        #
+#    Updated: 2023/06/15 20:07:00 by rarahhal         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = webserv
-CPPFLAGS = -Wall -Werror -Wextra -std=c++98
+CPPFLAGS = -Wall -Werror -Wextra -std=c++98 -fsanitize=address
 CC = c++
 
 SRCS =	main.cpp \
