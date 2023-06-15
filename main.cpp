@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 18:33:14 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/15 20:08:41 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/15 21:56:16 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,8 @@ int main()
     new_response.setHeader("Content-Length", "1024");
     new_response.setHeader("Connection", "Keep-alaive");
     new_response.setBody("Hello world!\n");
-    
-    // std::cout << "-------Start-------\n" << new_response.generateResponse() << "\n-------End-------\n" << std::endl;
+
+    std::cout << "\n-------Start-------\n\n" << new_response.generateResponse() << "\n\n-------End-------\n" << std::endl;
 
     return 0;
 }
- 
