@@ -15,6 +15,9 @@
 #include <map>
 #include <arpa/inet.h>
 #include <algorithm>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 
 class locations
 {
@@ -35,13 +38,13 @@ class client
 {
 
 public:
-	client(/* args */){}
+	client(/* args */);
 
 	int fd_client;
 	struct sockaddr_in client_address;
 	socklen_t clientaddrlenght;
 
-	~client(){}
+	~client();
 };
 
 
@@ -59,12 +62,15 @@ class server
 	std::map<int, std::string> map_err_page;
 	int client_body_size;
 
-	struct sockaddr_in address;
+	struct sockaddr_in addr;
+	struct addrinfo hints;
+	struct addrinfo *res;
 	int fd_server;
 	static fd_set current; 
 	unsigned int sizeof_struct;
 	static int maxfd;
 
+	static fd_set initializer();
 	~server(){}
 };
 
@@ -77,5 +83,8 @@ public:
 };
 
 void    ft_parce_config(char **av, global &global);
+void    creat_socket_and_bind(global & glob);
+void     listen_new_connection(global & glob);
+void    run_servers(global & glob);
 
 # endif

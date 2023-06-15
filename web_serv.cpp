@@ -9,3 +9,10 @@ client::~client()
 {
 	std::cout<<"destructer called"<<std::endl;
 }
+
+
+fd_set server::initializer()
+{
+	FD_ZERO(&current);
+	return (current);
+}

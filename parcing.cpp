@@ -42,7 +42,7 @@ void    location_serv(std::string line, server & server)
             {
                 if (location.allow_methods[i] != "get" || location.allow_methods[i] != "post" || location.allow_methods[i] != "delete")
                  std::cout<<"allow methods not correct"<<std::endl;
-                 exit(0);
+                exit(0);
             }
             
         }
@@ -82,16 +82,15 @@ void    parce_server(std::string line, global & global)
         location_serv(location, server);
 
     }
-    
 
     std::vector<std::string> vector;
     std::stringstream tmp(line);
     std::string str;
-    server::maxfd = 0;
     while (std::getline(tmp, str))
     {
         vector.push_back(str);
     }
+    
     for (size_t i = 0; i < vector.size(); i++)
     {
         std::stringstream tmp1(vector[i]);
@@ -103,9 +102,10 @@ void    parce_server(std::string line, global & global)
         }
         else if (str == "port")
         {
-            int i;
-            tmp1 >> i;
-            server.port = i;
+            int port;
+            tmp1 >> port;
+            server.port = port;
+            std::cout<<"port in parcing : "<< server.port<<std::endl;
         }
         else if (str == "server_name")
         {
@@ -127,8 +127,8 @@ void    parce_server(std::string line, global & global)
         }
         else if (str == "location")
             break;
-        global.server.push_back(server);
     }
+    global.server.push_back(server);
 }
 
 void    ft_parce_config(char **av, global &global)

@@ -1,4 +1,4 @@
-SRC = main.cpp parcing.cpp web_serv.cpp
+SRC = main.cpp parcing.cpp web_serv.cpp networking.cpp
 
 CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 NAME = web_serv
