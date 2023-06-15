@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:33:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/14 18:23:45 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/15 17:08:50 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int main(void)
 
 	long valread;
 
-	std::ifstream file("videoplayback.mp4", std::ifstream::binary);
+	std::ifstream file("index.html", std::ifstream::binary);
 
 	if (!file.is_open())
 	{
@@ -60,13 +60,13 @@ int main(void)
     int videoLength = file.tellg();
     file.seekg(0, std::ios::beg);
 
-	char uffer[videoLength/2];
-	file.read(uffer, videoLength/2);
-	char uffer2[videoLength/2];
-	file.read(uffer2, videoLength/2);
+	char uffer[(int)videoLength/2];
+	file.read(uffer, (int)videoLength/2);
+	char uffer2[(int)videoLength/2 + 1];
+	file.read(uffer2, (int)videoLength/2 + 1);
 
 	file.close();
-	char headers[66] = "HTTP/1.1 200 OK\nContent-Type: video/mp4\nContent-Length: ";
+	char headers[66] = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: ";
 	std::string header = headers + std::to_string(videoLength) + "\n\n";
 	std::string response = header + uffer + uffer2;
 
@@ -84,8 +84,8 @@ int main(void)
 		std::cout << buffer << std::endl;
 		
 		send(new_socket, header.c_str(), header.size(), MSG_SEND);
-		send(new_socket, uffer, videoLength/2, MSG_SEND);
-		send(new_socket, uffer2, videoLength/2, MSG_SEND);
+		send(new_socket, uffer, (int)videoLength/2, MSG_SEND);
+		send(new_socket, uffer2, (int)videoLength/2 + 1, MSG_SEND);
 		// write(new_socket, headers.c_str(), response.size());
 		// write(new_socket, uffer, 3465);
 		std::cout << "-------------------response message sent---------------\n";
