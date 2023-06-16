@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 18:33:14 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/15 21:56:16 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/16 00:04:23 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 int main()
 {
     Response new_response;
+
+
 
     new_response.setVersion("HTTP/1.1");
     new_response.setStatusCode(200);
