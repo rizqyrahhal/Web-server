@@ -79,13 +79,11 @@ client accept_new_connection(server& serv)
 void    run_servers(global & glob)
 {
     int tmp = 0;
-    std::cout<<"hello from run"<<std::endl;
 	while (1)
 	{
 		fd_set writable = server::current;
 		fd_set readable = server::current;
 		tmp = select(server::maxfd + 1, &readable, &writable, nullptr, 0);
-        std::cout<<"AFTER Select"<<std::endl;
 		if (tmp < 0) {
 			std::perror("select() Error ");
 			continue;
@@ -106,13 +104,15 @@ void    run_servers(global & glob)
 				if (FD_ISSET(client.fd_client, &readable))
 				{
 					fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
-					std::cout<<"hello from request\n";
+                    // char buffer[30000] = {0};
+                    // read(client.fd_client, buffer, 1024);
+					// std::cout<<buffer<<std::endl;
                     exit(0);
 				}
 				// IF statement for Response.
 				else if(i >= 0  && FD_ISSET(client.fd_client, &writable))
 				{
-                    std::cout<<"hello from response";
+                    std::cout<<"hello from response\n";
 				}
 			}
 		}

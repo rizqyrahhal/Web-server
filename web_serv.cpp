@@ -7,7 +7,7 @@ client::client()
 
 client::~client()
 {
-	std::cout<<"destructer called"<<std::endl;
+
 }
 
 

@@ -82,6 +82,13 @@ public:
 	std::vector<server> server;
 };
 
+class request
+{
+	request(){}
+	~request(){}
+	
+};
+
 void    ft_parce_config(char **av, global &global);
 void    creat_socket_and_bind(global & glob);
 void     listen_new_connection(global & glob);
