@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 21:47:25 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/16 12:17:12 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/16 18:51:21 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 class Response
 {
-    private:
+	private:
 		// management data
 		// std::map<std::string, std::string>::iterator _it; // using to increment .insert()
 
@@ -32,7 +32,7 @@ class Response
 		std::string _body;
 		std::string generateStatusLine();
 		std::string generateHeaders();
-    public:
+	public:
 		Response();
 		void setVersion(std::string const &version);
 		void setStatusCode(int status_code);

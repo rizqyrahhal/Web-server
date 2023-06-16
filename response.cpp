@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 17:41:36 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/16 12:22:09 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/16 18:50:45 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ std::string Response::generateHeaders() {
 		headers += "\n";
 	}
 	headers += "\n";
-	
+
 	return (headers);
 }
 
@@ -70,8 +70,14 @@ std::string Response::generateResponse() {
 	return (response);
 }
 
+//  this function to generate response frome status code 
 std::string Response::generateResponse(int statuscode) {
-	
+	// GENERATE_FIXED_HEADERS();
+	// CHECK_STATUS_CODE();
+	// FILL_THE_HEADERS();
+	// FILL_THE_BODY();
+	// GENERATE_THE_FINALE_RESPONSE();
+	(void)statuscode;
 	std::string response;
 	// std::cout << generateStatusLine() << std::endl;
 	response = 	generateStatusLine() + generateHeaders() + _body;

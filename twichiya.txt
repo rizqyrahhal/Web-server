@@ -1,4 +1,4 @@
-working over the data from global.server.port (int)
+working over the data from global.server.port (int)        (vector<server>)
 										.ip_address (string)
 										.server_name (string)
 										.map_err_page (map<int, string>)
@@ -9,8 +9,8 @@ working over the data from global.server.port (int)
 			location.name (string)  (vector<location>)
 					.root (string)
 					.allow_methods (map<string, string>)
-					.autoindex (string)
+					.autoindex (string)                    on or of (something around dyrictory)
 					.cgi (map<int string>)
 					.redirect (map<int, string>)
 
-			client.fd_client (int)
+			client.
