@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 17:41:36 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/16 18:50:45 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/16 20:43:53 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,10 @@ std::string Response::generateHeaders() {
 		headers += it->second;
 		headers += "\n";
 	}
+		headers += it->first;
+		headers += ": ";
+		headers += it->second;
+		headers += "\n";
 	headers += "\n";
 
 	return (headers);
