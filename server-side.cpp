@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:33:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/16 20:52:31 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/16 22:50:17 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,8 +80,11 @@ void network(void)
         int videoLength = file.tellg();
         file.seekg(0, std::ios::beg);
 
-        char uffer[videoLength];
-        file.read(uffer, videoLength);
+        char uffer[videoLength + 1];
+        file.read(uffer, videoLength + 1);
+		std::cout << "--------++++++++++\n";
+		std::cout << uffer << std::endl;
+		std::cout << "--------++++++++++\n";
 
         file.close();
         // ******************
@@ -99,7 +102,7 @@ void network(void)
         new_response.setBody(uffer);
         std::string response = new_response.generateResponse();
         std::cout << "\n\n\n" << response << "\n\n\n";
-	     // ******************
+	    // ******************
 
         // ------------------ sending response 
         if(request.getMethod() == "GET" && request.getUri() == "/index.html" && request.getVersion() == "HTTP/1.1")

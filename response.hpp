@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/14 21:47:25 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/16 20:53:57 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/16 22:27:34 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ class Response
 		void setStatusCode(int status_code);
 		void setStatusMessage(std::string const &status_message);
 		void setHeader(const std::string &name, const std::string &value);
-		void setBody(std::string body);
+		void setBody(const std::string &body);
 		std::string generateResponse();
 		std::string generateResponse(int statuscode);
 

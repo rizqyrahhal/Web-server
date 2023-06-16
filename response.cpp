@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 17:41:36 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/16 20:43:53 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/16 22:29:30 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void Response::setHeader(const std::string &name, const std::string &value) {
 	// _headers.insert(_it, std::pair<std::string, std::string>(name, value));
 }
 
-void Response::setBody(std::string body) {
+void Response::setBody(const std::string &body) {
 	_body = body;	
 }
 
