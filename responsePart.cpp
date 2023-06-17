@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/17 18:03:33 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/17 19:58:25 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,11 @@ const std::string GenerateErrorPage(int statuscode, std::string statusmessage)
 }
 
 std::string SearchAboutErrorPage(int statuscode, std::map<int, std::string> err_page) {
+    std::string string;
 	for (std::map<int, std::string>::iterator it = err_page.begin(); it != err_page.end(); it++)
 		if (it->first == statuscode)
 			return(it->second);
-	return (NULL);
+	return (string);
 }
 
 std::string ReadErrorPage(std::string errpage) {

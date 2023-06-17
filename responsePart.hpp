@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/17 18:03:42 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/17 20:02:24 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,8 +106,7 @@ class Server
 			_server_name = "localhost";
 
             _map_err_page[400] = "./www/error/400.html";
-            _map_err_page[401] = "./www/error/401.html";
-            _map_err_page[403] = "./www/error/403.html";
+            _map_err_page[409] = "./www/error/409.html";
 			// _locations ;
 			// _map_err_page ;
 			// _client_body_size ;

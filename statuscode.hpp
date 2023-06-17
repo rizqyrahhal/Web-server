@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 16:16:35 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/17 16:16:58 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/17 20:14:26 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,6 +153,6 @@ inline const char *getReason(int code)
 		return "Network Authentication Required";
 
 	default:
-		return NULL;
+		return "ITS A PROBLEME : PASSING STATUS CODE NOT EXISTING!!! \n if saying this ERROR it is a prbleme in our programe :( :( :( :)";
 	}
 }

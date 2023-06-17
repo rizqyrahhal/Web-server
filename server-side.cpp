@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:33:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/17 17:47:37 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/17 20:16:53 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,11 @@ void network(void)
 		std::cout << buffer << std::endl;
 
 
-
+		// ############################################  INSIDE MY PART   ###################################//
+		// ##################################################################################################//
+		// ##################################################################################################//
 
 		// ---------------------  detecte status code and fill all needed data to generate response
-		
 
 		// ++++++++++++++++++++++++++++  body handler
         std::ifstream file("www/app/index.html", std::ifstream::binary);
@@ -104,10 +105,16 @@ void network(void)
         new_response.setHeader("Content-Length", std::to_string(videoLength));
 		new_response.setHeader("Conection", request.getConection());
         new_response.setBody(uffer);
-        std::string response = GenerateResponseFromStatusCode(400);
+        std::string response = GenerateResponseFromStatusCode(412);
         std::cout << "\n\n\n" << response << "\n\n\n";
 	    // ******************
 
+
+
+
+		// ##################################################################################################//
+		// ##################################################################################################//
+		// ##################################################################################################//
         // ------------------ sending response 
         if(request.getMethod() == "GET" && request.getUri() == "/index.html" && request.getVersion() == "HTTP/1.1")
         {
