@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:33:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/16 22:50:17 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/17 17:47:37 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,9 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <fstream>
-#include "response.hpp"
+#include "responsePart.hpp"
 
 #define PORT 4875
-
-// class Request;
 
 void network(void)
 {
@@ -69,7 +67,11 @@ void network(void)
 
 
 
-		// ---------------  body handler
+
+		// ---------------------  detecte status code and fill all needed data to generate response
+		
+
+		// ++++++++++++++++++++++++++++  body handler
         std::ifstream file("www/app/index.html", std::ifstream::binary);
         if (!file.is_open())
         {
@@ -81,26 +83,28 @@ void network(void)
         file.seekg(0, std::ios::beg);
 
         char uffer[videoLength + 1];
-        file.read(uffer, videoLength + 1);
-		std::cout << "--------++++++++++\n";
-		std::cout << uffer << std::endl;
-		std::cout << "--------++++++++++\n";
+        file.read(uffer, videoLength);
+		uffer[videoLength] = '\0';
 
         file.close();
-        // ******************
+        // ############################
+
+
+		// **********************
+
 
         // --------------- generate response
-        Response new_response;
+        HttpResponse new_response;
 
         new_response.setVersion(request.getVersion());
         new_response.setStatusCode(200);
         new_response.setStatusMessage("Ok"); // generat enume structe to geting statuse msg from its
 		// new_response.setHeader("Date: ", generateDate());
-        new_response.setHeader("Content-Type", "text/html");
+        new_response.setHeader("Content-Type", "text/html"); //generateContentType()
         new_response.setHeader("Content-Length", std::to_string(videoLength));
 		new_response.setHeader("Conection", request.getConection());
         new_response.setBody(uffer);
-        std::string response = new_response.generateResponse();
+        std::string response = GenerateResponseFromStatusCode(400);
         std::cout << "\n\n\n" << response << "\n\n\n";
 	    // ******************
 

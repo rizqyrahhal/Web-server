@@ -6,7 +6,7 @@
 #    By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/17 16:07:04 by rarahhal          #+#    #+#              #
-#    Updated: 2023/06/16 22:39:59 by rarahhal         ###   ########.fr        #
+#    Updated: 2023/06/17 17:14:59 by rarahhal         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,8 @@ CC = c++
 
 SRCS =	main.cpp \
 		server-side.cpp \
-		response.cpp \
+		responsePart.cpp \
+		HttpResponse.cpp \
 
 OBJS = $(SRCS:.cpp=.o)
 

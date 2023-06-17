@@ -1,49 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   response.hpp                                       :+:      :+:    :+:   */
+/*   responsePart.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/14 21:47:25 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/16 22:27:34 by rarahhal         ###   ########.fr       */
+/*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
+/*   Updated: 2023/06/17 18:03:42 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <map>
 #include <vector>
 #include <iterator>
 
-class Response
-{
-	private:
-		// management data
-		// std::map<std::string, std::string>::iterator _it; // using to increment .insert()
+#include "HttpResponse.hpp"
+#include "statuscode.hpp"
 
-		// shared data
-		std::string _version;
-		int _status_code;
-		std::string _status_message;
-		std::map<std::string, std::string> _headers;
-		std::string _body;
-		std::string generateStatusLine();
-		std::string generateHeaders();
-	public:
-		Response();
-		void setVersion(std::string const &version);
-		void setStatusCode(int status_code);
-		void setStatusMessage(std::string const &status_message);
-		void setHeader(const std::string &name, const std::string &value);
-		void setBody(const std::string &body);
-		std::string generateResponse();
-		std::string generateResponse(int statuscode);
 
-		~Response();
-};
+std::string GenerateResponseFromStatusCode(int statuscode);
+
 
 
 
@@ -97,7 +78,7 @@ class Locations
 	public:
 		Locations() {
 			_name = "localhost";
-			_root = "www/";
+			_root = "/www";
 			_allow_methods.push_back("GET");
 			_allow_methods.push_back("POST");
 			_allow_methods.push_back("DELETE");
@@ -123,6 +104,10 @@ class Server
             _port = 0000;
             _ip_address = "127.0.0.1";
 			_server_name = "localhost";
+
+            _map_err_page[400] = "./www/error/400.html";
+            _map_err_page[401] = "./www/error/401.html";
+            _map_err_page[403] = "./www/error/403.html";
 			// _locations ;
 			// _map_err_page ;
 			// _client_body_size ;
