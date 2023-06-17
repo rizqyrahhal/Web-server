@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/17 20:02:24 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/17 21:28:24 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,19 @@
 #include "HttpResponse.hpp"
 #include "statuscode.hpp"
 
+class Response
+{
+	public:
+		
+	private:
+		Response();
+		
+		~Response();
+};
 
+
+std::string CreatResponse();
 std::string GenerateResponseFromStatusCode(int statuscode);
-
 
 
 

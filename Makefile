@@ -6,7 +6,7 @@
 #    By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/17 16:07:04 by rarahhal          #+#    #+#              #
-#    Updated: 2023/06/17 17:14:59 by rarahhal         ###   ########.fr        #
+#    Updated: 2023/06/17 21:18:52 by rarahhal         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,9 +15,10 @@ CPPFLAGS = -Wall -Werror -Wextra -std=c++98 -fsanitize=address
 CC = c++
 
 SRCS =	main.cpp \
-		server-side.cpp \
-		responsePart.cpp \
-		HttpResponse.cpp \
+		sources/server-side.cpp \
+		sources/responsePart.cpp \
+		sources/HttpResponse.cpp \
+		sources/error_page.cpp \
 
 OBJS = $(SRCS:.cpp=.o)
 
@@ -27,7 +28,7 @@ $(NAME): $(OBJS)
 all: $(NAME)
 
 clean:
-	@rm -rf *.o
+	@rm -rf $(OBJS)
 
 fclean: clean
 	@rm -f $(NAME)

@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:33:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/17 20:16:53 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/17 21:14:47 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <fstream>
-#include "responsePart.hpp"
+#include "../includes/responsePart.hpp"
 
 #define PORT 4875
 
@@ -105,7 +105,8 @@ void network(void)
         new_response.setHeader("Content-Length", std::to_string(videoLength));
 		new_response.setHeader("Conection", request.getConection());
         new_response.setBody(uffer);
-        std::string response = GenerateResponseFromStatusCode(412);
+		std::string response = new_response.generateResponse();
+        // std::string response = GenerateResponseFromStatusCode(412);
         std::cout << "\n\n\n" << response << "\n\n\n";
 	    // ******************
 

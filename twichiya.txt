@@ -18,7 +18,7 @@ working over the data from global.server.port (int)        (vector<server>)
 					.root (string)
 					.allow_methods (map<string, string>)
 					.autoindex (string)                    on or of (something around dyrictory)
-					.cgi (map<int string>)
+					.cgi (map<int, string>)
 					.redirect (map<int, string>)
 
 			client.

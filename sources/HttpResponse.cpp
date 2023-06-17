@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "responsePart.hpp"
+#include "../includes/responsePart.hpp"
 
 HttpResponse::HttpResponse() {
 	// _it = _headers.begin();

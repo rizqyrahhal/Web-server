@@ -6,11 +6,11 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 18:33:14 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/17 17:11:42 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/17 21:15:53 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "responsePart.hpp"
+#include "includes/responsePart.hpp"
 
 void network(void);
 
