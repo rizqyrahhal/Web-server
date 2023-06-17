@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:33:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/17 21:14:47 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/17 23:48:54 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,45 +70,52 @@ void network(void)
 		// ##################################################################################################//
 		// ##################################################################################################//
 
+		std::string response = CreatResponse(); // it is a probleme when send response in one message, with body just contian file html 
+
 		// ---------------------  detecte status code and fill all needed data to generate response
 
 		// ++++++++++++++++++++++++++++  body handler
-        std::ifstream file("www/app/index.html", std::ifstream::binary);
-        if (!file.is_open())
-        {
-        	std::cout << "Error in opening file\n";
-        	std::exit(-404);
-        }
-        file.seekg(0, std::ios::end);
-        int videoLength = file.tellg();
-        file.seekg(0, std::ios::beg);
+        // std::ifstream file("www/app/index.html", std::ifstream::binary);
+        // if (!file.is_open())
+        // {
+        // 	std::cout << "Error in opening file\n";
+        // 	std::exit(-404);
+        // }
+        // file.seekg(0, std::ios::end);
+        // int Length = file.tellg();
+        // file.seekg(0, std::ios::beg);
 
-        char uffer[videoLength + 1];
-        file.read(uffer, videoLength);
-		uffer[videoLength] = '\0';
+        // char uffer[(int)Length/2 +1];
+		// char uffer2[(int)Length/2 + 2];
+        // file.read(uffer, (int)Length/2);
+        // file.read(uffer2, (int)Length/2 + 1);
+		// // uffer[(int)Length/2 + 1] = '\0';
+		// // uffer2[(int)Length/2 + 2] = '\0';
 
-        file.close();
-        // ############################
+        // file.close();
+        // // ############################
 
 
-		// **********************
+		// // **********************
 
 
-        // --------------- generate response
-        HttpResponse new_response;
+        // // --------------- generate response
+        // HttpResponse new_response;
 
-        new_response.setVersion(request.getVersion());
-        new_response.setStatusCode(200);
-        new_response.setStatusMessage("Ok"); // generat enume structe to geting statuse msg from its
-		// new_response.setHeader("Date: ", generateDate());
-        new_response.setHeader("Content-Type", "text/html"); //generateContentType()
-        new_response.setHeader("Content-Length", std::to_string(videoLength));
-		new_response.setHeader("Conection", request.getConection());
-        new_response.setBody(uffer);
-		std::string response = new_response.generateResponse();
+        // new_response.setVersion(request.getVersion());
+        // new_response.setStatusCode(200);
+        // new_response.setStatusMessage("Ok"); // generat enume structe to geting statuse msg from its
+		// // new_response.setHeader("Date: ", generateDate());
+        // new_response.setHeader("Content-Type", "text/html"); //generateContentType()
+        // new_response.setHeader("Content-Length", std::to_string(Length));
+		// new_response.setHeader("Conection", request.getConection());
+        // // new_response.setBody(uffer);
+		// std::string response = new_response.generateResponse();
+        // std::cout << "\n\n\n" << response << "\n\n\n";
+	    // // ******************
+		
         // std::string response = GenerateResponseFromStatusCode(412);
-        std::cout << "\n\n\n" << response << "\n\n\n";
-	    // ******************
+        // std::cout << "\n\n\n" << response << "\n\n\n";
 
 
 
@@ -119,7 +126,10 @@ void network(void)
         // ------------------ sending response 
         if(request.getMethod() == "GET" && request.getUri() == "/index.html" && request.getVersion() == "HTTP/1.1")
         {
-            send(new_socket, response.c_str(), response.size(), MSG_SEND);
+            if (send(new_socket, response.c_str(), response.size(), MSG_SEND) < -1)
+				std::cout << "NETWORK!!!!!!!!!!!!!!!!!!\n";
+            // send(new_socket, uffer, Length/2, MSG_SEND);
+            // send(new_socket, uffer2, Length/2 + 1, MSG_SEND);
         }
         // *******************
 	}

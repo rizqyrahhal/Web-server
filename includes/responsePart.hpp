@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/17 21:28:24 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/17 23:52:55 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,11 @@
 
 class Response
 {
-	public:
-		
 	private:
-		Response();
 		
+	public:
+		Response();
+			
 		~Response();
 };
 
@@ -122,4 +122,12 @@ class Server
 			// _client_body_size ;
         }
 	    ~Server(){}
+};
+
+class Glb
+{
+	private:
+	public:
+		Server server;
+		Request request;
 };

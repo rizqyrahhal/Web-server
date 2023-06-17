@@ -1,5 +1,4 @@
 working on GET Method
 make the standar headers like time ....
-set database of  statusCode: statsMessgae
 
-the Gool is hosting all the files of Portfolyo page
+the Gool is hosting all the files of Portfolyo page              (!!!!!)
