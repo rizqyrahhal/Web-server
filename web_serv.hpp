@@ -19,6 +19,8 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
+#define BUFFER_SIZE 1024
+
 class locations
 {
 public:
@@ -34,20 +36,33 @@ public:
 	~locations(){}
 };
 
+
+
+class request
+{
+	public:
+	request(){}
+	void	read_reqwest(int fd_client);
+	std::string method;
+	std::string url;
+	std::map<std::string, std::string> map_request;
+	~request(){}
+	
+};
+
 class client
 {
 
-public:
+	public:
 	client(/* args */);
 
 	int fd_client;
 	struct sockaddr_in client_address;
 	socklen_t clientaddrlenght;
+	request request_client;
 
 	~client();
 };
-
-
 
 class server
 {
@@ -82,16 +97,10 @@ public:
 	std::vector<server> server;
 };
 
-class request
-{
-	request(){}
-	~request(){}
-	
-};
 
 void    ft_parce_config(char **av, global &global);
 void    creat_socket_and_bind(global & glob);
-void     listen_new_connection(global & glob);
+void    listen_new_connection(global & glob);
 void    run_servers(global & glob);
 
 # endif

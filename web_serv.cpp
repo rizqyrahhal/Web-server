@@ -10,6 +10,11 @@ client::~client()
 
 }
 
+void request::read_reqwest(int fd_client)
+{
+	std::cout<<fd_client<<std::endl;
+}
+
 
 fd_set server::initializer()
 {

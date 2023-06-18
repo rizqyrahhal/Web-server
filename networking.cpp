@@ -103,10 +103,8 @@ void    run_servers(global & glob)
 				// IF statement for Request.
 				if (FD_ISSET(client.fd_client, &readable))
 				{
-					fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
-                    // char buffer[30000] = {0};
-                    // read(client.fd_client, buffer, 1024);
-					// std::cout<<buffer<<std::endl;
+					// fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
+                    client.request_client.read_reqwest(client.fd_client);
                     exit(0);
 				}
 				// IF statement for Response.
