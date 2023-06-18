@@ -1,11 +1,6 @@
 
 
 
-
-
-
-
-
 working over the data from global.server.port (int)        (vector<server>)
 										.ip_address (string)
 										.server_name (string)
@@ -21,6 +16,5 @@ working over the data from global.server.port (int)        (vector<server>)
 					.cgi (map<int, string>)
 					.redirect (map<int, string>)
 
-			client.
+			client.request
 
-			request.

@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:33:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/17 23:48:54 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/18 18:10:13 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,10 @@ void network(void)
 		// ############################################  INSIDE MY PART   ###################################//
 		// ##################################################################################################//
 		// ##################################################################################################//
-
-		std::string response = CreatResponse(); // it is a probleme when send response in one message, with body just contian file html 
+		
+		// std::cout << "00000000000000000\n"; 
+		// std::string response = CreatResponse(); // it is a probleme when send response in one message, with body just contian file html 
+		// std::cout << "----SIZE: " << response.size() << std::endl;
 
 		// ---------------------  detecte status code and fill all needed data to generate response
 
@@ -114,8 +116,8 @@ void network(void)
         // std::cout << "\n\n\n" << response << "\n\n\n";
 	    // // ******************
 		
-        // std::string response = GenerateResponseFromStatusCode(412);
-        // std::cout << "\n\n\n" << response << "\n\n\n";
+        std::string response = GenerateResponseFromStatusCode(400);
+        std::cout << "\n\n\n" << response << "\n\n\n";
 
 
 

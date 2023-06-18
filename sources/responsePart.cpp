@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/17 23:52:33 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/18 18:05:56 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ Response::~Response() {
 }
 
 std::string CreatResponse() {
-	Glb _glb;
+    Server server;
+	Request request;
     // Response response;
 
 		// ---------------------  detecte status code and fill all needed data to generate response
@@ -50,7 +51,7 @@ std::string CreatResponse() {
         // --------------- generate response
         HttpResponse new_response;
 
-        new_response.setVersion(_glb.request.getVersion());
+        new_response.setVersion(request.getVersion());
         new_response.setStatusCode(200);
         new_response.setStatusMessage("Ok"); // generat enume structe to geting statuse msg from its
 		// new_response.setHeader("Date: ", generateDate());
@@ -58,12 +59,13 @@ std::string CreatResponse() {
         new_response.setHeader("Content-Length", std::to_string(length));
 		// new_response.setHeader("Conection", request.getConection());
         new_response.setBody(buffer);
-		std::string response = new_response.generateResponse();
-        std::cout << "\n\n\n" << response << "\n\n\n";
+		// std::string response = new_response.generateResponse();
+        // std::cout << "\n\n\n" << response << "\n\n\n";
+        
 	    // ******************
 
 
     // response from cgi
     
-    return ("");
+    return (new_response.generateResponse());
 }

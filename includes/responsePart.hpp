@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/17 23:52:55 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/18 18:12:39 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 class Response
 {
 	private:
+		// HEAREDS
 		
 	public:
 		Response();
@@ -35,8 +36,6 @@ class Response
 
 std::string CreatResponse();
 std::string GenerateResponseFromStatusCode(int statuscode);
-
-
 
 
 
@@ -124,10 +123,10 @@ class Server
 	    ~Server(){}
 };
 
-class Glb
-{
-	private:
-	public:
-		Server server;
-		Request request;
-};
+// class Glb
+// {
+// 	private:
+// 	public:
+// 		Server server;
+// 		Request request;
+// };
