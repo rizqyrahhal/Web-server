@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:33:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/19 14:24:11 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/19 17:25:15 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,9 @@ void network(void)
 		// ##################################################################################################//
 		// ##################################################################################################//
 
-		std::string response = CreatResponse();
+		// std::string response = CreatResponse();
 		
-        // std::string response = GenerateResponseFromStatusCode(500);
+        std::string response = GenerateResponseFromStatusCode(400);
 
         std::cout << "\n\n\n" << response << "\n\n\n";
 

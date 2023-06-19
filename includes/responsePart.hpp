@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/18 18:12:39 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/19 21:57:21 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ class Locations
 		std::string _root;
 		std::vector<std::string> _allow_methods;
 		std::string _autoindex;
+		std::string _index; // if autoindex off         //this line not handl in parse talk with peer to handl it
 		std::map<std::string, std::string> _cgi;
 		std::map<int, std::string> _redirect;
 	public:
@@ -92,6 +93,7 @@ class Locations
 			_allow_methods.push_back("POST");
 			_allow_methods.push_back("DELETE");
 			_autoindex = "on";
+			_index = "index.html";
 			// _cgi ;
 			// _redirect ;
 		}

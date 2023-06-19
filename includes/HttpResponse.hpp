@@ -16,14 +16,7 @@
 
 class HttpResponse
 {
-	public:
-		// Request request;
-		// Server	server;
 	private:
-		// management data
-		// std::map<std::string, std::string>::iterator _it; // using to increment .insert()
-
-		// shared data
 		std::string _version;
 		int _status_code;
 		std::string _status_message;

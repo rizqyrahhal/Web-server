@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/18 18:05:56 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/19 17:22:52 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ std::string CreatResponse() {
     // Response response;
 
 		// ---------------------  detecte status code and fill all needed data to generate response
-		
+
 		// ++++++++++++++++++++++++++++  body handler
         std::ifstream file("www/app/index.html", std::ifstream::binary);
         if (!file.is_open())
@@ -46,7 +46,6 @@ std::string CreatResponse() {
 
 
 		// **********************
-
 
         // --------------- generate response
         HttpResponse new_response;
