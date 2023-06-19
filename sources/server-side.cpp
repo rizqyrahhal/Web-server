@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:33:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/18 18:10:13 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/19 14:24:11 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,54 @@ void network(void)
 		// ############################################  INSIDE MY PART   ###################################//
 		// ##################################################################################################//
 		// ##################################################################################################//
+
+		std::string response = CreatResponse();
+		
+        // std::string response = GenerateResponseFromStatusCode(500);
+
+        std::cout << "\n\n\n" << response << "\n\n\n";
+
+
+		/* make header in std::string and movine the body in file (create function that read from file by spesific size in agrumenet) */
+
+
+		// ##################################################################################################//
+		// ##################################################################################################//
+		// ##################################################################################################//
+        // ------------------ sending response 
+        if(request.getMethod() == "GET" && request.getUri() == "/index.html" && request.getVersion() == "HTTP/1.1")
+        {
+            send(new_socket, response.c_str(), response.size(), MSG_SEND);
+
+			/* in the chunks case */
+            // send(new_socket, uffer, Length/2, MSG_SEND);
+            // send(new_socket, uffer2, Length/2 + 1, MSG_SEND);
+        }
+		close(new_socket);
+        // *******************
+	}
+}
+	    // char uffer2[(int)videoLength/2 + 1];
+	    // file.read(uffer2, (int)videoLength/2 + 1);
+
+		// send(new_socket, header.c_str(), header.size(), MSG_SEND);
+		// send(new_socket, uffer, (int)videoLength/2, MSG_SEND);
+		// send(new_socket, uffer2, (int)videoLength/2 + 1, MSG_SEND);
+		// // write(new_socket, headers.c_str(), response.size());
+		// // write(new_socket, uffer, 3465);
+		// std::cout << "-------------------response message sent---------------\n";
+		// std::cout << response << std::endl;
+		// std::cout << "------------------------------------------------------\n";
+		// close(new_socket);
+
+
+
+		// ############################################  INSIDE MY PART   ###################################//
+		// ##################################################################################################//
+		// ##################################################################################################//
 		
 		// std::cout << "00000000000000000\n"; 
-		// std::string response = CreatResponse(); // it is a probleme when send response in one message, with body just contian file html 
+		std::string response = CreatResponse(); // it is a probleme when send response in one message, with body just contian file html 
 		// std::cout << "----SIZE: " << response.size() << std::endl;
 
 		// ---------------------  detecte status code and fill all needed data to generate response
@@ -116,8 +161,8 @@ void network(void)
         // std::cout << "\n\n\n" << response << "\n\n\n";
 	    // // ******************
 		
-        std::string response = GenerateResponseFromStatusCode(400);
-        std::cout << "\n\n\n" << response << "\n\n\n";
+        // std::string response = GenerateResponseFromStatusCode(500);
+        // std::cout << "\n\n\n" << response << "\n\n\n";
 
 
 
@@ -125,26 +170,3 @@ void network(void)
 		// ##################################################################################################//
 		// ##################################################################################################//
 		// ##################################################################################################//
-        // ------------------ sending response 
-        if(request.getMethod() == "GET" && request.getUri() == "/index.html" && request.getVersion() == "HTTP/1.1")
-        {
-            if (send(new_socket, response.c_str(), response.size(), MSG_SEND) < -1)
-				std::cout << "NETWORK!!!!!!!!!!!!!!!!!!\n";
-            // send(new_socket, uffer, Length/2, MSG_SEND);
-            // send(new_socket, uffer2, Length/2 + 1, MSG_SEND);
-        }
-        // *******************
-	}
-}
-	    // char uffer2[(int)videoLength/2 + 1];
-	    // file.read(uffer2, (int)videoLength/2 + 1);
-
-		// send(new_socket, header.c_str(), header.size(), MSG_SEND);
-		// send(new_socket, uffer, (int)videoLength/2, MSG_SEND);
-		// send(new_socket, uffer2, (int)videoLength/2 + 1, MSG_SEND);
-		// // write(new_socket, headers.c_str(), response.size());
-		// // write(new_socket, uffer, 3465);
-		// std::cout << "-------------------response message sent---------------\n";
-		// std::cout << response << std::endl;
-		// std::cout << "------------------------------------------------------\n";
-		// close(new_socket);
