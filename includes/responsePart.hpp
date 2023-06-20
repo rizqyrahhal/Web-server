@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/20 17:31:45 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/20 22:13:54 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,37 +21,6 @@
 
 #include "HttpResponse.hpp"
 #include "statuscode.hpp"
-
-
-
-// class switch
-// {
-// 	private:
-// 		std::string header;
-// 		int fd;
-// 	public:
-// 		std::string readforsend(short sizetoread);
-// };
-
-
-
-class Response
-{
-	private:
-		// HEAREDS
-		
-		
-	public:
-		Response();
-			
-		~Response();
-};
-
-
-std::string CreatResponse();
-std::string GenerateResponseFromStatusCode(int statuscode);
-
-
 
 							/*   data     */
 //  the Request class
@@ -69,7 +38,7 @@ class Request
             _method = "GET";
             _uri = "/";
             _version = "HTTP/1.1";
-            _conection = "close";
+            _conection = "keep-alive";
 			_headers[""] = "";
         }
         std::string getMethod() const {
@@ -139,6 +108,39 @@ class Server
         }
 	    ~Server(){}
 };
+// -----------------------------------------------------------------------------------------------------------------------------------------------
+
+// class switch
+// {
+// 	private:
+// 		std::string header;
+// 		int fd;
+// 	public:
+// 		std::string readforsend(short sizetoread);
+// };
+
+
+class Response
+{
+	private:
+		std::string _matchedLocation;
+		std::string _path;
+
+	public:
+		Response();
+		int GetMatchedLocationRequestUrl(std::vector<Locations> locations, std::string requesturi);
+
+		// seters
+		// geters
+		~Response();
+};
+
+
+std::string CreatResponse();
+std::string GenerateResponseFromStatusCode(int statuscode);
+
+
+
 
 // class Glb
 // {

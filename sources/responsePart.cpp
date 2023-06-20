@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/20 17:34:37 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/20 22:38:18 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,15 @@ Response::~Response() {
     
 // }
 
-int GetMatchedLocationRequestUrl(std::vector<Locations> locations, std::string requesturi) {
+int Response::GetMatchedLocationRequestUrl(std::vector<Locations> locations, std::string requesturi) {
     for(unsigned int i = 0; i < locations.size(); i++)
     {
-        if (locations[i]._name == requesturi)
-            return i;
+        if (locations[i]._name.find(requesturi) == 0)
+        {
+            
+            std::cout << "iiiiiiiiiii: " << i << std::endl;
+        }
+        return i;
     }
     throw (GenerateResponseFromStatusCode(404));
 }
@@ -44,10 +48,10 @@ void IsLocationHaveRedirection(Locations matchedlocation) {
 std::string CreatResponse() {
         Server server;
 	    Request request;
+        Response response;
         try
         {
-            // Response response;
-            int MatchedLocation = GetMatchedLocationRequestUrl(server._locations, request.getUri());
+            int MatchedLocation = response.GetMatchedLocationRequestUrl(server._locations, request.getUri());
             // std::cout << "++++++++_+_+_+_+_+_++_+_+_+_+_+_+_+_+_+_+_+_+_+_ "<< std::endl;
             IsLocationHaveRedirection(server._locations[MatchedLocation]);
         }
