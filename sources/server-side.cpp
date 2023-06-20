@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:33:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/20 01:18:21 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/20 17:33:59 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void network(void)
 		// ##################################################################################################//
 
 		std::string response = CreatResponse();
-		
+
         // std::string response = GenerateResponseFromStatusCode(400);
 
         std::cout << "\n\n\n" << response << "\n\n\n";
@@ -82,7 +82,7 @@ void network(void)
 		// ##################################################################################################//
 		// ##################################################################################################//
         // ------------------ sending response 
-        if(request.getMethod() == "GET" && request.getUri() == "/index.html" && request.getVersion() == "HTTP/1.1")
+        if(request.getMethod() == "GET" && request.getUri() == "/" && request.getVersion() == "HTTP/1.1")
         {
             send(new_socket, response.c_str(), response.size(), MSG_SEND);
 

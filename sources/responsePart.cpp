@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/20 02:00:45 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/20 17:34:37 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,52 +20,46 @@ Response::~Response() {
 
 }
 
-void CheckMethod() {
+// void CheckMethod() {
     
-}
+// }
 
-void CheckUrl() {
+// void CheckUrl() {
     
-}
+// }
 
-std::string GetMatchedLocationRequestUrl(std::vector<Locations> locations) {
-    std::string path;
-
+int GetMatchedLocationRequestUrl(std::vector<Locations> locations, std::string requesturi) {
     for(unsigned int i = 0; i < locations.size(); i++)
     {
-        locations[i]._root;
-    }    
+        if (locations[i]._name == requesturi)
+            return i;
+    }
+    throw (GenerateResponseFromStatusCode(404));
+}
 
-    return (path);
+void IsLocationHaveRedirection(Locations matchedlocation) {
+    std::cout << "Matched Location name: " << matchedlocation._name << std::endl;       //// working here 
 }
 
 std::string CreatResponse() {
-    Server server;
-    
-	Request request;
-    Response response;
+        Server server;
+	    Request request;
+        try
+        {
+            // Response response;
+            int MatchedLocation = GetMatchedLocationRequestUrl(server._locations, request.getUri());
+            // std::cout << "++++++++_+_+_+_+_+_++_+_+_+_+_+_+_+_+_+_+_+_+_+_ "<< std::endl;
+            IsLocationHaveRedirection(server._locations[MatchedLocation]);
+        }
+        catch(std::string response)
+        {
+            std::cout << "in catch statment ================================================ \n";
+            return (response);
+            // return the error page  that throwen
+        }
 
-		// ---------------------  detecte status code and fill all needed data to generate response
-
-        // try
-        // {
-        std::string path = GetMatchedLocationRequestUrl(server._locations);
-            
-        // }
-        // catch(const std::exception& e)
-        // {
-        //     // return the error page  that throwen
-        // }
-        
-
-
-
-        CheckMethod(); // to undarstand the way need to take it
-        CheckUrl(); //  check url and the allowd method in location
-
-
-
-
+        // CheckMethod(); // to undarstand the way need to take it
+        // CheckUrl(); //  check url and the allowd method in location
 
 		// ++++++++++++++++++++++++++++  body handler
 

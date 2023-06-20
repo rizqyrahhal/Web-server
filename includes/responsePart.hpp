@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/20 01:56:39 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/20 17:31:45 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,24 @@
 #include "HttpResponse.hpp"
 #include "statuscode.hpp"
 
+
+
+// class switch
+// {
+// 	private:
+// 		std::string header;
+// 		int fd;
+// 	public:
+// 		std::string readforsend(short sizetoread);
+// };
+
+
+
 class Response
 {
 	private:
 		// HEAREDS
+		
 		
 	public:
 		Response();
@@ -53,7 +67,7 @@ class Request
     public:
 		Request(){
             _method = "GET";
-            _uri = "/index.html";
+            _uri = "/";
             _version = "HTTP/1.1";
             _conection = "close";
 			_headers[""] = "";
@@ -87,7 +101,7 @@ class Locations
 		std::map<int, std::string> _redirect;
 	public:
 		Locations() {
-			_name = "app";
+			_name = "/";
 			_root = "/www/app";
 			_allow_methods.push_back("GET");
 			// _allow_methods.push_back("POST");
