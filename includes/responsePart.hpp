@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/19 21:57:21 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/20 01:56:39 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,10 +87,10 @@ class Locations
 		std::map<int, std::string> _redirect;
 	public:
 		Locations() {
-			_name = "localhost";
-			_root = "/www";
+			_name = "app";
+			_root = "/www/app";
 			_allow_methods.push_back("GET");
-			_allow_methods.push_back("POST");
+			// _allow_methods.push_back("POST");
 			_allow_methods.push_back("DELETE");
 			_autoindex = "on";
 			_index = "index.html";
@@ -112,13 +112,14 @@ class Server
 	    int _client_body_size;
 	public:
 	    Server(){
+			Locations location;
             _port = 0000;
             _ip_address = "127.0.0.1";
 			_server_name = "localhost";
 
             _map_err_page[400] = "./www/error/400.html";
             _map_err_page[409] = "./www/error/409.html";
-			// _locations ;
+			_locations.push_back(location);
 			// _map_err_page ;
 			// _client_body_size ;
         }

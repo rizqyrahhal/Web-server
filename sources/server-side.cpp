@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:33:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/19 17:25:15 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/20 01:18:21 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,20 +65,18 @@ void network(void)
 		
 		std::cout << buffer << std::endl;
 
-
 		// ############################################  INSIDE MY PART   ###################################//
 		// ##################################################################################################//
 		// ##################################################################################################//
 
-		// std::string response = CreatResponse();
+		std::string response = CreatResponse();
 		
-        std::string response = GenerateResponseFromStatusCode(400);
+        // std::string response = GenerateResponseFromStatusCode(400);
 
         std::cout << "\n\n\n" << response << "\n\n\n";
 
 
 		/* make header in std::string and movine the body in file (create function that read from file by spesific size in agrumenet) */
-
 
 		// ##################################################################################################//
 		// ##################################################################################################//
