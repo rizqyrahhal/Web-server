@@ -45,6 +45,7 @@ class request
 	void	read_reqwest(int fd_client);
 	std::string method;
 	std::string url;
+	std::string query;
 	std::map<std::string, std::string> map_request;
 	~request(){}
 	
