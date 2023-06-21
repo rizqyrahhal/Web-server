@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/20 22:13:54 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/21 19:57:18 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ class Request
     public:
 		Request(){
             _method = "GET";
-            _uri = "/";
+            _uri = "/image.png";
             _version = "HTTP/1.1";
-            _conection = "keep-alive";
+            _conection = "close";
 			_headers[""] = "";
         }
         std::string getMethod() const {
@@ -69,9 +69,9 @@ class Locations
 		std::map<std::string, std::string> _cgi;
 		std::map<int, std::string> _redirect;
 	public:
-		Locations() {
-			_name = "/";
-			_root = "/www/app";
+		Locations(std::string name, std::string root) {
+			_name = name;
+			_root = root;
 			_allow_methods.push_back("GET");
 			// _allow_methods.push_back("POST");
 			_allow_methods.push_back("DELETE");
@@ -95,7 +95,12 @@ class Server
 	    int _client_body_size;
 	public:
 	    Server(){
-			Locations location;
+			Locations location("/", "/www/app");
+			Locations location2("/example_redirect", "/www/app");
+			location2._redirect[301] = "http://example.com";
+			Locations location3("/www", "/www/app");
+			Locations location4("/www/app/images/", "/www/app");
+			Locations location5("/app/images/", "/www/app");
             _port = 0000;
             _ip_address = "127.0.0.1";
 			_server_name = "localhost";
@@ -103,6 +108,10 @@ class Server
             _map_err_page[400] = "./www/error/400.html";
             _map_err_page[409] = "./www/error/409.html";
 			_locations.push_back(location);
+			_locations.push_back(location2);
+			_locations.push_back(location3);
+			_locations.push_back(location4);
+			_locations.push_back(location5);
 			// _map_err_page ;
 			// _client_body_size ;
         }
@@ -123,12 +132,13 @@ class Server
 class Response
 {
 	private:
+	    size_t _matchedLocationPosition;
 		std::string _matchedLocation;
 		std::string _path;
 
 	public:
 		Response();
-		int GetMatchedLocationRequestUrl(std::vector<Locations> locations, std::string requesturi);
+		size_t GetMatchedLocationRequestUrl(std::vector<Locations> locations, std::string requesturi);
 
 		// seters
 		// geters
@@ -138,7 +148,7 @@ class Response
 
 std::string CreatResponse();
 std::string GenerateResponseFromStatusCode(int statuscode);
-
+std::string GenerateResponseFromStatusCode(int statuscode, HttpResponse response);
 
 
 
