@@ -29,15 +29,21 @@ void request::read_reqwest(int fd_client)
 	//check allow methods
 	method = s;
 	tmp1 >> s;
-	if (s.lenght() > 2048)
+	if (s.length() > 2048)
+	{
+		std::string response = GenerateResponseFromStatusCode(414);
+		send(fd_client, response.c_str(), response.size(), 0);
 		//respose 414
+	}
 	//check for allow caracter
 	std::string caracter = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%";
-	for(int j = 0; j < s.lenght(); j++)
+	for(size_t j = 0; j < s.length(); j++)
 	{
-		int f = caracter.find(s[i])
-		if (f == caracter::npos())
+		size_t f = caracter.find(s[j]);
+		if (f == std::string::npos)
 			{
+				std::string response = GenerateResponseFromStatusCode(404);
+				send(fd_client, response.c_str(), response.size(), 0);
 				//responce 404 bad request
 			}
 	}

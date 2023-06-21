@@ -105,13 +105,19 @@ void    run_servers(global & glob)
 				{
 					// fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
                     client.request_client.read_reqwest(client.fd_client);
-                    exit(0);
+                    std::cout << "---------------------- --------------- \n";
+                    send(client.fd_client, GenerateResponseFromStatusCode(400).c_str(), GenerateResponseFromStatusCode(400).size(), 0);
+                    std::cout << "----------------------+--------------- \n";
+                    // FD_CLR(client.fd_client, &server::current);
+                    // close(client.fd_client);
+
 				}
 				// IF statement for Response.
-				else if(i >= 0  && FD_ISSET(client.fd_client, &writable))
-				{
-                    std::cout<<"hello from response\n";
-				}
+				// else if(i >= 0  && FD_ISSET(client.fd_client, &writable))
+				// {
+                //     // std::cout<<"hello from response\n";
+                //     close(client.fd_client);
+				// }
 			}
 		}
 	}

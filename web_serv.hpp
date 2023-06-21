@@ -19,6 +19,8 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
+#include "includes/responsePart.hpp"
+
 #define BUFFER_SIZE 1024
 
 class locations
