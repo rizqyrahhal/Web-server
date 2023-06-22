@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/21 19:57:18 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/22 01:01:47 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <map>
 #include <vector>
 #include <iterator>
+#include <unistd.h>
 
 #include "HttpResponse.hpp"
 #include "statuscode.hpp"
@@ -36,7 +37,7 @@ class Request
     public:
 		Request(){
             _method = "GET";
-            _uri = "/image.png";
+            _uri = "/app/html/index.html";
             _version = "HTTP/1.1";
             _conection = "close";
 			_headers[""] = "";
@@ -73,7 +74,7 @@ class Locations
 			_name = name;
 			_root = root;
 			_allow_methods.push_back("GET");
-			// _allow_methods.push_back("POST");
+			_allow_methods.push_back("POST");
 			_allow_methods.push_back("DELETE");
 			_autoindex = "on";
 			_index = "index.html";
@@ -95,10 +96,10 @@ class Server
 	    int _client_body_size;
 	public:
 	    Server(){
-			Locations location("/", "/www/app");
+			Locations location("/app", "/www/app");
 			Locations location2("/example_redirect", "/www/app");
 			location2._redirect[301] = "http://example.com";
-			Locations location3("/www", "/www/app");
+			Locations location3("/www/app", "/www/app");
 			Locations location4("/www/app/images/", "/www/app");
 			Locations location5("/app/images/", "/www/app");
             _port = 0000;
@@ -132,13 +133,21 @@ class Server
 class Response
 {
 	private:
-	    size_t _matchedLocationPosition;
+	    static size_t _matchedLocationPosition;
 		std::string _matchedLocation;
+		std::string _requestedSource;
 		std::string _path;
 
+		static void GetMethod(Server server, Request request);
+		static std::string GetRequestedSource(Locations matchedlocation, std::string requesturi);
+		// static void PostMethod();
+		// static void DeleteMethod();
 	public:
 		Response();
 		size_t GetMatchedLocationRequestUrl(std::vector<Locations> locations, std::string requesturi);
+		static void IsLocationHaveRedirection(Locations matchedlocation);
+		static void IsMethodAllowedInLocation(std::vector<std::string> allowedmethod, std::string requestmethod);
+		static void CheckWhichRequestMethod(Server server, Request request);
 
 		// seters
 		// geters

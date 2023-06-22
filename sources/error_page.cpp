@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 21:10:59 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/21 20:01:59 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/21 22:14:42 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,34 +60,7 @@ std::string GenerateResponseFromStatusCode(int statuscode) {
   
     	// CHECK_STATUS_CODE();
 	if (statuscode >= 400){
-        response.setVersion("HTTP/1.1");
-		response.setStatusCode(statuscode);
-		response.setStatusMessage(getReason(statuscode));
-
-		// search about error page in map_error page
-		std::string err_page = SearchAboutErrorPage(statuscode, server._map_err_page);
-        if (!err_page.empty())
-        	response.setBody(ReadErrorPage(err_page));
-        else
-            response.setBody(GenerateErrorPage(statuscode, getReason(statuscode)));
         
-		// new_response.setHeader("Date: ", generateDate());
-        response.setHeader("Content-Type", "text/html"); //generateContentType()
-        response.setHeader("Content-Length", std::to_string(response.getBodySize()));
-		response.setHeader("Conection", request.getConection()); // from map headers (request data)   request.getConection()
-	}
-
-	// GENERATE_THE_FINALE_RESPONSE();
-    return response.generateResponse();
-}
-
-
-/* rest small choise not handling in headers !!!!!!!!!!!!! */                // TRY  to merge this function with the abouve function in some sulution (my be make it a template function or something like this)
-std::string GenerateResponseFromStatusCode(int statuscode, HttpResponse response) {
-    // HttpResponse response;
-	Request request;
-	Server	server;
-  
         /* Start line element */
         response.setVersion("HTTP/1.1");
 		response.setStatusCode(statuscode);
@@ -97,19 +70,48 @@ std::string GenerateResponseFromStatusCode(int statuscode, HttpResponse response
 		// new_response.setHeader("Date: ", generateDate());
 		response.setHeader("Conection", request.getConection()); // from map headers (request data)   request.getConection()
 
+		// search about error page in map_error page
+		std::string err_page = SearchAboutErrorPage(statuscode, server._map_err_page);
+        if (!err_page.empty())
+        	response.setBody(ReadErrorPage(err_page));
+        else
+            response.setBody(GenerateErrorPage(statuscode, getReason(statuscode)));
+        
+        response.setHeader("Content-Type", "text/html"); //generateContentType()
+        response.setHeader("Content-Length", std::to_string(response.getBodySize()));
+	}
 
-            /* HERE response have rederect message not have any body or something like this her is the probleme*/
-		/* search about error page in map_error page */
-        if (statuscode < 300 && statuscode >= 400)
-        {
-		    std::string err_page = SearchAboutErrorPage(statuscode, server._map_err_page);
-            if (!err_page.empty())
-        	    response.setBody(ReadErrorPage(err_page));
-            else
-                response.setBody(GenerateErrorPage(statuscode, getReason(statuscode)));           
-        // response.setHeader("Content-Type", "text/html"); //generateContentType()
-        // response.setHeader("Content-Length", std::to_string(response.getBodySize()));
-        }
+	// GENERATE_THE_FINALE_RESPONSE();
+    return response.generateResponse();
+}
+
+
+/* rest small choise not handling in headers !!!!!!!!!!!!! */                // TRY  to merge this function with the abouve function in some sulution (my be make it a template function or something like this)
+std::string GenerateResponseFromStatusCode(int statuscode, HttpResponse response) {
+	Request request;
+	Server	server;
+
+    /* Start line element */
+    response.setVersion("HTTP/1.1");
+	response.setStatusCode(statuscode);
+	response.setStatusMessage(getReason(statuscode));
+
+    /* set default headers */
+	// new_response.setHeader("Date: ", generateDate());
+	response.setHeader("Conection", request.getConection()); // from map headers (request data)   request.getConection()
+
+    /* HERE response have rederect message not have any body or something like this her is the probleme*/
+	/* search about error page in map_error page */
+    if (statuscode < 300 || statuscode >= 400)   // change this with categore redirection-error
+    {
+		std::string err_page = SearchAboutErrorPage(statuscode, server._map_err_page);
+        if (!err_page.empty())
+        	response.setBody(ReadErrorPage(err_page));
+        else
+            response.setBody(GenerateErrorPage(statuscode, getReason(statuscode)));           
+        response.setHeader("Content-Type", "text/html"); //generateContentType()
+        response.setHeader("Content-Length", std::to_string(response.getBodySize()));
+    }
 
 	// GENERATE_THE_FINALE_RESPONSE();
     return response.generateResponse();

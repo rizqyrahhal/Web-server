@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:33:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/21 17:32:16 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/21 23:06:41 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 #include "../includes/responsePart.hpp"
 
 #define PORT 4875
+
+size_t Response::_matchedLocationPosition;
 
 void network(void)
 {
