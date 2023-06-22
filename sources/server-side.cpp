@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/05 17:33:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/21 23:06:41 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/22 14:28:42 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,8 @@ void network(void)
 		// ############################################  INSIDE MY PART   ###################################//
 		// ##################################################################################################//
 		// ##################################################################################################//
-
-		std::string response = CreatResponse();
+		Response respons;
+		std::string response = respons.CreatResponse();
 
         // std::string response = GenerateResponseFromStatusCode(400);
 
@@ -116,7 +116,7 @@ void network(void)
 		// ##################################################################################################//
 		
 		// std::cout << "00000000000000000\n"; 
-		std::string response = CreatResponse(); // it is a probleme when send response in one message, with body just contian file html 
+		// std::string response = CreatResponse(); // it is a probleme when send response in one message, with body just contian file html 
 		// std::cout << "----SIZE: " << response.size() << std::endl;
 
 		// ---------------------  detecte status code and fill all needed data to generate response

@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/22 01:05:49 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/22 19:05:41 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,122 +16,7 @@ Response::Response() {
 
 }
 
-Response::~Response() {
-
-}
-
-/* this function get the matched location position in the vectors location if axisting, 
-   {!!!} but need more check if it is a location name without / in (begin/end) or something like that*/
-size_t Response::GetMatchedLocationRequestUrl(std::vector<Locations> locations, std::string requesturi) {
-    bool why = false;
-    for(size_t i = 0; i < locations.size(); i++)
-    {
-        // std::cout << "matchedLocation: " << locations[i]._name << "\nURi: " << requesturi << std::endl;
-        if (locations[i]._name == requesturi)
-        {
-            _matchedLocation = locations[i]._name;
-            return (i);
-        }
-        if (locations[i]._name.find(requesturi))
-        {
-            // size_t locationPositionInUri = requesturi.find(locations[i]._name);
-            /* check if uri begin with location name */
-            if (requesturi.find(locations[i]._name) == 0)
-            {
-                // std::cout << "Location: " << locations[i]._name << "\nURI: " << requesturi << std::endl;
-                /* stor it to _matchedLocation if the length of its longer tnen last one */
-                if (locations[i]._name.size() > _matchedLocation.size())
-                {
-                    why = true;
-                    _matchedLocation = locations[i]._name;
-                    _matchedLocationPosition = i;
-                }
-            }
-        }
-    }
-    // std::cout << "matchedLocationPosition: " << _matchedLocationPosition << "\nMatchedLocationStored: " << _matchedLocation << std::endl;
-    if (why)
-        return _matchedLocationPosition;
-    throw (GenerateResponseFromStatusCode(404));
-}
-
-/* this function check if the matched location have redirection derictive 
-    -> if it is handl it and return a response headers heve location header contian the first redirect path */
-void Response::IsLocationHaveRedirection(Locations matchedlocation) {
-    std::map<int, std::string>::iterator it = matchedlocation._redirect.begin();
-    if (matchedlocation._redirect.size())
-    {
-        HttpResponse response;
-        response.setHeader("Location", it->second);
-        throw (GenerateResponseFromStatusCode(it->first, response));
-    }
-}
-
-void Response::IsMethodAllowedInLocation(std::vector<std::string> allowedmethod, std::string requestmethod) {
-    std::string methods;
-    for(size_t i = 0; i < allowedmethod.size(); i++)
-    {
-        methods.append(allowedmethod[i]);
-        methods.append(", ");
-        if (allowedmethod[i] == requestmethod)
-            return;
-    }
-    HttpResponse response;
-    methods.erase(methods.find_last_of(","));
-    response.setHeader("Allow", methods);
-    throw (GenerateResponseFromStatusCode(405, response));
-}
-
-                                        /*       Start Working On Method Type */
-std::string Response::GetRequestedSource(Locations matchedlocation, std::string requesturi) {
-    // std::cout << "--- --- - - - - - - - " << matchedlocation._root << std::endl;
-
-    size_t position = requesturi.find_last_of("/");
-    std::string checked = requesturi.substr(position, requesturi.size());
-    std::string requestedSource = matchedlocation._root + checked;
-
-    // std::cout << "Position: " << position << std::endl;
-
-    std::string path = "." + requestedSource;
-    // std::cout << "requestedSource: " << path << std::endl;
-
-    /* check if exist */
-
-    if (access(path.c_str(), 0) == 0)
-       return (path);
-
-    throw(GenerateResponseFromStatusCode(404));
-}
-
-void Response::GetMethod(Server server, Request request) {
-    // (void)server;
-    // (void)request;
-
-    // !!!!!!!!!!!!!! STOP HERE but path need more and more handling !!!!!!!!!!!!!!!
-    std::cout << "THE EXISTING PATH: " << Response::GetRequestedSource(server._locations[Response::_matchedLocationPosition], request.getUri()) << std::endl;
-}
-
-// void Response::PostMethod() {
-
-// }
-
-// void Response::DeleteMethod() {
-    
-// }
-
-
-void Response::CheckWhichRequestMethod(Server server, Request request) {
-    if (request.getMethod() == "GET")
-        Response::GetMethod(server, request);
-    // else if (request.getMethod() == "POST")
-    //     Response::PostMethod();
-    // else if (request.getMethod() == "DELETE")
-    //     Response::DeleteMethod();
-    else
-        std::cout << "IF SHOWING THIS LINE IT IS A PROBLEME BEFORE WORKING ON THE REQUEST METHOD !!!!!!!!!\n";
-}
-
-std::string CreatResponse() {
+std::string Response::CreatResponse() {
         Server server;
 	    Request request;
         Response response;
@@ -142,8 +27,15 @@ std::string CreatResponse() {
             Response::IsLocationHaveRedirection(server._locations[MatchedLocation]);
             Response::IsMethodAllowedInLocation(server._locations[MatchedLocation]._allow_methods, request.getMethod());
 
-            /* in the method place */
-            Response::CheckWhichRequestMethod(server, request);
+            /* Check Which Requested Method */
+            if (request.getMethod() == "GET")
+                response.GetMethod(server, request);
+            // else if (request.getMethod() == "POST")
+            //         response.PostMethod();
+            // else if (request.getMethod() == "DELETE")
+            //     response.DeleteMethod();
+            else
+                std::cout << "IF SHOWING THIS LINE IT IS A PROBLEME BEFORE WORKING ON THE REQUEST METHOD !!!!!!!!!\n";
         }
         catch(std::string response)
         {
@@ -159,7 +51,7 @@ std::string CreatResponse() {
 
 		// ++++++++++++++++++++++++++++  body handler
 
-        std::ifstream file("www/app/index.html", std::ifstream::binary);
+        std::ifstream file("www/app/html/index.html", std::ifstream::binary);
         if (!file.is_open())
         {
         	std::cout << "Error in opening file\n";
@@ -201,4 +93,8 @@ std::string CreatResponse() {
     // response from cgi
     
     return (new_response.generateResponse());
+}
+
+Response::~Response() {
+
 }

@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/22 01:01:47 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/22 19:08:25 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,30 +136,29 @@ class Response
 	    static size_t _matchedLocationPosition;
 		std::string _matchedLocation;
 		std::string _requestedSource;
-		std::string _path;
+		// std::string _path;
+		// std::string _method;
 
-		static void GetMethod(Server server, Request request);
-		static std::string GetRequestedSource(Locations matchedlocation, std::string requesturi);
+		size_t GetMatchedLocationRequestUrl(std::vector<Locations> locations, std::string requesturi);
+		static void IsLocationHaveRedirection(Locations matchedlocation);
+		static void IsMethodAllowedInLocation(std::vector<std::string> allowedmethod, std::string requestmethod);
+		void GetMethod(Server server, Request request);
 		// static void PostMethod();
 		// static void DeleteMethod();
 	public:
 		Response();
-		size_t GetMatchedLocationRequestUrl(std::vector<Locations> locations, std::string requesturi);
-		static void IsLocationHaveRedirection(Locations matchedlocation);
-		static void IsMethodAllowedInLocation(std::vector<std::string> allowedmethod, std::string requestmethod);
-		static void CheckWhichRequestMethod(Server server, Request request);
+		std::string CreatResponse();
 
 		// seters
 		// geters
 		~Response();
 };
 
-
-std::string CreatResponse();
 std::string GenerateResponseFromStatusCode(int statuscode);
 std::string GenerateResponseFromStatusCode(int statuscode, HttpResponse response);
 
-
+// utilse
+std::string GetRequestedSource(Locations matchedlocation, std::string requesturi);
 
 // class Glb
 // {
