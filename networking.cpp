@@ -107,6 +107,7 @@ void    run_servers(global & glob)
 				if (FD_ISSET(client.fd_client, &readable) && client.check == 0)
 				{
                     resp = client.request_client->read_reqwest(client.fd_client);
+                    std::cout<<client.request_client->max_body_size<<std::endl;
                     std::cout<<resp<<std::endl;
 					// fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
                     client.check = 1;
@@ -114,7 +115,11 @@ void    run_servers(global & glob)
                 // std::cout << "Client -> " << client.fd_client << std::endl;
 				else if (FD_ISSET(client.fd_client, &writable) && client.check == 1)
                 {
-                    send(client.fd_client, GenerateResponseFromStatusCode(414).c_str(), GenerateResponseFromStatusCode(414).size(), 0);
+                    if (resp > 0){
+                        send(client.fd_client, GenerateResponseFromStatusCode(resp).c_str(), GenerateResponseFromStatusCode(resp).size(), 0);
+                    }
+                    else if (resp == 0)
+                        //send correct response
                     close(client.fd_client);
                     FD_CLR(client.fd_client, &server::current);
                     server.client.erase(server.client.begin() + i);
