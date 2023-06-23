@@ -1,5 +1,5 @@
 #include "web_serv.hpp" 
-
+#include <sys/socket.h>
 void    creat_socket_and_bind(global & glob)
 {
     for (size_t i = 0; i < glob.server.size(); i++)
@@ -63,7 +63,7 @@ void     listen_new_connection(global & glob)
 
 client accept_new_connection(server& serv)
 {
-    client client;
+    client client(serv.client_body_size);
 	client.fd_client = accept(serv.fd_server, (struct sockaddr *)&client.client_address, &client.clientaddrlenght);
 	if (client.fd_client == -1)
 	{
@@ -78,6 +78,8 @@ client accept_new_connection(server& serv)
 
 void    run_servers(global & glob)
 {
+    signal(SIGPIPE, SIG_IGN);
+    int resp = 0;
     int tmp = 0;
 	while (1)
 	{
@@ -88,37 +90,40 @@ void    run_servers(global & glob)
 			std::perror("select() Error ");
 			continue;
 		}
-		if (!tmp)
-			continue;
 		for (size_t  j = 0; j < glob.server.size(); j++)
 		{
 			server &server = glob.server[j];
 			if (FD_ISSET(server.fd_server, &readable))
 			{
 				server.client.push_back(accept_new_connection(server));
-			}
+                std::cout << "Pushing Clients\n";
+            }
+            std::cout << "num clients => " << server.client.size() << std::endl;
 			for (size_t i = 0; i < server.client.size() ; i++)
 			{
 				client &client = server.client[i];
+                std::cout << "CLIENT CHECK => " << client.check << std::endl;
 				// IF statement for Request.
-				if (FD_ISSET(client.fd_client, &readable))
+				if (FD_ISSET(client.fd_client, &readable) && client.check == 0)
 				{
+                    resp = client.request_client->read_reqwest(client.fd_client);
+                    std::cout<<resp<<std::endl;
 					// fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
-                    client.request_client.read_reqwest(client.fd_client);
-                    std::cout << "---------------------- --------------- \n";
-                    send(client.fd_client, GenerateResponseFromStatusCode(400).c_str(), GenerateResponseFromStatusCode(400).size(), 0);
-                    std::cout << "----------------------+--------------- \n";
-                    // FD_CLR(client.fd_client, &server::current);
-                    // close(client.fd_client);
-
+                    client.check = 1;
 				}
-				// IF statement for Response.
-				// else if(i >= 0  && FD_ISSET(client.fd_client, &writable))
-				// {
-                //     // std::cout<<"hello from response\n";
-                //     close(client.fd_client);
-				// }
+                // std::cout << "Client -> " << client.fd_client << std::endl;
+				else if (FD_ISSET(client.fd_client, &writable) && client.check == 1)
+                {
+                    send(client.fd_client, GenerateResponseFromStatusCode(414).c_str(), GenerateResponseFromStatusCode(414).size(), 0);
+                    close(client.fd_client);
+                    FD_CLR(client.fd_client, &server::current);
+                    server.client.erase(server.client.begin() + i);
+
+                    //    exit(0);
+                }
 			}
 		}
-	}
+
+    }
+   
 }

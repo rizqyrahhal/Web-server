@@ -44,10 +44,12 @@ class request
 {
 	public:
 	request(){}
-	void	read_reqwest(int fd_client);
+	request(int max_size);
+	int	read_reqwest(int fd_client);
 	std::string method;
 	std::string url;
 	std::string query;
+	int max_body_size;
 	std::map<std::string, std::string> map_request;
 	~request(){}
 	
@@ -60,10 +62,13 @@ class client
 	client(/* args */);
 
 	int fd_client;
+	int bytesrecv;
 	struct sockaddr_in client_address;
 	socklen_t clientaddrlenght;
-	request request_client;
-
+	int check;
+	int max_client_body_size;
+	request *request_client;
+	client(int maxBodySize);
 	~client();
 };
 
@@ -84,7 +89,8 @@ class server
 	struct addrinfo hints;
 	struct addrinfo *res;
 	int fd_server;
-	static fd_set current; 
+	static fd_set current;
+	static fd_set current2;
 	unsigned int sizeof_struct;
 	static int maxfd;
 

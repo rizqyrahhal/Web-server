@@ -6,7 +6,7 @@ SRC = main.cpp \
 	./sources/HttpResponse.cpp \
 	./sources/error_page.cpp \
 
-CPPFLAGS = -Wall -Wextra -Werror -std=c++98
+CPPFLAGS = -std=c++98 -g -fsanitize=address
 NAME = web_serv
 CC = c++
 OBJ = ${SRC:.cpp=.o}

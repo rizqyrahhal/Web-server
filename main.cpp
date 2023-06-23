@@ -2,6 +2,7 @@
 
 int server::maxfd = 0;
 fd_set server::current = server::initializer();
+fd_set server::current2 = server::initializer();
 
 int main(int ac, char **av)
 {

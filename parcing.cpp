@@ -105,7 +105,6 @@ void    parce_server(std::string line, global & global)
             int port;
             tmp1 >> port;
             server.port = port;
-            std::cout<<"port in parcing : "<< server.port<<std::endl;
         }
         else if (str == "server_name")
         {
