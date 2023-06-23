@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/22 19:05:41 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/23 21:07:47 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,18 @@ std::string Response::CreatResponse() {
         try
         {
             /* First handling */
-            size_t MatchedLocation = response.GetMatchedLocationRequestUrl(server._locations, request.getUri());
-            Response::IsLocationHaveRedirection(server._locations[MatchedLocation]);
-            Response::IsMethodAllowedInLocation(server._locations[MatchedLocation]._allow_methods, request.getMethod());
+            _matchedLocation = response.GetMatchedLocationRequestUrl(server._locations, request.getUri());
+            if (DEBUG) {
+                std::cout << "_matchedLocationPosition: " << _matchedLocationPosition << "\n_matchedLocation: " << _matchedLocation << std::endl;
+            }
+            Response::IsLocationHaveRedirection(server._locations[_matchedLocationPosition]);
+            Response::IsMethodAllowedInLocation(server._locations[_matchedLocationPosition]._allow_methods, request.getMethod());
+
+            /*       Start Working On Method Type */ // for new it is OK but a don't know all casase to check
 
             /* Check Which Requested Method */
             if (request.getMethod() == "GET")
-                response.GetMethod(server, request);
+                return (response.GetMethod(server, request));
             // else if (request.getMethod() == "POST")
             //         response.PostMethod();
             // else if (request.getMethod() == "DELETE")
@@ -39,7 +44,9 @@ std::string Response::CreatResponse() {
         }
         catch(std::string response)
         {
-            std::cout << "in catch statment ================================================ \n";
+            if(DEBUG) {
+                std::cout << "in catch statment ================================================ \n";
+            }
             // return the error page that throwen
             return (response);
         }

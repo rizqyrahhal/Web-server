@@ -6,14 +6,13 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/15 18:33:14 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/22 00:41:20 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/23 12:59:51 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "includes/responsePart.hpp"
 
 void network(void);
-
 
 int main()
 {

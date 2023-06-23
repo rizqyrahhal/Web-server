@@ -6,24 +6,26 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:22:56 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/22 15:26:32 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/23 21:06:51 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/responsePart.hpp"
 
-
+/* Just basic location for new */
 /* this function get the matched location position in the vectors location if axisting, 
-   {!!!} but need more check if it is a location name without / in (begin/end) or something like that*/
-size_t Response::GetMatchedLocationRequestUrl(std::vector<Locations> locations, std::string requesturi) {
+   {!!!} but need more check if it is a location name without / in (begin/end) or something like that
+   {!!!} if uri:(/app/html) and location:(/www/app) */
+std::string Response::GetMatchedLocationRequestUrl(std::vector<Locations> locations, std::string requesturi) {
     bool why = false;
+    std::string matchedlocation;  
     for(size_t i = 0; i < locations.size(); i++)
     {
         // std::cout << "matchedLocation: " << locations[i]._name << "\nURi: " << requesturi << std::endl;
         if (locations[i]._name == requesturi)
         {
-            _matchedLocation = locations[i]._name;
-            return (i);
+            _matchedLocationPosition = i;
+            return (locations[i]._name);
         }
         if (locations[i]._name.find(requesturi))
         {
@@ -33,10 +35,10 @@ size_t Response::GetMatchedLocationRequestUrl(std::vector<Locations> locations, 
             {
                 // std::cout << "Location: " << locations[i]._name << "\nURI: " << requesturi << std::endl;
                 /* stor it to _matchedLocation if the length of its longer tnen last one */
-                if (locations[i]._name.size() > _matchedLocation.size())
+                if (locations[i]._name.size() > matchedlocation.size())
                 {
                     why = true;
-                    _matchedLocation = locations[i]._name;
+                    matchedlocation = locations[i]._name;
                     _matchedLocationPosition = i;
                 }
             }
@@ -44,7 +46,7 @@ size_t Response::GetMatchedLocationRequestUrl(std::vector<Locations> locations, 
     }
     // std::cout << "matchedLocationPosition: " << _matchedLocationPosition << "\nMatchedLocationStored: " << _matchedLocation << std::endl;
     if (why)
-        return _matchedLocationPosition;
+        return (matchedlocation);
     throw (GenerateResponseFromStatusCode(404));
 }
 

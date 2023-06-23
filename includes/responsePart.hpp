@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/22 22:50:59 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/23 21:05:13 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,14 @@
 #include <vector>
 #include <iterator>
 #include <unistd.h>
+#include <dirent.h>
 
 #include "HttpResponse.hpp"
 #include "statuscode.hpp"
 
+#ifndef DEBUG
+#define DEBUG true
+#endif
 							/*   data     */
 //  the Request class
 class Request
@@ -96,12 +100,13 @@ class Server
 	    int _client_body_size;
 	public:
 	    Server(){
-			Locations location("/app", "/www/app");
+			Locations location("/www/app", "/www/app/html");
 			Locations location2("/example_redirect", "/www/app");
 			location2._redirect[301] = "http://example.com";
 			Locations location3("/www/app", "/www/app");
 			Locations location4("/www/app/images/", "/www/app");
 			Locations location5("/app/images/", "/www/app");
+			Locations location6("/", "/www/app/html");
             _port = 0000;
             _ip_address = "127.0.0.1";
 			_server_name = "localhost";
@@ -113,6 +118,7 @@ class Server
 			_locations.push_back(location3);
 			_locations.push_back(location4);
 			_locations.push_back(location5);
+			_locations.push_back(location6);
 			// _map_err_page ;
 			// _client_body_size ;
         }
@@ -136,13 +142,15 @@ class Response
 	    static size_t _matchedLocationPosition;
 		std::string _matchedLocation;
 		std::string _requestedSource;
+		std::string _resourceType; // dyrictore Vs file
+		std::string content_type; // if it is file (.html, .css, .js, .png, .mp4 ..) my be fill it in map and construct it at constructer
 		// std::string _path;
 		// std::string _method;
 
-		size_t GetMatchedLocationRequestUrl(std::vector<Locations> locations, std::string requesturi);
+		std::string GetMatchedLocationRequestUrl(std::vector<Locations> locations, std::string requesturi);
 		static void IsLocationHaveRedirection(Locations matchedlocation);
 		static void IsMethodAllowedInLocation(std::vector<std::string> allowedmethod, std::string requestmethod);
-		void GetMethod(Server server, Request request);
+		std::string GetMethod(Server server, Request request);
 		// static void PostMethod();
 		// static void DeleteMethod();
 	public:
@@ -152,13 +160,16 @@ class Response
 		// seters
 		// geters
 		~Response();
+	private:
+		// utilse
+		static std::string GetResourceType(std::string requestedSource);
+		static std::string GetRequestedSource(Locations matchedlocation, std::string requesturi);
 };
 
 std::string GenerateResponseFromStatusCode(int statuscode);
 std::string GenerateResponseFromStatusCode(int statuscode, HttpResponse response);
 
-// utilse
-std::string GetRequestedSource(Locations matchedlocation, std::string requesturi);
+
 
 // class Glb
 // {
