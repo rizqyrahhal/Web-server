@@ -35,11 +35,11 @@ void HttpResponse::setHeader(const std::string &name, const std::string &value) 
 }
 
 void HttpResponse::setBody(const std::string &body) {
-	_body = body;	
+	_body = body;
 }
 
 std::string HttpResponse::generateStatusLine() {
-	return (_version + " " + std::to_string(_status_code) + " " + _status_message + "\n");
+	return (_version + " " + std::to_string(_status_code) + " " + _status_message);
 }
 
 // !!!!!!!!!!!!!!   take in mainde when implement this function that the map is revirse order
@@ -54,13 +54,13 @@ std::string HttpResponse::generateHeaders() {
 		headers += it->first;
 		headers += ": ";
 		headers += it->second;
-		headers += "\n";
+		headers += "\r\n";
 	}
 		headers += it->first;
 		headers += ": ";
 		headers += it->second;
-		headers += "\n";
-	headers += "\n";
+		headers += "\r\n";
+	headers += "\r\n";
 
 	return (headers);
 }
@@ -73,7 +73,7 @@ std::string HttpResponse::generateResponse() {
 	
 	std::string response;
 	// std::cout << generateStatusLine() << std::endl;
-	response = 	generateStatusLine() + generateHeaders() + _body;
+	response = 	generateStatusLine() + "\r\n" + generateHeaders() + _body;
 
 	return (response);
 }

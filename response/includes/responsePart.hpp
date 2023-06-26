@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/23 22:35:19 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/26 01:26:15 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <unordered_map>
 #include <vector>
 #include <iterator>
 #include <unistd.h>
@@ -23,45 +24,126 @@
 
 #include "HttpResponse.hpp"
 #include "statuscode.hpp"
+#include "../../networking/web_serv.hpp"
 
+#define FILE true
+#define DRCT false
 
 #ifndef DEBUG
-#define DEBUG true
+#define DEBUG
 #endif
+
+
+
+
+
+// class switch
+// {
+// 	private:
+// 		std::string header;
+// 		int fd;
+// 	public:
+// 		std::string readforsend(short sizetoread);
+// };
+
+
+class request;
+class server;
+class locations;
+
+class Response : public  HttpResponse
+{
+	private:
+		std::unordered_map<std::string, std::string> _mimeTypes;
+	    static size_t _matchedLocationPosition;
+		std::string _matchedLocation;
+		std::string _requestedSource;
+		bool _resourceType; /* bool */ // dyrictore Vs file
+		std::string _contentType; // if it is file (.html, .css, .js, .png, .mp4 ..) my be fill it in map and construct it at constructer
+		// std::string _path;
+		// std::string _method;
+
+		std::string GetMatchedLocationRequestUrl(std::vector<locations> locations, std::string requesturi);
+		static void IsLocationHaveRedirection(locations matchedlocation, Response &response);
+		static void IsMethodAllowedInLocation(std::vector<std::string> allowedmethod, std::string requestmethod, Response &response);
+		std::string GetMethod(server server, request request);
+		// static void PostMethod();
+		// static void DeleteMethod();
+	public:
+		Response();
+		std::string CreatResponse(server server, request request);
+		std::string ResponseGeneratedFromStatusCode(int statuscode, server server, request request);
+
+		/* seters */
+		/* geters */
+		~Response();
+	private:
+		/* utilse */
+		static void GetContentType(std::string requestedSource, std::unordered_map<std::string, std::string> mimetypes, std::string &contenttype);
+		// static std::string GetResourceType(std::string requestedSource);
+		static std::string GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response response);
+
+};
+
+std::string GenerateResponseFromStatusCode(int statuscode);
+std::string GenerateResponseFromStatusCode(int statuscode, Response response);
+
+
+/* mimetypes and content type function */
+void fillMimeTypes(std::unordered_map<std::string, std::string> &mimeTypes);
+std::string getFileExtantion(std::string requestedsource);
+std::string getMimeType(std::unordered_map<std::string, std::string> mimetypes, std::string fileextantion);
+const std::string generatBody(std::string _requestedSource);
+
+
+
+// error page 
+const std::string GenerateErrorPage(int statuscode, std::string statusmessage);
+std::string SearchAboutErrorPage(int statuscode, std::map<int, std::string> err_page);
+std::string ReadErrorPage(std::string errpage);
+
+
+
+
+
+
+
+
+// -----------------------------------------------------------------------------------------------------------------------------------------------
 							/*   data     */
 //  the Request class
-class Request
-{
-    private:
-		std::string _method;
-		std::string _uri;
-		std::string _version;
-        std::string _conection;
-		std::map<std::string, std::string> _headers;
-		std::string _body;
-    public:
-		Request(){
-            _method = "GET";
-            _uri = "/app/html/index.html";
-            _version = "HTTP/1.1";
-            _conection = "close";
-			_headers[""] = "";
-        }
-        std::string getMethod() const {
-            return _method;
-        }
-        std::string getUri() const {
-            return _uri;
-        }
-        std::string getVersion() const
-        {
-            return _version;
-        }
-        std::string getConection() const {
-            return _conection;
-        }
-		~Request(){}
-};
+// class Request
+// {
+//     private:
+// 		std::string _method;
+// 		std::string _uri;
+// 		std::string _version;
+//         std::string _conection;
+// 		std::map<std::string, std::string> _headers;
+// 		std::string _body;
+//     public:
+// 		Request(){
+//             _method = "GET";
+//             _uri = "/app/html/index.html";
+//             _version = "HTTP/1.1";
+//             _conection = "close";
+// 			_headers[""] = "";
+//         }
+//         std::string getMethod() const {
+//             return _method;
+//         }
+//         std::string getUri() const {
+//             return _uri;
+//         }
+//         std::string getVersion() const
+//         {
+//             return _version;
+//         }
+//         std::string getConection() const {
+//             return _conection;
+//         }
+// 		~Request(){}
+// };
 
 // the Location class
 class Locations
@@ -125,63 +207,3 @@ class Server
         }
 	    ~Server(){}
 };
-// -----------------------------------------------------------------------------------------------------------------------------------------------
-
-// class switch
-// {
-// 	private:
-// 		std::string header;
-// 		int fd;
-// 	public:
-// 		std::string readforsend(short sizetoread);
-// };
-
-
-#include "../../web_serv.hpp"
-
-class request;
-class server;
-class locations;
-
-class Response
-{
-	private:
-	    static size_t _matchedLocationPosition;
-		std::string _matchedLocation;
-		std::string _requestedSource;
-		std::string _resourceType; // dyrictore Vs file
-		std::string content_type; // if it is file (.html, .css, .js, .png, .mp4 ..) my be fill it in map and construct it at constructer
-		// std::string _path;
-		// std::string _method;
-
-		std::string GetMatchedLocationRequestUrl(std::vector<locations> locations, std::string requesturi);
-		static void IsLocationHaveRedirection(locations matchedlocation);
-		static void IsMethodAllowedInLocation(std::vector<std::string> allowedmethod, std::string requestmethod);
-		std::string GetMethod(server server, request request);
-		// static void PostMethod();
-		// static void DeleteMethod();
-	public:
-		Response();
-		std::string CreatResponse(server server, request request);
-
-		// seters
-		// geters
-		~Response();
-	private:
-		// utilse
-		static std::string GetResourceType(std::string requestedSource);
-		static std::string GetRequestedSource(locations matchedlocation, std::string requesturi);
-};
-
-std::string GenerateResponseFromStatusCode(int statuscode);
-std::string GenerateResponseFromStatusCode(int statuscode, HttpResponse response);
-
-
-
-// class Glb
-// {
-// 	private:
-// 	public:
-// 		Server server;
-// 		Request request;
-// };

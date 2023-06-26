@@ -19,7 +19,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-#include "response/includes/responsePart.hpp"
+#include "../response/includes/responsePart.hpp"
 
 #define BUFFER_SIZE 1024
 
@@ -34,6 +34,8 @@ public:
 	std::string autoindex;
 	std::map<std::string, std::string> cgi;
 	std::map<int, std::string> redirect;
+
+	// need map to the error_page inside location
 
 	~locations(){}
 };

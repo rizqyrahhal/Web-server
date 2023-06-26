@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 21:10:59 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/21 22:14:42 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/26 06:08:45 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,7 @@
 #include "../includes/HttpResponse.hpp"
 
 
-const std::string GenerateErrorPage(int statuscode, std::string statusmessage)
-{
+const std::string GenerateErrorPage(int statuscode, std::string statusmessage) {
     std::string errorpage;
     errorpage = "<!DOCTYPE html><html><head><title>Error</title><style>body {font-family: Arial, sans-serif;margin: 0;padding: 20px;}h1 {color: #333;font-size: 24px;}p {color: #666;font-size: 16px;}</style></head><body><h1>Error " \
                 + std::to_string(statuscode) \
@@ -27,15 +26,19 @@ const std::string GenerateErrorPage(int statuscode, std::string statusmessage)
 
 std::string SearchAboutErrorPage(int statuscode, std::map<int, std::string> err_page) {
     std::string string;
+    // (void)statuscode;
 	for (std::map<int, std::string>::iterator it = err_page.begin(); it != err_page.end(); it++)
-		if (it->first == statuscode)
+		if (it->first == statuscode) {
+            std::cout << "------------ " << it->first<< "   " << it->second << "\n" ;
 			return(it->second);
+        }
 	return (string);
 }
 
 // read err_page file  (my be make it like a globale function to read any file) 
 std::string ReadErrorPage(std::string errpage) {
-	std::ifstream file(errpage, std::ifstream::binary);
+    std::cout << "ERROR Page: " << errpage << std::endl;
+	std::ifstream file(errpage.c_str(), std::ifstream::binary);
     if (!file.is_open())
     {
     	std::cout << "Error in opening file\n";
@@ -53,9 +56,10 @@ std::string ReadErrorPage(std::string errpage) {
 }
 
 /* rest small choise not handling in headers !!!!!!!!!!!!! */
-std::string GenerateResponseFromStatusCode(int statuscode) {
+// the header in htis function is fixed for all time         MY BE in the futer work with the standard function
+std::string GenerateResponseFromStatusCode(int statuscode) { // adding argement to take server for the error page
     HttpResponse response;
-	Request request;
+	// Request request;
 	Server	server;
   
     	// CHECK_STATUS_CODE();
@@ -68,7 +72,7 @@ std::string GenerateResponseFromStatusCode(int statuscode) {
 
         /* set default headers */
 		// new_response.setHeader("Date: ", generateDate());
-		response.setHeader("Conection", request.getConection()); // from map headers (request data)   request.getConection()
+		response.setHeader("Conection", "close"); // from map headers (request data)   request.getConection()
 
 		// search about error page in map_error page
 		std::string err_page = SearchAboutErrorPage(statuscode, server._map_err_page);
@@ -85,10 +89,9 @@ std::string GenerateResponseFromStatusCode(int statuscode) {
     return response.generateResponse();
 }
 
-
 /* rest small choise not handling in headers !!!!!!!!!!!!! */                // TRY  to merge this function with the abouve function in some sulution (my be make it a template function or something like this)
-std::string GenerateResponseFromStatusCode(int statuscode, HttpResponse response) {
-	Request request;
+std::string GenerateResponseFromStatusCode(int statuscode, Response response) {
+	// request request;
 	Server	server;
 
     /* Start line element */
@@ -98,7 +101,7 @@ std::string GenerateResponseFromStatusCode(int statuscode, HttpResponse response
 
     /* set default headers */
 	// new_response.setHeader("Date: ", generateDate());
-	response.setHeader("Conection", request.getConection()); // from map headers (request data)   request.getConection()
+	response.setHeader("Conection", "close"); // from map headers (request data)   request.getHeaderValue(std::string key)  <---- this function global to get any header from map headers in the request (key in this case = "Conection")
 
     /* HERE response have rederect message not have any body or something like this her is the probleme*/
 	/* search about error page in map_error page */

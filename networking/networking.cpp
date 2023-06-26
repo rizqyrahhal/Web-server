@@ -96,19 +96,19 @@ void    run_servers(global & glob)
 			if (FD_ISSET(server.fd_server, &readable))
 			{
 				server.client.push_back(accept_new_connection(server));
-                std::cout << "Pushing Clients\n";
+                // std::cout << "Pushing Clients\n";
             }
-            std::cout << "num clients => " << server.client.size() << std::endl;
+            // std::cout << "num clients => " << server.client.size() << std::endl;
 			for (size_t i = 0; i < server.client.size() ; i++)
 			{
 				client &client = server.client[i];
-                std::cout << "CLIENT CHECK => " << client.check << std::endl;
+                // std::cout << "CLIENT CHECK => " << client.check << std::endl;
 				// IF statement for Request.
 				if (FD_ISSET(client.fd_client, &readable) && client.check == 0)
 				{
                     resp = client.request_client->read_reqwest(client.fd_client);
-                    std::cout<<client.request_client->max_body_size<<std::endl;
-                    std::cout<<resp<<std::endl;
+                    // std::cout<<client.request_client->max_body_size<<std::endl;
+                    // std::cout<<resp<<std::endl;
 					// fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
                     client.check = 1;
 				}

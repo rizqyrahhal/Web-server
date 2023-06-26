@@ -12,7 +12,7 @@ void    location_serv(std::string line, server & server)
         vector.push_back(str);
     }
     for (size_t i = 0 ; i < vector.size(); i++){
-        std::stringstream tmp1;
+        std::stringstream tmp1(vector[i]);
         tmp1 >> str;
         if (str == "location")
         {
@@ -40,11 +40,13 @@ void    location_serv(std::string line, server & server)
             }
             for (size_t i = 0; i < location.allow_methods.size(); i++)
             {
-                if (location.allow_methods[i] != "get" || location.allow_methods[i] != "post" || location.allow_methods[i] != "delete")
-                 std::cout<<"allow methods not correct"<<std::endl;
-                exit(0);
+                if (location.allow_methods[i] != "GET" && location.allow_methods[i] != "POST" && location.allow_methods[i] != "DELETE")
+                {
+                    std::cout<<"*** allow methods not correct ***"<<std::endl;
+                    exit(0);
+                }
             }
-            
+
         }
         else if(str == "cgi")
         {

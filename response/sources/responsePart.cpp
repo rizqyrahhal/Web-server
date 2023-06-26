@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/23 22:37:35 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/26 06:02:53 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ size_t Response::_matchedLocationPosition;
 
 
 Response::Response() {
-
+    fillMimeTypes(_mimeTypes); // this data move to initial it in the beginig of programe one time to evit time delia in any response {!!!!!!!}
 }
 
 std::string Response::CreatResponse(server server, request request) {
@@ -29,12 +29,23 @@ std::string Response::CreatResponse(server server, request request) {
         try
         {
             /* First handling */
+
+
+            // for (size_t i = 0; i < server.locations.size(); i++)
+            // {
+            //     std::cout << "locations.name[" << i << "] name: " << server.locations[i].root << std::endl;
+            // }         
+            // std::cout << "URL: " << request.url << std::endl;
+
+
+
             _matchedLocation = response.GetMatchedLocationRequestUrl(server.locations, request.url);
-            if (DEBUG) {
+            #ifdef DEBUG
                 std::cout << "_matchedLocationPosition: " << _matchedLocationPosition << "\n_matchedLocation: " << _matchedLocation << std::endl;
-            }
-            Response::IsLocationHaveRedirection(server.locations[_matchedLocationPosition]);
-            Response::IsMethodAllowedInLocation(server.locations[_matchedLocationPosition].allow_methods, request.method);
+                std::cout << "_matchedLocation.root: " << server.locations[_matchedLocationPosition].root << std::endl;
+            #endif
+            Response::IsMethodAllowedInLocation(server.locations[_matchedLocationPosition].allow_methods, request.method, response);
+            Response::IsLocationHaveRedirection(server.locations[_matchedLocationPosition], response);
 
             /*       Start Working On Method Type */ // for new it is OK but a don't know all casase to check
 
@@ -48,66 +59,76 @@ std::string Response::CreatResponse(server server, request request) {
             else
                 std::cout << "IF SHOWING THIS LINE IT IS A PROBLEME BEFORE WORKING ON THE REQUEST METHOD !!!!!!!!!\n";
         }
-        catch(std::string response)
-        {
-            if(DEBUG) {
-                std::cout << "in catch statment ================================================ \n";
-            }
-            // return the error page that throwen
-            return (response);
+        catch(int statuscode) { //change int by short in futere
+            // if (statuscode == 200){
+                std::cout << "***** Response OK ***** \n" << response.ResponseGeneratedFromStatusCode(statuscode, server, request) << "\n----------------------------------\n";
+                return (response.ResponseGeneratedFromStatusCode(statuscode, server, request));
+            // }
+            // else{
+                // std::cout << "***** Response OK ***** \n" << GenerateResponseFromStatusCode(statuscode, response) << "\n----------------------------------\n";
+                // return (GenerateResponseFromStatusCode(statuscode, response));
+            // }    
         }
-        // catch(generatedResponse response)
+        // catch(std::string response)
         // {
-                /* if it is a response by body file return object contian header and fd_body and mumber function to read chunck by chunck from the body files */
+        //     /* catch the status code and then creat the response form construct a response and set the headers and evry where */
+        //     #ifdef DEBUG
+        //         std::cout << "in catch statment ================================================ \n" << response << std::endl;
+        //     #endif
+        //     // return the error page that throwen
         //     return (response);
+        //     /* if it is a response by body file return object contian header and fd_body and mumber function to read chunck by chunck from the body files */
+        //     // return (response);
         // }
-
-		// ++++++++++++++++++++++++++++  body handler
-
-        std::ifstream file("www/app/html/index.html", std::ifstream::binary);
-        if (!file.is_open())
-        {
-        	std::cout << "Error in opening file\n";
-        	std::exit(-404);
-        }
-        file.seekg(0, std::ios::end);
-        int length = file.tellg();
-        file.seekg(0, std::ios::beg);
-
-        char buffer[length + 1];
-        file.read(buffer, length);
-		buffer[length] = '\0';
-
-        file.close();
-        // ############################
-
-
-		// **********************
-
-        // --------------- generate response
-        HttpResponse new_response;
-
-        new_response.setVersion("HTTP/1.1");
-        new_response.setStatusCode(200);
-        new_response.setStatusMessage("Ok"); // generat enume structe to geting statuse msg from its
-		// new_response.setHeader("Date: ", generateDate());
-        new_response.setHeader("Content-Type", "text/html"); //generateContentType()
-        // new_response.setHeader("Content-Length", "0");
-        // new_response.setHeader("Location", "/new_page");
-        new_response.setHeader("Content-Length", std::to_string(length));
-		new_response.setHeader("Conection", "close");  // request.getConection()
-        new_response.setBody(buffer);
-		// std::string response = new_response.generateResponse();
-        // std::cout << "\n\n\n" << response << "\n\n\n";
-        
-	    // ******************
-
 
     // response from cgi
     
-    return (new_response.generateResponse());
+    return ("ERROR *************************************\n");
 }
+
+/* rest small choise not handling in headers !!!!!!!!!!!!! */                // TRY  to merge this function with the abouve function in some sulution (my be make it a template function or something like this)
+std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server server, request request) {
+	// request request;
+	// Server	server;
+
+    (void)request;
+    /* Start line element */
+    setVersion("HTTP/1.1");
+	setStatusCode(statuscode);
+	setStatusMessage(getReason(statuscode));
+
+    /* set default headers */
+	// setHeader("Date: ", generateDate());
+	setHeader("Conection", "close"); // from map headers (request data)   request.getHeaderValue(std::string key)  <---- this function global to get any header from map headers in the request (key in this case = "Conection")
+
+    /* HERE response have rederect message not have any body or something like this her is the probleme*/
+	/* search about error page in map_error page */
+
+    if (statuscode != 200)   // change this with categore redirection-error
+    {
+		std::string err_page = SearchAboutErrorPage(statuscode, server.map_err_page);
+        if (!err_page.empty())
+        	setBody(ReadErrorPage(err_page));
+        else
+            setBody(GenerateErrorPage(statuscode, getReason(statuscode)));
+        setHeader("Content-Type", "text/html"); //generateContentType()
+    }
+    
+    setHeader("Content-Length", std::to_string(getBodySize()));
+    
+	// GENERATE_THE_FINALE_RESPONSE();
+    return generateResponse();
+}
+
 
 Response::~Response() {
 
 }
+
+// change from throw response to throw status code \|
+// add the reading file  in vector \|
+// swap between check rederection check  allowd methods, but need confinm with nginx
+// new in fixed image, not send it
+
+// 
+// in GET flow files finished ---> in dyrctory l2an

@@ -1,4 +1,0 @@
-working on GET Method
-make the standar headers like time ....
-
-the Gool is hosting all the files of Portfolyo page              (!!!!!)

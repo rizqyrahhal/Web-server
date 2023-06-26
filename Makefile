@@ -1,15 +1,17 @@
 SRC = main.cpp \
-	parcing.cpp \
-	web_serv.cpp \
-	networking.cpp \
+	networking/parcing.cpp \
+	networking/web_serv.cpp \
+	networking/networking.cpp \
 	response/sources/responsePart.cpp \
 	response/sources/HttpResponse.cpp \
 	response/sources/error_page.cpp \
 	response/sources/beforeMethods.cpp \
 	response/sources/GetMethod.cpp \
 	response/sources/utils.cpp \
+	response/sources/mimeTypes.cpp \
 
-CPPFLAGS = -std=c++98 -g -fsanitize=address
+
+CPPFLAGS = -Wall -Wextra -Werror -std=c++98 -g -fsanitize=address
 NAME = web_serv
 CC = c++
 OBJ = ${SRC:.cpp=.o}
@@ -17,7 +19,7 @@ OBJ = ${SRC:.cpp=.o}
 all : $(NAME)
 $(NAME) : $(OBJ)
 	$(CC) $(CPPFLAGS) $(OBJ) -o $(NAME)
-		
+
 clean :
 	rm -f $(OBJ)
 fclean : clean

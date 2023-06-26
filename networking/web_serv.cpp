@@ -43,8 +43,8 @@ int request::read_reqwest(int fd_client)
 		//check allow methods
 		method = s;
 		tmp1 >> s;
-		std::cout<<s<<std::endl;
-		if (s.length() > 20)
+		// std::cout<<s<<std::endl; //
+		if (s.length() > 2048)
 		{
 			return(414);
 		}
