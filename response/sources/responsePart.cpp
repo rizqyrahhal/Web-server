@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/26 06:02:53 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/27 02:51:22 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,12 @@ std::string Response::CreatResponse(server server, request request) {
     // (void)requdest;
         // Server server;
 	    // Request request;
+
+        /* this data between this tow comment need to adding by parser */
+        // std::map<int, std::string> map_err_page;
+        server.locations[0].index = "./www/app//html/index.html"; // need to addd in parssing !!!!
+        /* this is the second comment : END OF COMMENT */
+        
         Response response;
         try
         {
@@ -61,7 +67,7 @@ std::string Response::CreatResponse(server server, request request) {
         }
         catch(int statuscode) { //change int by short in futere
             // if (statuscode == 200){
-                std::cout << "***** Response OK ***** \n" << response.ResponseGeneratedFromStatusCode(statuscode, server, request) << "\n----------------------------------\n";
+                // std::cout << "***** Response OK ***** \n" << response.ResponseGeneratedFromStatusCode(statuscode, server, request) << "\n----------------------------------\n";
                 return (response.ResponseGeneratedFromStatusCode(statuscode, server, request));
             // }
             // else{
@@ -106,14 +112,15 @@ std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server ser
 
     if (statuscode != 200)   // change this with categore redirection-error
     {
-		std::string err_page = SearchAboutErrorPage(statuscode, server.map_err_page);
+		// std::string err_page = SearchAboutErrorPage(statuscode, server.map_err_page);
+		std::string err_page = SearchAboutErrorPageFormTowPlaces(statuscode, server.map_err_page, server.locations[_matchedLocationPosition].map_err_page); //the last map not implemented by parser
         if (!err_page.empty())
         	setBody(ReadErrorPage(err_page));
         else
             setBody(GenerateErrorPage(statuscode, getReason(statuscode)));
         setHeader("Content-Type", "text/html"); //generateContentType()
     }
-    
+
     setHeader("Content-Length", std::to_string(getBodySize()));
     
 	// GENERATE_THE_FINALE_RESPONSE();
@@ -127,8 +134,7 @@ Response::~Response() {
 
 // change from throw response to throw status code \|
 // add the reading file  in vector \|
-// swap between check rederection check  allowd methods, but need confinm with nginx
-// new in fixed image, not send it
+// swap between check rederection and check allowd methods, but need confinm with nginx
 
 // 
 // in GET flow files finished ---> in dyrctory l2an

@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/26 01:26:15 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/27 02:15:03 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,11 +78,10 @@ class Response : public  HttpResponse
 		/* geters */
 		~Response();
 	private:
-		/* utilse */
+		/* response utilse */
 		static void GetContentType(std::string requestedSource, std::unordered_map<std::string, std::string> mimetypes, std::string &contenttype);
-		// static std::string GetResourceType(std::string requestedSource);
-		static std::string GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response response);
-
+		static std::string GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response);
+		static void checkForIndexFile(Response *response, server server);
 };
 
 std::string GenerateResponseFromStatusCode(int statuscode);
@@ -93,13 +92,16 @@ std::string GenerateResponseFromStatusCode(int statuscode, Response response);
 void fillMimeTypes(std::unordered_map<std::string, std::string> &mimeTypes);
 std::string getFileExtantion(std::string requestedsource);
 std::string getMimeType(std::unordered_map<std::string, std::string> mimetypes, std::string fileextantion);
-const std::string generatBody(std::string _requestedSource);
 
+/* utils */
+const std::string generatBody(std::string _requestedSource);
+bool checkIndexInsidDerctory(std::string *path);
 
 
 // error page 
 const std::string GenerateErrorPage(int statuscode, std::string statusmessage);
-std::string SearchAboutErrorPage(int statuscode, std::map<int, std::string> err_page);
+std::string SearchAboutErrorPageFormTowPlaces(int statuscode, std::map<int, std::string> g_err_page, std::map<int, std::string> l_err_page);
+std::string SearchAboutErrorPage(int statuscode, std::map<int, std::string> g_err_page);
 std::string ReadErrorPage(std::string errpage);
 
 

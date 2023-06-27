@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 21:10:59 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/26 06:08:45 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/26 22:49:27 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,20 +24,28 @@ const std::string GenerateErrorPage(int statuscode, std::string statusmessage) {
     return errorpage;
 }
 
-std::string SearchAboutErrorPage(int statuscode, std::map<int, std::string> err_page) {
+ /* this  function for error after determine matchedlocation (using inside ResponseGeneratedFromStatusCode() function) */
+std::string SearchAboutErrorPageFormTowPlaces(int statuscode, std::map<int, std::string> g_err_page, std::map<int, std::string> l_err_page) {
     std::string string;
-    // (void)statuscode;
-	for (std::map<int, std::string>::iterator it = err_page.begin(); it != err_page.end(); it++)
-		if (it->first == statuscode) {
-            std::cout << "------------ " << it->first<< "   " << it->second << "\n" ;
-			return(it->second);
-        }
+	for (std::map<int, std::string>::iterator l_it = l_err_page.begin(); l_it != l_err_page.end(); l_it++)
+		if (l_it->first == statuscode)
+			return(l_it->second);
+	for (std::map<int, std::string>::iterator g_it = g_err_page.begin(); g_it != g_err_page.end(); g_it++)
+		if (g_it->first == statuscode)
+			return(g_it->second);
+	return (string);
+}
+
+std::string SearchAboutErrorPage(int statuscode, std::map<int, std::string> g_err_page) {
+    std::string string;
+	for (std::map<int, std::string>::iterator g_it = g_err_page.begin(); g_it != g_err_page.end(); g_it++)
+		if (g_it->first == statuscode)
+			return(g_it->second);
 	return (string);
 }
 
 // read err_page file  (my be make it like a globale function to read any file) 
 std::string ReadErrorPage(std::string errpage) {
-    std::cout << "ERROR Page: " << errpage << std::endl;
 	std::ifstream file(errpage.c_str(), std::ifstream::binary);
     if (!file.is_open())
     {

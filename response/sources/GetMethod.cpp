@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:24:42 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/26 04:43:43 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/27 01:32:04 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ std::string Response::GetMethod(server server, request request) {
     // (void)request;
 
     // !!!!!!!!!!!!!! STOP HERE but path need more and more handling !!!!!!!!!!!!!!!
-    _requestedSource = Response::GetRequestedSource(server.locations[Response::_matchedLocationPosition], request.url, _resourceType, *this);
+    _requestedSource = Response::GetRequestedSource(server.locations[Response::_matchedLocationPosition], request.url, _resourceType, &(*this));
 
     #ifdef DEBUG
         std::cout << "_requestedSource: " << _requestedSource << std::endl;
@@ -31,18 +31,24 @@ std::string Response::GetMethod(server server, request request) {
         else
             std::cout << "DERCTORY\n";
     #endif
-    if (_resourceType == DRCT)
+    /* affter finish dyrectory error if no error and index take the same floow like file just set the neded information */
+    if (_resourceType == DRCT || _resourceType == FILE)
     {
-        //dyrctoryhandler//
-    }
-    else if (_resourceType == FILE)
-    {
-        //fileshandler//
-        Response::GetContentType(_requestedSource, _mimeTypes, _contentType);
+        if (_resourceType == DRCT)
+            checkForIndexFile(&(*this), server);
         setHeader("Content-Type", _contentType);
         setBody(generatBody(_requestedSource));
         throw(200);
+        //dyrctoryhandler//
     }
+    // else if (_resourceType == FILE)
+    // {
+    //     //fileshandler//
+    //     Response::GetContentType(_requestedSource, _mimeTypes, _contentType);
+    //     setHeader("Content-Type", _contentType);
+    //     setBody(generatBody(_requestedSource));
+    //     throw(200);
+    // }
 
     #ifdef DEBUG
     std::cout << "contentType : " << _contentType << std::endl;

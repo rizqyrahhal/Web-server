@@ -35,6 +35,8 @@ public:
 	std::map<std::string, std::string> cgi;
 	std::map<int, std::string> redirect;
 
+	std::string index;  //this line aadded by rarahhal
+	std::map<int, std::string> map_err_page; /// this line added by rarahhal
 	// need map to the error_page inside location
 
 	~locations(){}
@@ -53,8 +55,7 @@ class request
 	std::string query;
 	int max_body_size;
 	std::map<std::string, std::string> map_request;
-	~request(){}
-	
+	~request(){}	
 };
 
 class client
