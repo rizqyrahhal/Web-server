@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/27 02:51:22 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/27 13:04:45 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ std::string Response::CreatResponse(server server, request request) {
             // for (size_t i = 0; i < server.locations.size(); i++)
             // {
             //     std::cout << "locations.name[" << i << "] name: " << server.locations[i].root << std::endl;
-            // }         
+            // }
             // std::cout << "URL: " << request.url << std::endl;
 
 
@@ -58,10 +58,10 @@ std::string Response::CreatResponse(server server, request request) {
             /* Check Which Requested Method */
             if (request.method == "GET")
                 response.GetMethod(server, request);
+            else if (request.method == "DELETE")
+                response.DeleteMethod(server, request);
             // else if (request.getMethod() == "POST")
             //         response.PostMethod();
-            // else if (request.getMethod() == "DELETE")
-            //     response.DeleteMethod();
             else
                 std::cout << "IF SHOWING THIS LINE IT IS A PROBLEME BEFORE WORKING ON THE REQUEST METHOD !!!!!!!!!\n";
         }

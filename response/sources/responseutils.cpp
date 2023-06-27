@@ -13,17 +13,15 @@
 #include "../includes/responsePart.hpp"
 
 void Response::checkForIndexFile(Response *response, server server) {
-    std::cout << "requestedSource: --=++: " << response->_requestedSource << std::endl;
-    std::cout << "serverName: --=++: " << server.server_name << std::endl;
-    std::cout << "autoindex: --+++: " << server.locations[response->_matchedLocationPosition].autoindex << std::endl;
     if (server.locations[response->_matchedLocationPosition].index.empty())
     {
-        if (checkIndexInsidDerctory(&response->_requestedSource)) // return bool
+        if (checkIndexInsidDerctory(&response->_requestedSource)) // return bool and append index.html to requstedSource if existe
             return;
         if (server.locations[response->_matchedLocationPosition].autoindex == "on")
         {
-            here /// //  // / / / / / / / / / // / / / / // / / / / / / //////////////////////////////////////// // / / / /
             // generate outoindex
+            response->setBody(generateAutoindexFile(response->_requestedSource));
+            throw(200);
         }
         else
             throw(403);
@@ -43,35 +41,53 @@ void Response::GetContentType(std::string requestedSource, std::unordered_map<st
 /* this function check the resource existent and its type whit rediriction if the type directory and hav'not / in the end
  {!!!}new it is work but in simple casae  
  {!!!} case if have root /www/app and the url /www/app/html/ the source generate is /www/app/ ERROR the correct is /www/app/html/
- */
-std::string Response::GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response) {
+ {!!!} this function need big change like getMatchedLocation */
+std::string Response::GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method) {
     size_t position = requesturi.find_last_of("/");
     std::string checked, requestedSource, uriplusslash;
     uriplusslash = requesturi + "/";
 
-    // if (DEBUG) {
-    //     std::cout << "matchedlocation.name: " << matchedlocation.name << std::endl;
-    //     std::cout << "matchedlocation.root: " << matchedlocation.root << std::endl;
-    //     std::cout << "requesturi: " << requesturi << std::endl;
-    //     std::cout << "positionAFfterloop: " << position << std::endl << std::endl;
-    // }
+    #ifdef DEBUG
+        std::cout << "matchedlocation.name: " << matchedlocation.name << std::endl;
+        std::cout << "matchedlocation.root: " << matchedlocation.root << std::endl;
+        std::cout << "requesturi: " << requesturi << std::endl;
+        std::cout << "positionAFfterloop: " << position << std::endl << std::endl;
+    #endif
+
+        requestedSource = "." + requesturi;
+        if (opendir(requestedSource.c_str()) != NULL) {
+            resourcetype = DRCT;
+            if (requestedSource[requestedSource.size() - 1] != '/') {
+                response->setHeader("Location", uriplusslash);
+                throw(301);
+            }
+        	return (requestedSource);
+        }
+        else if (access(requestedSource.c_str(), 0) == 0) {
+            resourcetype = FILE;
+        	return (requestedSource);
+        }
 
     while (position != 0)
     {
         checked = requesturi.substr(position, requesturi.size());
         requestedSource = "." + matchedlocation.root + checked;
 
-        // if (DEBUG) {
-        //     std::cout << "checked: " << checked << "\n";
-        //     std::cout << "requestedSource: " << requestedSource << "\n";
-        //     std::cout << "uriplusslash: " << uriplusslash << "\n";
-        //     std::cout << "positionINloop: " << position << std::endl << std::endl;
-        // }
+        #ifdef DEBUG
+        std::cout << "\n-------------------";
+        std::cout << "positionINloop: " << position << std::endl << std::endl;
+        std::cout << "checked: " << checked << "\n";
+        std::cout << "requestedSource: " << requestedSource << "\n";
+        std::cout << "uriplusslash: " << uriplusslash << "\n";
+        std::cout << "********************************************************\n";
+        #endif
     
         /* check if exist */
         if (opendir(requestedSource.c_str()) != NULL) {
             resourcetype = DRCT;
             if (requestedSource[requestedSource.size() - 1] != '/') {
+                if (method == "DELETE")
+                    throw (409);
                 response->setHeader("Location", uriplusslash);
                 throw(301);
             }
@@ -91,6 +107,9 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
         if (opendir(requestedSource.c_str()) != NULL) {
             resourcetype = DRCT;
             if (requestedSource[requestedSource.size() - 1] != '/') {
+
+                if (method == "DELETE")
+                    throw (409);
                 response->setHeader("Location", uriplusslash);
                 throw(301);
             }

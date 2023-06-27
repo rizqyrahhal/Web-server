@@ -6,13 +6,56 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 00:10:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/27 02:58:25 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/27 08:48:48 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/responsePart.hpp"
 
-#include <dirent.h>
+// <!-- DOCTYPE html -->
+// <html>
+// <head><title>Directory Listing</title></head>
+// <body>
+// <h1>Directory Listing</h1>
+// <ul>
+// <li><a href="./www/app/html/.">.</a></li>
+// <li><a href="./www/app/html/..">..</a></li>
+// <li><a href="./www/app/html/images">images</a></li>
+// <li><a href="./www/app/html/logo.png">logo.png</a></li>
+// <li><a href="./www/app/html/Music.mp4">Music.mp4</a></li>
+// <li><a href="./www/app/html/scripts">scripts</a></li>
+// <li><a href="./www/app/html/styles">styles</a></li>
+// <li><a href="./www/app/html/videoplayback.mp4">videoplayback.mp4</a></li>
+// </ul>
+// </body>
+// </html>
+
+
+std::string generateAutoindexFile(std::string requestedSource) {
+    std::cout << "in GenerateAoutoindex: " << requestedSource << std::endl;
+    /* this code begin with it to search about lest of directory files */
+    std::string indexhtml = "<!-- DOCTYPE html --><html><head><title>Directory Listing</title></head><body><h1>Directory Listing</h1><ul>";
+    DIR* dr = opendir(requestedSource.c_str());
+    if (dr != NULL)
+    {
+        struct dirent *dir = NULL;
+        while ((dir = readdir(dr)))
+        {
+            indexhtml += "<li><a href=\"" + std::string(dir->d_name) + "\">" + dir->d_name + "</a></li>";
+            // if (dir->d_type != DT_REG)
+                // std::cout << "name: " << dir->d_name << std::endl;
+        //     if (dir == "index.html")
+        //     {
+        //         *path += "index.html";
+        //         return true;
+        //     }
+        }
+        indexhtml += "</ul></body></html>";
+        closedir(dr);
+    }
+    // std::cout << ""
+    return  (indexhtml);
+}
 
 bool checkIndexInsidDerctory(std::string *path) {
     std::string index = *path + "index.html";
@@ -21,25 +64,6 @@ bool checkIndexInsidDerctory(std::string *path) {
         return true; 
     }
     return false;
-
-    /* this code begin with it to search about lest of directory files */ 
-    // DIR* dr = opendir(path->c_str());
-    // if (dr != NULL)
-    // {
-    //     struct dirent *dir = NULL;
-        
-    //     while ((dir = readdir(dr)))
-    //     {
-    //         if (dir->d_type != DT_REG)
-    //             std::cout << "name: " << dir->d_name << std::endl;
-    //     //     if (dir == "index.html")
-    //     //     {
-    //     //         *path += "index.html";
-    //     //         return true;
-    //     //     }
-    //     }
-    //     closedir(dr);
-    // }
 }
 
 /* function to response body */

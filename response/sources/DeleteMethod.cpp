@@ -1,27 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   GetMethod.cpp                                      :+:      :+:    :+:   */
+/*   DeleteMethod.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/22 15:24:42 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/27 13:20:24 by rarahhal         ###   ########.fr       */
+/*   Created: 2023/06/27 11:09:55 by rarahhal          #+#    #+#             */
+/*   Updated: 2023/06/27 13:21:06 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/responsePart.hpp"
 
-
-/* this function for new return a response inside string,
-    but for advance return object that contian header indide string,
-    and file of body and member function to red from this file by spesific size */
-std::string Response::GetMethod(server server, request request) {
-    // (void)server;
-    // (void)request;
-
+std::string Response::DeleteMethod(server server, request request) {
     _requestedSource = Response::GetRequestedSource(server.locations[Response::_matchedLocationPosition], request.url, _resourceType, &(*this), request.method);
-
+    
     #ifdef DEBUG
         std::cout << "_requestedSource: " << _requestedSource << std::endl;
         std::cout << "_resourceType: ";
@@ -50,5 +43,6 @@ std::string Response::GetMethod(server server, request request) {
     }
 
 
+    return ("");
     return ("");
 }

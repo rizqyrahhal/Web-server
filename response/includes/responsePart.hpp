@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/27 02:15:03 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/27 13:19:46 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 #define DRCT false
 
 #ifndef DEBUG
-#define DEBUG
+// #define DEBUG
 #endif
 
 
@@ -61,14 +61,14 @@ class Response : public  HttpResponse
 		bool _resourceType; /* bool */ // dyrictore Vs file
 		std::string _contentType; // if it is file (.html, .css, .js, .png, .mp4 ..) my be fill it in map and construct it at constructer
 		// std::string _path;
-		// std::string _method;
+		std::string _method;
 
 		std::string GetMatchedLocationRequestUrl(std::vector<locations> locations, std::string requesturi);
 		static void IsLocationHaveRedirection(locations matchedlocation, Response &response);
 		static void IsMethodAllowedInLocation(std::vector<std::string> allowedmethod, std::string requestmethod, Response &response);
 		std::string GetMethod(server server, request request);
+		std::string DeleteMethod(server server, request request);
 		// static void PostMethod();
-		// static void DeleteMethod();
 	public:
 		Response();
 		std::string CreatResponse(server server, request request);
@@ -80,7 +80,7 @@ class Response : public  HttpResponse
 	private:
 		/* response utilse */
 		static void GetContentType(std::string requestedSource, std::unordered_map<std::string, std::string> mimetypes, std::string &contenttype);
-		static std::string GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response);
+		static std::string GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method);
 		static void checkForIndexFile(Response *response, server server);
 };
 
@@ -94,8 +94,9 @@ std::string getFileExtantion(std::string requestedsource);
 std::string getMimeType(std::unordered_map<std::string, std::string> mimetypes, std::string fileextantion);
 
 /* utils */
-const std::string generatBody(std::string _requestedSource);
+std::string generateAutoindexFile(std::string requestedSource);
 bool checkIndexInsidDerctory(std::string *path);
+const std::string generatBody(std::string _requestedSource);
 
 
 // error page 

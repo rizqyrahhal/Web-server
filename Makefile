@@ -12,6 +12,7 @@ SRCS = main.cpp \
 	response/sources/error_page.cpp \
 	response/sources/beforeMethods.cpp \
 	response/sources/GetMethod.cpp \
+	response/sources/DeleteMethod.cpp \
 	response/sources/responseutils.cpp \
 	response/sources/utils.cpp \
 	response/sources/mimeTypes.cpp \

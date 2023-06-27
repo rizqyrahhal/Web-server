@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:22:56 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/27 00:17:18 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/27 08:04:08 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,7 @@
 std::string Response::GetMatchedLocationRequestUrl(std::vector<locations> locations, std::string requesturi) {
     bool why = false;
     std::string matchedlocation;
-    
-    
+
     for(size_t i = 0; i < locations.size(); i++)
     {
         // std::cout << "matchedLocation: " << locations[i]._name << "\nURi: " << requesturi << std::endl;
