@@ -16,7 +16,7 @@
 
 class HttpResponse
 {
-	private:
+	protected:
 		std::string _version;
 		int _status_code;
 		std::string _status_message;

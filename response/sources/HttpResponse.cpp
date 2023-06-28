@@ -72,7 +72,7 @@ unsigned int HttpResponse::getBodySize() const {
 std::string HttpResponse::generateResponse() {
 	
 	std::string response;
-	// std::cout << generateStatusLine() << std::endl;
+
 	response = 	generateStatusLine() + "\r\n" + generateHeaders() + _body;
 
 	return (response);

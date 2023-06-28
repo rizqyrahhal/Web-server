@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/27 13:04:45 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/28 02:14:52 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,11 @@ std::string Response::CreatResponse(server server, request request) {
 	    // Request request;
 
         /* this data between this tow comment need to adding by parser */
+        // parsing of config file need more check about the existing and permetion of any files or folder set inside its ...
         // std::map<int, std::string> map_err_page;
-        server.locations[0].index = "./www/app//html/index.html"; // need to addd in parssing !!!!
+        
+        // server.locations[0].index = "./www/app/html/index.html"; // need to addd in parssing !!!!
+        
         /* this is the second comment : END OF COMMENT */
         
         Response response;
@@ -59,36 +62,23 @@ std::string Response::CreatResponse(server server, request request) {
             if (request.method == "GET")
                 response.GetMethod(server, request);
             else if (request.method == "DELETE")
+            {
+
                 response.DeleteMethod(server, request);
+            }
             // else if (request.getMethod() == "POST")
             //         response.PostMethod();
             else
                 std::cout << "IF SHOWING THIS LINE IT IS A PROBLEME BEFORE WORKING ON THE REQUEST METHOD !!!!!!!!!\n";
         }
         catch(int statuscode) { //change int by short in futere
-            // if (statuscode == 200){
-                // std::cout << "***** Response OK ***** \n" << response.ResponseGeneratedFromStatusCode(statuscode, server, request) << "\n----------------------------------\n";
+                #ifdef DEBUG
+                    std::cout << "***** Response OK ***** \n" << response.ResponseGeneratedFromStatusCode(statuscode, server, request) << "\n----------------------------------\n";
+                #endif
                 return (response.ResponseGeneratedFromStatusCode(statuscode, server, request));
-            // }
-            // else{
-                // std::cout << "***** Response OK ***** \n" << GenerateResponseFromStatusCode(statuscode, response) << "\n----------------------------------\n";
-                // return (GenerateResponseFromStatusCode(statuscode, response));
-            // }    
         }
-        // catch(std::string response)
-        // {
-        //     /* catch the status code and then creat the response form construct a response and set the headers and evry where */
-        //     #ifdef DEBUG
-        //         std::cout << "in catch statment ================================================ \n" << response << std::endl;
-        //     #endif
-        //     // return the error page that throwen
-        //     return (response);
-        //     /* if it is a response by body file return object contian header and fd_body and mumber function to read chunck by chunck from the body files */
-        //     // return (response);
-        // }
 
     // response from cgi
-    
     return ("ERROR *************************************\n");
 }
 
@@ -110,7 +100,7 @@ std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server ser
     /* HERE response have rederect message not have any body or something like this her is the probleme*/
 	/* search about error page in map_error page */
 
-    if (statuscode != 200)   // change this with categore redirection-error
+    if (statuscode != 200 && statuscode != 201 && statuscode != 204)   // change this with categore redirection-error
     {
 		// std::string err_page = SearchAboutErrorPage(statuscode, server.map_err_page);
 		std::string err_page = SearchAboutErrorPageFormTowPlaces(statuscode, server.map_err_page, server.locations[_matchedLocationPosition].map_err_page); //the last map not implemented by parser
@@ -121,12 +111,12 @@ std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server ser
         setHeader("Content-Type", "text/html"); //generateContentType()
     }
 
-    setHeader("Content-Length", std::to_string(getBodySize()));
+    if (statuscode != 201 && statuscode != 204)
+        setHeader("Content-Length", std::to_string(getBodySize()));
     
 	// GENERATE_THE_FINALE_RESPONSE();
     return generateResponse();
 }
-
 
 Response::~Response() {
 
@@ -136,5 +126,13 @@ Response::~Response() {
 // add the reading file  in vector \|
 // swap between check rederection and check allowd methods, but need confinm with nginx
 
-// 
-// in GET flow files finished ---> in dyrctory l2an
+
+
+
+
+
+
+
+/* new in DELETE METHOD handl file and directory 409 rest 403 and 500 and cgi for both file and directory */
+
+

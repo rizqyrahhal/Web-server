@@ -121,7 +121,8 @@ void    run_servers(global & glob)
                     else if (resp == 0)
                     {
                         Response response;
-                        send(client.fd_client, response.CreatResponse(server, *client.request_client).c_str(), response.CreatResponse(server, *client.request_client).size(), 0);
+                        std::string res = response.CreatResponse(server, *client.request_client).c_str();
+                        send(client.fd_client, res.c_str(), res.size(), 0);
                         //send correct response
                     }
                     close(client.fd_client);

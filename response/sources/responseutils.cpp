@@ -46,7 +46,6 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
     size_t position = requesturi.find_last_of("/");
     std::string checked, requestedSource, uriplusslash;
     uriplusslash = requesturi + "/";
-
     #ifdef DEBUG
         std::cout << "matchedlocation.name: " << matchedlocation.name << std::endl;
         std::cout << "matchedlocation.root: " << matchedlocation.root << std::endl;

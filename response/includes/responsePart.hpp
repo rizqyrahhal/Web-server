@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/27 13:19:46 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/06/28 01:19:57 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <iterator>
 #include <unistd.h>
 #include <dirent.h>
+#include <algorithm>
 
 #include "HttpResponse.hpp"
 #include "statuscode.hpp"
@@ -32,6 +33,12 @@
 #ifndef DEBUG
 // #define DEBUG
 #endif
+
+#ifndef CURENT_DEBUG
+// #define CURENT_DEBUG
+#endif
+
+
 
 
 
@@ -66,8 +73,8 @@ class Response : public  HttpResponse
 		std::string GetMatchedLocationRequestUrl(std::vector<locations> locations, std::string requesturi);
 		static void IsLocationHaveRedirection(locations matchedlocation, Response &response);
 		static void IsMethodAllowedInLocation(std::vector<std::string> allowedmethod, std::string requestmethod, Response &response);
-		std::string GetMethod(server server, request request);
-		std::string DeleteMethod(server server, request request);
+		void GetMethod(server server, request request);
+		void DeleteMethod(server server, request request);
 		// static void PostMethod();
 	public:
 		Response();
@@ -94,9 +101,9 @@ std::string getFileExtantion(std::string requestedsource);
 std::string getMimeType(std::unordered_map<std::string, std::string> mimetypes, std::string fileextantion);
 
 /* utils */
-std::string generateAutoindexFile(std::string requestedSource);
 bool checkIndexInsidDerctory(std::string *path);
 const std::string generatBody(std::string _requestedSource);
+std::string generateAutoindexFile(std::string requestedSource); // in GET method
 
 
 // error page 
