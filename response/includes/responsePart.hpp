@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/28 01:19:57 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/03 15:15:20 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,6 @@
 #ifndef CURENT_DEBUG
 // #define CURENT_DEBUG
 #endif
-
-
-
 
 
 

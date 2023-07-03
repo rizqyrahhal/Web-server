@@ -20,7 +20,8 @@ void Response::checkForIndexFile(Response *response, server server) {
         if (server.locations[response->_matchedLocationPosition].autoindex == "on")
         {
             // generate outoindex
-            response->setBody(generateAutoindexFile(response->_requestedSource));
+            response->setBody(generateAutoindexFile(response->_requestedSource)); /* problem but from the requsted source genaratore, the Url taked in the place at need the root*/
+            // response->setBody(generateAutoindexFile("." + server.locations[response->_matchedLocationPosition].root));
             throw(200);
         }
         else
@@ -46,6 +47,7 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
     size_t position = requesturi.find_last_of("/");
     std::string checked, requestedSource, uriplusslash;
     uriplusslash = requesturi + "/";
+
     #ifdef DEBUG
         std::cout << "matchedlocation.name: " << matchedlocation.name << std::endl;
         std::cout << "matchedlocation.root: " << matchedlocation.root << std::endl;
@@ -53,10 +55,34 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
         std::cout << "positionAFfterloop: " << position << std::endl << std::endl;
     #endif
 
+        /* just hardcode to make "/" work as expected */
+        if (matchedlocation.name == requesturi && requesturi == "/")
+        {
+            requestedSource = "." + matchedlocation.root;
+            /* check if exist */
+            if (opendir(requestedSource.c_str()) != NULL) {
+                resourcetype = DRCT;
+                // if (requestedSource[requestedSource.size() - 1] != '/') {
+                //     if (method == "DELETE")
+                //         throw (409);
+                // response->setHeader("Location", uriplusslash);
+                // throw(301);
+                // }
+        	    return (requestedSource);
+            }
+            else if (access(requestedSource.c_str(), 0) == 0) {
+                resourcetype = FILE;
+        	return (requestedSource);
+            }
+        }
+
         requestedSource = "." + requesturi;
+            // requestedSource = "." + matchedlocation.root;
         if (opendir(requestedSource.c_str()) != NULL) {
             resourcetype = DRCT;
             if (requestedSource[requestedSource.size() - 1] != '/') {
+                if (method == "DELETE")
+                    throw (409);
                 response->setHeader("Location", uriplusslash);
                 throw(301);
             }
@@ -98,9 +124,9 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
         }
 		position = requesturi.find_last_of("/", position - 1);
     }
-
     if (matchedlocation.root == requesturi || matchedlocation.name == requesturi)
     {
+    
         requestedSource = "." + requesturi;
         /* check if exist */
         if (opendir(requestedSource.c_str()) != NULL) {
@@ -121,6 +147,7 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
     }
     throw(404);
 }
+/* in this above function thire is more and more hardcoding !!!! */
 
 
 

@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 00:10:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/27 23:07:36 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/03 12:29:10 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ const std::string generatBody(std::string _requestedSource) {
     	std::cout << "Error in opening file\n";    // this error and any other like its need to handel in parssing and exit if an problem (ofxorce check with it in my code to evet any carash)
     	std::exit(-404);
     }
+
     file.seekg(0, std::ios::end);
     int length = file.tellg();
     file.seekg(0, std::ios::beg);

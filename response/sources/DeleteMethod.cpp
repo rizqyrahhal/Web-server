@@ -6,11 +6,47 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 11:09:55 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/28 01:10:17 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/03 19:56:15 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/responsePart.hpp"
+
+bool writeAccess(std::string requestedSource) {
+	if (access(requestedSource.c_str(), W_OK) == 0)
+	    return (true);
+    else
+        return (false);
+}
+
+bool deleteDirectory(std::string requestedSource) {
+    DIR* dr = opendir(requestedSource.c_str());
+    if (dr != NULL)
+    {
+        struct dirent *dir = NULL;
+        while ((dir = readdir(dr))) {
+			std::string name(dir->d_name);
+			if (name == "." || name == "..")
+				continue;
+			if (opendir((requestedSource + "/" + name).c_str()) != NULL)
+			{
+				if (!deleteDirectory(std::string(requestedSource + "/" + name)))
+					return (false);
+			}
+			if (std::remove((requestedSource + "/" + name).c_str()) == 0)
+				continue;
+			else
+			{
+        		closedir(dr);
+				return false;
+			}
+		}
+        closedir(dr);
+    }
+    else
+        std::cout << "ERROR IN OPENING DIRECTORY (this error be to check about it in parsing!!!)";
+    return (true);
+}
 
 void Response::DeleteMethod(server server, request request) {
     _requestedSource = Response::GetRequestedSource(server.locations[Response::_matchedLocationPosition], request.url, _resourceType, &(*this), request.method);
@@ -24,13 +60,27 @@ void Response::DeleteMethod(server server, request request) {
     #endif
     /* affter finish dyrectory error if no error and index take the same floow like file just set the neded information */
     if (_resourceType == DRCT || _resourceType == FILE) {  // change this condition in futere
-        if (_resourceType == DRCT){ // directory handling
-            checkForIndexFile(&(*this), server);
+        
+		/* directory handling */
+		if (_resourceType == DRCT) {
+            // if (location has cgi ) {
+            //     checkForIndexFile(&(*this), server);
+            // }
+			if (!deleteDirectory(_requestedSource)) {
+				if (!writeAccess(_requestedSource)) {
+					throw(304);
+                }
+				else
+					throw(500);
+			}
+			else
+				throw(204);
         }
+
         /* file handling */
-        #ifdef CURENT_DEBUG
-            std::cout << "_requestedSource: " << _requestedSource << std::endl;
-        #endif
+        // if (location has cgi ) {
+        //     cgi code
+        // }
 		if (std::remove(_requestedSource.c_str()) == 0)
 			throw (204);
     }

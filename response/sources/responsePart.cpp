@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/28 02:14:52 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/03 19:52:39 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ std::string Response::CreatResponse(server server, request request) {
                 response.GetMethod(server, request);
             else if (request.method == "DELETE")
             {
-
                 response.DeleteMethod(server, request);
             }
             // else if (request.getMethod() == "POST")
@@ -72,14 +71,16 @@ std::string Response::CreatResponse(server server, request request) {
                 std::cout << "IF SHOWING THIS LINE IT IS A PROBLEME BEFORE WORKING ON THE REQUEST METHOD !!!!!!!!!\n";
         }
         catch(int statuscode) { //change int by short in futere
-                #ifdef DEBUG
-                    std::cout << "***** Response OK ***** \n" << response.ResponseGeneratedFromStatusCode(statuscode, server, request) << "\n----------------------------------\n";
-                #endif
-                return (response.ResponseGeneratedFromStatusCode(statuscode, server, request));
+                std::string *res = new std::string(response.ResponseGeneratedFromStatusCode(statuscode, server, request));
+                // #ifdef DEBUG
+                //     std::cout << "***** Response OK ***** \n" << res << "\n----------------------------------\n";
+                // #endif
+                return (*res); /* this res need to be inside the Response class to destroy it when finshed sending response to client */
         }
 
     // response from cgi
-    return ("ERROR *************************************\n");
+    return (NULL);
+    // return ("ERROR *************************************\n");
 }
 
 /* rest small choise not handling in headers !!!!!!!!!!!!! */                // TRY  to merge this function with the abouve function in some sulution (my be make it a template function or something like this)
@@ -95,7 +96,7 @@ std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server ser
 
     /* set default headers */
 	// setHeader("Date: ", generateDate());
-	setHeader("Conection", "close"); // from map headers (request data)   request.getHeaderValue(std::string key)  <---- this function global to get any header from map headers in the request (key in this case = "Conection")
+	setHeader("Connection", "close"); // from map headers (request data)   request.getHeaderValue(std::string key)  <---- this function global to get any header from map headers in the request (key in this case = "Conection")
 
     /* HERE response have rederect message not have any body or something like this her is the probleme*/
 	/* search about error page in map_error page */
@@ -108,9 +109,10 @@ std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server ser
         	setBody(ReadErrorPage(err_page));
         else
             setBody(GenerateErrorPage(statuscode, getReason(statuscode)));
-        setHeader("Content-Type", "text/html"); //generateContentType()
+        setHeader("Content-Type", "text/html"); //generateContentType(), that is oky for new becous the error type in all time html and the other way detecte and assigne in the same place
     }
 
+    /* adding headers */
     if (statuscode != 201 && statuscode != 204)
         setHeader("Content-Length", std::to_string(getBodySize()));
     
