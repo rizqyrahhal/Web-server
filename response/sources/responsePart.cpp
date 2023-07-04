@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/03 19:52:39 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/05 00:06:41 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,6 @@ std::string Response::CreatResponse(server server, request request) {
             //     std::cout << "locations.name[" << i << "] name: " << server.locations[i].root << std::endl;
             // }
             // std::cout << "URL: " << request.url << std::endl;
-
-
 
             _matchedLocation = response.GetMatchedLocationRequestUrl(server.locations, request.url);
             #ifdef DEBUG
@@ -117,7 +115,9 @@ std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server ser
         setHeader("Content-Length", std::to_string(getBodySize()));
     
 	// GENERATE_THE_FINALE_RESPONSE();
-    return generateResponse();
+    std::string res = generateResponse();
+    
+    return res;
 }
 
 Response::~Response() {

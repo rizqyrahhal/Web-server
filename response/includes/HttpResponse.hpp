@@ -33,5 +33,6 @@ class HttpResponse
 		void setBody(const std::string &body);
 		unsigned int getBodySize() const;
 		std::string generateResponse();
+		// std::string mygenerateResponse();
 		~HttpResponse();
 };

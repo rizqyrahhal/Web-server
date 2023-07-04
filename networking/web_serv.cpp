@@ -27,7 +27,7 @@ int request::read_reqwest(int fd_client)
 	char buffer[BUFFER_SIZE] = {0};
 	int bytesrecv = recv(fd_client, buffer, 1024, 0);
 	// std::cout << "----->" << bytesrecv << std::endl;
-	// std::cout<< buffer <<std::endl;
+	std::cout << "Request: \n" << buffer << std::endl;
     if (bytesrecv > 0)
 	{
 		std::string str = buffer;

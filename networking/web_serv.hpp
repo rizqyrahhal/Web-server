@@ -83,6 +83,8 @@ class server
 	int port;
 	std::string ip_address;
 	std::string server_name;
+	std::string root;
+	std::string index;
 	std::vector<client> client;
 	std::vector<locations> locations;
 	std::map<int, std::string> map_err_page;

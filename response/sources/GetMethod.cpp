@@ -6,13 +6,14 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:24:42 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/03 15:41:44 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/04 17:22:05 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/responsePart.hpp"
 
 std::string generateAutoindexFile(std::string requestedSource) {
+    
     std::string indexhtml = "<!-- DOCTYPE html --><html><head><title>Directory Listing</title></head><body><h1>Directory Listing</h1><ul>";
     DIR* dr = opendir(requestedSource.c_str());
     

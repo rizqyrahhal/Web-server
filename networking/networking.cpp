@@ -81,6 +81,7 @@ void    run_servers(global & glob)
     signal(SIGPIPE, SIG_IGN);
     int resp = 0;
     int tmp = 0;
+    bool sen = false;
 	while (1)
 	{
 		fd_set writable = server::current;
@@ -92,15 +93,21 @@ void    run_servers(global & glob)
 		}
 		for (size_t  j = 0; j < glob.server.size(); j++)
 		{
+
 			server &server = glob.server[j];
 			if (FD_ISSET(server.fd_server, &readable))
 			{
+                std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  Pushing Clients @@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n";
 				server.client.push_back(accept_new_connection(server));
-                // std::cout << "Pushing Clients\n";
+                std::cout << "########### number of client:  " << server.client.size() << std::endl;
             }
+            // std::cout << "########### FD_client:  " << server.client.fd_client << std::endl;
             // std::cout << "num clients => " << server.client.size() << std::endl;
-			for (size_t i = 0; i < server.client.size() ; i++)
+			for (size_t i = 0; i < server.client.size() ; i++) // in this i <= Just to evet loop
 			{
+                // std::cout << "++++++++++++++++++++++++++++++++\n";
+                if (server.client.size() != 0)
+                {
 				client &client = server.client[i];
                 // std::cout << "CLIENT CHECK => " << client.check << std::endl;
 				// IF statement for Request.
@@ -116,22 +123,34 @@ void    run_servers(global & glob)
 				else if (FD_ISSET(client.fd_client, &writable) && client.check == 1)
                 {
                     if (resp > 0){
+
                         send(client.fd_client, GenerateResponseFromStatusCode(resp).c_str(), GenerateResponseFromStatusCode(resp).size(), 0);
                     }
                     else if (resp == 0)
                     {
+                        std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
                         Response response;
                         std::string res = response.CreatResponse(server, *client.request_client);
-                            std::cout << "\n***** Response OK ***** \n" << res << "\n----------------------------------\n";
+                            std::cout << "\n***** Response ***** \n" << res << "\n----------------------------------\n";
                         send(client.fd_client, res.c_str(), res.size(), 0);
+                        std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << std::endl;
+                        std::cout << "\n###################################################################################################################################################\n\n";
                         //send correct response
+                        sen = true; /// change with client_status_life
                     }
-                    close(client.fd_client);
-                    FD_CLR(client.fd_client, &server::current);
-                    server.client.erase(server.client.begin() + i);
+                    if (resp > 0 || sen) {
+                        close(client.fd_client);
+                        FD_CLR(client.fd_client, &server::current);
+                        server.client.erase(server.client.begin() + i);
 
+                        std::cout << "server.client.size() : " << server.client.size() << "   ) :)\n";
+                        // exit (0);
+                    }
                     //    exit(0);
                 }
+                }
+                else
+                    break;
 			}
 		}
 

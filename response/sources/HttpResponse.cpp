@@ -46,22 +46,22 @@ std::string HttpResponse::generateStatusLine() {
 // generate headers by contatinet it in one string that contian  (KEY: value\nKEY: value\n......\n\n)
 std::string HttpResponse::generateHeaders() {
 	std::string headers;
-
-	std::map<std::string, std::string>::iterator it = _headers.end();
-	it--;
-	for (; it != _headers.begin(); it--)
-	{
+	if (!_headers.empty()) {
+		std::map<std::string, std::string>::iterator it = _headers.end();
+		it--;
+		for (; it != _headers.begin(); it--)
+		{
+			headers += it->first;
+			headers += ": ";
+			headers += it->second;
+			headers += "\r\n";
+		}
 		headers += it->first;
 		headers += ": ";
 		headers += it->second;
+		headers += "\r\n";
 		headers += "\r\n";
 	}
-		headers += it->first;
-		headers += ": ";
-		headers += it->second;
-		headers += "\r\n";
-	headers += "\r\n";
-
 	return (headers);
 }
 
@@ -72,11 +72,24 @@ unsigned int HttpResponse::getBodySize() const {
 std::string HttpResponse::generateResponse() {
 	
 	std::string response;
+	std::string headers = generateHeaders();
 
-	response = 	generateStatusLine() + "\r\n" + generateHeaders() + _body;
+
+	response = generateStatusLine() + "\r\n" + generateHeaders() + _body;
 
 	return (response);
 }
+
+// std::string HttpResponse::mygenerateResponse() {
+	
+// 	std::string response;
+// 	std::string headers = generateHeaders();
+
+
+// 	response = generateStatusLine() + "\r\n" + generateHeaders() + _body;
+
+// 	return (response);
+// }
 
 HttpResponse::~HttpResponse() {
 
