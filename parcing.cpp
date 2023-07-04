@@ -12,7 +12,7 @@ void    location_serv(std::string line, server & server)
         vector.push_back(str);
     }
     for (size_t i = 0 ; i < vector.size(); i++){
-        std::stringstream tmp1;
+        std::stringstream tmp1(vector[i]);
         tmp1 >> str;
         if (str == "location")
         {
@@ -22,11 +22,24 @@ void    location_serv(std::string line, server & server)
         else if (str == "root")
         {
             tmp1 >> str;
+            if (access(str.c_str(), F_OK) == -1) {
+                std::cout<<"Error : root path in location not exist!"<<std::endl;
+                exit(0);
+            }
             location.root = str;
         }
         else if (str == "autoindex"){
             tmp1 >> str;
             location.autoindex = str;
+        }
+        else if (str == "index")
+        {
+            tmp1 >> str;
+            if (access(str.c_str(), F_OK) == -1) {
+                std::cout<<"Error : index path in location not exist!"<<std::endl;
+                exit(0);
+            }
+            location.index = str;
         }
         else if (str == "allow_methods"){
             while(tmp1 >> str)
@@ -35,16 +48,29 @@ void    location_serv(std::string line, server & server)
             }
             if (location.allow_methods.size() > 3)
             {
-                std::cout<<"allow methods not correct"<<std::endl;
+                std::cout<<"allow methods not correct---------"<<std::endl;
                 exit(0);
             }
             for (size_t i = 0; i < location.allow_methods.size(); i++)
             {
-                if (location.allow_methods[i] != "get" || location.allow_methods[i] != "post" || location.allow_methods[i] != "delete")
-                 std::cout<<"allow methods not correct"<<std::endl;
-                exit(0);
+                if (location.allow_methods[i] != "GET" && location.allow_methods[i] != "POST" && location.allow_methods[i] != "DELETE")
+                {
+                    std::cout<<"allow methods not correct *******"<<std::endl;
+                    exit(0);
+                }
             }
             
+        }
+        if (str == "error_page")
+        {
+            int err;
+            tmp1 >> err;
+            tmp1 >> str;
+            if (access(str.c_str(), F_OK) == -1) {
+                std::cout<<"Error : error page path int locations not exist!"<<std::endl;
+                exit(0);
+            }
+            location.map_err_page.insert(std::make_pair(err, str));
         }
         else if(str == "cgi")
         {
@@ -100,6 +126,25 @@ void    parce_server(std::string line, global & global)
             tmp1 >> str;
             server.ip_address = str;
         }
+        if (str == "root")
+        {
+            tmp1 >> str;
+            if (access(str.c_str(), F_OK) == -1) {
+                std::cout<<"Error : path root not exist!"<<std::endl;
+                exit(0);
+            }
+            server.root = str;
+        }
+        if (str == "index")
+        {
+            tmp1 >> str;
+            if (access(str.c_str(), F_OK) == -1) {
+                std::cout<<"Error : path index not exist!"<<std::endl;
+                exit(0);
+            }
+            server.root = str;
+        }
+
         else if (str == "port")
         {
             int port;
@@ -122,6 +167,10 @@ void    parce_server(std::string line, global & global)
             int err;
             tmp1 >> err;
             tmp1 >> str;
+            if (access(str.c_str(), F_OK) == -1) {
+                std::cout<<"Error : path error page not exist!"<<std::endl;
+                exit(0);
+            }
             server.map_err_page.insert(std::make_pair(err, str));
         }
         else if (str == "location")

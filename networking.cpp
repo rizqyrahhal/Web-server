@@ -76,6 +76,35 @@ client accept_new_connection(server& serv)
 	return (client);
 }
 
+int    send_video(client & client)
+{
+    int fd = 0;
+    std::cout <<" i want to send video --->>>"<<std::endl;
+    char *readvideo = new char[1024];
+    if (client.p == 0)
+    {
+        fd = open("/Users/araysse/Desktop/test.mp4", 0);
+        client.readFd = fd;
+        std::string header = "HTTP/1.1 200 OK\r\n"
+                       "Content-Type: video/mp4\r\n"
+                       "Content-Length: 344248223\r\n"
+                       "Connection: closed\r\n\r\n";
+        send(client.fd_client, header.c_str(), header.size(), 0);
+        client.p++;
+        return (0);
+    }
+    if (client.readFd <= 0)
+        return (-1);
+    int rd = read(client.readFd, readvideo, 1024);
+    if (rd <= 0)
+       return(-1);
+        // Send the image data
+    int snd = send(client.fd_client, readvideo, rd, 0);
+    if (snd <= 0)
+        return (-1);
+    return (0);
+}
+
 void    run_servers(global & glob)
 {
     signal(SIGPIPE, SIG_IGN);
@@ -95,14 +124,18 @@ void    run_servers(global & glob)
 			server &server = glob.server[j];
 			if (FD_ISSET(server.fd_server, &readable))
 			{
-				server.client.push_back(accept_new_connection(server));
+                std::cout << "aaa Clients " << server.client.size() << "\n";
+                client client = accept_new_connection(server);
+                std::cout << "aaa Clients " << server.client.size() << "\n";
+				server.client.push_back(client);
                 std::cout << "Pushing Clients\n";
             }
-            std::cout << "num clients => " << server.client.size() << std::endl;
+            // std::cout << "num clients => " << server.client.size() << std::endl;
 			for (size_t i = 0; i < server.client.size() ; i++)
 			{
 				client &client = server.client[i];
-                std::cout << "CLIENT CHECK => " << client.check << std::endl;
+                     std::cout << "CLIENT CHECK => " << client.check << std::endl;
+                     std::cout << "clients => " << server.client.size()  << " i = " << i << std::endl;
 				// IF statement for Request.
 				if (FD_ISSET(client.fd_client, &readable) && client.check == 0)
 				{
@@ -115,15 +148,22 @@ void    run_servers(global & glob)
                 // std::cout << "Client -> " << client.fd_client << std::endl;
 				else if (FD_ISSET(client.fd_client, &writable) && client.check == 1)
                 {
+                    int pr = 0;
                     if (resp > 0){
                         send(client.fd_client, GenerateResponseFromStatusCode(resp).c_str(), GenerateResponseFromStatusCode(resp).size(), 0);
                     }
-                    else if (resp == 0)
+                    else if (resp == 0){
+                        std::cout<<"send video ----->>>>>"<<std::endl;
+                        pr = send_video(client);
                         //send correct response
-                    close(client.fd_client);
-                    FD_CLR(client.fd_client, &server::current);
-                    server.client.erase(server.client.begin() + i);
-
+                    }
+                    std::cout << "here "  << pr << "\n";
+                    if (resp > 0 || pr) {
+                        close(client.fd_client);
+                        FD_CLR(client.fd_client, &server::current);
+                        server.client.erase(server.client.begin() + i);
+                        // exit (0);
+                    }                   
                     //    exit(0);
                 }
 			}

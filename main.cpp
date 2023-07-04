@@ -19,6 +19,10 @@ int main(int ac, char **av)
         creat_socket_and_bind(global);
         listen_new_connection(global);
         run_servers(global);
+        // for(size_t i = 0;i < global.server[0].locations.size();i++)
+        // {
+        //     std::cout<<"location name : "<< global.server[0].locations[i].root<<std::endl;
+        // }
     }
     catch(const std::exception& e)
     {

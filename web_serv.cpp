@@ -12,9 +12,13 @@ client::~client()
 }
 
 client::client(int maxClientBodySize) {
+	clientaddrlenght = sizeof(client_address);
 	this->max_client_body_size = maxClientBodySize;
 	this->request_client = new request(maxClientBodySize);
 	check = 0;
+	p = 0;
+	readFd = -1;
+	size = 0;
 }
 
 request::request(int max_size)
@@ -25,7 +29,8 @@ request::request(int max_size)
 int request::read_reqwest(int fd_client)
 {
 	char buffer[BUFFER_SIZE] = {0};
-	int bytesrecv = recv(fd_client, buffer, 1024, 0);
+	memset(&buffer,0,1024);
+	int bytesrecv = recv(fd_client, buffer, 1023, 0);
 	// std::cout << "----->" << bytesrecv << std::endl;
 	// std::cout<< buffer <<std::endl;
     if (bytesrecv > 0)

@@ -18,6 +18,7 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <stdlib.h>
 
 #include "includes/responsePart.hpp"
 
@@ -34,6 +35,9 @@ public:
 	std::string autoindex;
 	std::map<std::string, std::string> cgi;
 	std::map<int, std::string> redirect;
+
+	std::string index;  //this line aadded by rarahhal
+	std::map<int, std::string> map_err_page; /// this line added by rarahhal
 
 	~locations(){}
 };
@@ -66,8 +70,11 @@ class client
 	struct sockaddr_in client_address;
 	socklen_t clientaddrlenght;
 	int check;
+	int p;
+	int readFd;
 	int max_client_body_size;
 	request *request_client;
+	unsigned long size;
 	client(int maxBodySize);
 	~client();
 };
@@ -80,7 +87,9 @@ class server
 	int port;
 	std::string ip_address;
 	std::string server_name;
-	std::vector<client> client;
+	std::string root;
+	std::string index;
+ 	std::vector<client> client;
 	std::vector<locations> locations;
 	std::map<int, std::string> map_err_page;
 	int client_body_size;

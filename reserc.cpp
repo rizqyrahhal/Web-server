@@ -112,3 +112,30 @@ int maine() {
 
         // close(clientSocket);
 
+int    send_video(client & client)
+{
+    int fd = 0;
+    char *readvideo = new char[1024];
+    if (client.p == 0)
+    {
+        fd = open("Music.mp4", 0);
+        client.readFd = fd;
+        char *header = "HTTP/1.1 200 OK\r\n"
+                       "Content-Type: video/mp4\r\n"
+                       "Content-Length: 9973881\r\n"
+                       "Connection: closed\r\n\r\n";
+        send(client.fd_client, header, strlen(header), 0);
+        client.p++;
+        return (0);
+    }
+    if (client.readFd <= 0)
+        return (-1);
+    int rd = read(client.readFd, readvideo, 1024);
+    if (rd <= 0)
+       return(-1);
+        // Send the image data
+    int snd = send(client.fd_client, readvideo, 1024, 0);
+    if (snd <= 0)
+        return (-1);
+    return (0);
+}
