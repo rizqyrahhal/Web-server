@@ -19,6 +19,7 @@ client::client(int maxClientBodySize) {
 	p = 0;
 	readFd = -1;
 	size = 0;
+	resp = 0;
 }
 
 request::request(int max_size)

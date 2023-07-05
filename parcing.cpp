@@ -19,12 +19,17 @@ void    location_serv(std::string line, server & server)
             tmp1 >> str;
             location.name = str;
         }
+        if (str == "upload_pass")
+        {
+            tmp1 >> str;
+            location.upload_pass = str;
+        }
         else if (str == "root")
         {
             tmp1 >> str;
             if (access(str.c_str(), F_OK) == -1) {
                 std::cout<<"Error : root path in location not exist!"<<std::endl;
-                exit(0);
+                // exit(0);
             }
             location.root = str;
         }
@@ -37,7 +42,7 @@ void    location_serv(std::string line, server & server)
             tmp1 >> str;
             if (access(str.c_str(), F_OK) == -1) {
                 std::cout<<"Error : index path in location not exist!"<<std::endl;
-                exit(0);
+                // exit(0);
             }
             location.index = str;
         }
@@ -68,7 +73,7 @@ void    location_serv(std::string line, server & server)
             tmp1 >> str;
             if (access(str.c_str(), F_OK) == -1) {
                 std::cout<<"Error : error page path int locations not exist!"<<std::endl;
-                exit(0);
+                // exit(0);
             }
             location.map_err_page.insert(std::make_pair(err, str));
         }
@@ -131,7 +136,7 @@ void    parce_server(std::string line, global & global)
             tmp1 >> str;
             if (access(str.c_str(), F_OK) == -1) {
                 std::cout<<"Error : path root not exist!"<<std::endl;
-                exit(0);
+                // exit(0);
             }
             server.root = str;
         }
@@ -140,7 +145,7 @@ void    parce_server(std::string line, global & global)
             tmp1 >> str;
             if (access(str.c_str(), F_OK) == -1) {
                 std::cout<<"Error : path index not exist!"<<std::endl;
-                exit(0);
+                // exit(0);
             }
             server.root = str;
         }
@@ -169,7 +174,7 @@ void    parce_server(std::string line, global & global)
             tmp1 >> str;
             if (access(str.c_str(), F_OK) == -1) {
                 std::cout<<"Error : path error page not exist!"<<std::endl;
-                exit(0);
+                // exit(0);
             }
             server.map_err_page.insert(std::make_pair(err, str));
         }

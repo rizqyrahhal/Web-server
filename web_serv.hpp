@@ -36,6 +36,7 @@ public:
 	std::map<std::string, std::string> cgi;
 	std::map<int, std::string> redirect;
 
+	std::string upload_pass;
 	std::string index;  //this line aadded by rarahhal
 	std::map<int, std::string> map_err_page; /// this line added by rarahhal
 
@@ -71,6 +72,7 @@ class client
 	socklen_t clientaddrlenght;
 	int check;
 	int p;
+	int resp;
 	int readFd;
 	int max_client_body_size;
 	request *request_client;

@@ -101,14 +101,13 @@ int    send_video(client & client)
         // Send the image data
     int snd = send(client.fd_client, readvideo, rd, 0);
     if (snd <= 0)
-        return (-1);
+        return (1);
     return (0);
 }
 
 void    run_servers(global & glob)
 {
     signal(SIGPIPE, SIG_IGN);
-    int resp = 0;
     int tmp = 0;
 	while (1)
 	{
@@ -126,45 +125,49 @@ void    run_servers(global & glob)
 			{
                 std::cout << "aaa Clients " << server.client.size() << "\n";
                 client client = accept_new_connection(server);
-                std::cout << "aaa Clients " << server.client.size() << "\n";
+                std::cout << "bbb Clients " << server.client.size() << "\n";
 				server.client.push_back(client);
                 std::cout << "Pushing Clients\n";
+                // exit(0);
             }
             // std::cout << "num clients => " << server.client.size() << std::endl;
 			for (size_t i = 0; i < server.client.size() ; i++)
-			{
-				client &client = server.client[i];
-                     std::cout << "CLIENT CHECK => " << client.check << std::endl;
-                     std::cout << "clients => " << server.client.size()  << " i = " << i << std::endl;
-				// IF statement for Request.
-				if (FD_ISSET(client.fd_client, &readable) && client.check == 0)
-				{
-                    resp = client.request_client->read_reqwest(client.fd_client);
-                    std::cout<<client.request_client->max_body_size<<std::endl;
-                    std::cout<<resp<<std::endl;
-					// fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
-                    client.check = 1;
-				}
-                // std::cout << "Client -> " << client.fd_client << std::endl;
-				else if (FD_ISSET(client.fd_client, &writable) && client.check == 1)
+			{   
+                if (server.client.size() != 0)
                 {
-                    int pr = 0;
-                    if (resp > 0){
-                        send(client.fd_client, GenerateResponseFromStatusCode(resp).c_str(), GenerateResponseFromStatusCode(resp).size(), 0);
+				    client &client = server.client[i];
+                        //  std::cout << "CLIENT CHECK => " << client.check << std::endl;
+                     std::cout << "clients => " << server.client.size()  << " i = " << i << std::endl;
+				    // IF statement for Request.
+				    if (FD_ISSET(client.fd_client, &readable) && client.check == 0)
+				    {
+                        client.resp = client.request_client->read_reqwest(client.fd_client);
+                        std::cout<<client.request_client->max_body_size<<std::endl;
+                        std::cout<<client.resp<<std::endl;
+				    	// fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
+                        client.check = 1;
+				    }
+                    // std::cout << "Client -> " << client.fd_client << std::endl;
+				    else if (FD_ISSET(client.fd_client, &writable) && client.check == 1)
+                    {
+                        int pr = 0;
+                        if (client.resp > 0){
+                            send(client.fd_client, GenerateResponseFromStatusCode(client.resp).c_str(), GenerateResponseFromStatusCode(client.resp).size(), 0);
+                        }
+                        else if (client.resp == 0){
+                            std::cout<<"send video ----->>>>>"<<std::endl;
+                            pr = send_video(client);
+                            //send correct response
+                        }
+                        std::cout << "here "  << pr << "\n";
+                        if (client.resp > 0 || pr) {
+                            std::cout<<"client "<<client.fd_client<<" dropped succesfolly"<<std::endl;
+                            close(client.fd_client);
+                            FD_CLR(client.fd_client, &server::current);
+                            server.client.erase(server.client.begin() + i);
+
+                        }                   
                     }
-                    else if (resp == 0){
-                        std::cout<<"send video ----->>>>>"<<std::endl;
-                        pr = send_video(client);
-                        //send correct response
-                    }
-                    std::cout << "here "  << pr << "\n";
-                    if (resp > 0 || pr) {
-                        close(client.fd_client);
-                        FD_CLR(client.fd_client, &server::current);
-                        server.client.erase(server.client.begin() + i);
-                        // exit (0);
-                    }                   
-                    //    exit(0);
                 }
 			}
 		}
