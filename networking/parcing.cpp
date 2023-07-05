@@ -19,6 +19,15 @@ void    location_serv(std::string line, server & server)
             tmp1 >> str;
             location.name = str;
         }
+        else if (str == "upload_pass")
+        {
+            tmp1 >> str;
+            if (access(str.c_str(), F_OK) == -1) {
+                std::cout<<"Error : upload_pass path in location not exist!"<<std::endl;
+                exit(0);
+            }
+            location.upload_pass = str;
+        }
         else if (str == "root")
         {
             tmp1 >> str;

@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:24:42 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/04 17:22:05 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/05 21:33:30 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void Response::GetMethod(server server, request request) {
     #endif
     if (_resourceType == DRCT || _resourceType == FILE)
     {
-        if (_resourceType == DRCT){
+        if (_resourceType == DRCT) {
             checkForIndexFile(&(*this), server);
         }
         Response::GetContentType(_requestedSource, _mimeTypes, _contentType);

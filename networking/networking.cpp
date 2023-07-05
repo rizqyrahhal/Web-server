@@ -132,8 +132,8 @@ void    run_servers(global & glob)
                         Response response;
                         std::string res = response.CreatResponse(server, *client.request_client);
                             std::cout << "\n***** Response ***** \n" << res << "\n----------------------------------\n";
-                        send(client.fd_client, res.c_str(), res.size(), 0);
-                        std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << std::endl;
+                        int sending = send(client.fd_client, res.c_str(), res.size(), 0);
+                        std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
                         std::cout << "\n###################################################################################################################################################\n\n";
                         //send correct response
                         sen = true; /// change with client_status_life

@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/05 00:03:39 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/05 22:10:36 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 #define DRCT false
 
 #ifndef DEBUG
-// #define DEBUG
+#define DEBUG
 #endif
 
 #ifndef CURENT_DEBUG
@@ -72,7 +72,7 @@ class Response : public  HttpResponse
 		static void IsMethodAllowedInLocation(std::vector<std::string> allowedmethod, std::string requestmethod, Response &response);
 		void GetMethod(server server, request request);
 		void DeleteMethod(server server, request request);
-		// static void PostMethod();
+		void PostMethod(server server, request request);
 	public:
 		Response();
 		std::string CreatResponse(server server, request request);

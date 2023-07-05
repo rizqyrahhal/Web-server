@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/05 00:06:41 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/05 22:13:34 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,12 @@ std::string Response::CreatResponse(server server, request request) {
             if (request.method == "GET")
                 response.GetMethod(server, request);
             else if (request.method == "DELETE")
-            {
                 response.DeleteMethod(server, request);
-            }
-            // else if (request.getMethod() == "POST")
-            //         response.PostMethod();
+            else if (request.method == "POST")
+                    response.PostMethod(server, request);
             else
-                std::cout << "IF SHOWING THIS LINE IT IS A PROBLEME BEFORE WORKING ON THE REQUEST METHOD !!!!!!!!!\n";
+                std::cout << "IF SHOWING THIS LINE IT IS A PROBLEME BEFORE WORKING ON THE REQUESTED METHOD !!!!!!!!!\n";
+            throw(403);
         }
         catch(int statuscode) { //change int by short in futere
                 std::string *res = new std::string(response.ResponseGeneratedFromStatusCode(statuscode, server, request));

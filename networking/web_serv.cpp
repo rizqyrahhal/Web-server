@@ -21,16 +21,19 @@ request::request(int max_size)
 {
 	this->max_body_size = max_size;
 }
-
+#include <istream>
 int request::read_reqwest(int fd_client)
 {
-	char buffer[BUFFER_SIZE] = {0};
-	int bytesrecv = recv(fd_client, buffer, 1024, 0);
+	std::vector<char> buffer(2743); // Adding by rarahhal
+	int bytesrecv = recv(fd_client, &buffer[0], 2743, 0); // Adding by rarahhal
+	// char buffer[30000] = {0};
+	// int bytesrecv = recv(fd_client, buffer, 30000, 0);
+	// buffer[bytesrecv] = '\0';
 	// std::cout << "----->" << bytesrecv << std::endl;
-	std::cout << "Request: \n" << buffer << std::endl;
+	std::cout << "Request: (read this size = " << bytesrecv << ")\n" << std::string(buffer.begin(), buffer.end()) << std::endl;
     if (bytesrecv > 0)
 	{
-		std::string str = buffer;
+		std::string str(buffer.begin(), buffer.end());
 		std::vector<std::string> request_line;
 		std::stringstream tmp(str);
 		std::string s;

@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 00:10:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/04 21:14:26 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/05 20:44:18 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,7 @@ bool checkIndexInsidDerctory(std::string *path) {
 const std::string generatBody(std::string _requestedSource) {
     std::ifstream file(_requestedSource.c_str(), std::ifstream::binary);
     if (!file.is_open())
-    {
-    	std::cout << "Error in opening file\n";    // this error and any other like its need to handel in parssing and exit if an problem (ofxorce check with it in my code to evet any carash)
-    	std::exit(-404);
-    }
+        throw(403);
 
     file.seekg(0, std::ios::end);
     int length = file.tellg();
