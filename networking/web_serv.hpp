@@ -55,7 +55,7 @@ class request
 	std::string query;
 	int max_body_size;
 	std::map<std::string, std::string> map_request;
-	~request(){}	
+	~request(){}
 };
 
 class client

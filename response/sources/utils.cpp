@@ -17,7 +17,7 @@ bool checkIndexInsidDerctory(std::string *path) {
     std::string index = *path + "index.html";
     if (access(index.c_str(), 0) == 0) {
         *path = index;
-        return true; 
+        return true;
     }
     return false;
 }

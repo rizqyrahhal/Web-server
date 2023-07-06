@@ -65,7 +65,7 @@ std::string Response::CreatResponse(server server, request request) {
                     response.PostMethod(server, request);
             else
                 std::cout << "IF SHOWING THIS LINE IT IS A PROBLEME BEFORE WORKING ON THE REQUESTED METHOD !!!!!!!!!\n";
-            throw(403);
+            throw(403); // just to be work !!!!!!!!!!!!!!
         }
         catch(int statuscode) { //change int by short in futere
                 std::string *res = new std::string(response.ResponseGeneratedFromStatusCode(statuscode, server, request));

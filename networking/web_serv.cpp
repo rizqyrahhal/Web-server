@@ -26,13 +26,15 @@ int request::read_reqwest(int fd_client)
 {
 	std::vector<char> buffer(2743); // Adding by rarahhal
 	int bytesrecv = recv(fd_client, &buffer[0], 2743, 0); // Adding by rarahhal
-	// char buffer[30000] = {0};
-	// int bytesrecv = recv(fd_client, buffer, 30000, 0);
-	// buffer[bytesrecv] = '\0';
+	// char buffer[2732];
+	// int bytesrecv = recv(fd_client, buffer, 2731, 0);
+	// buffer[2731] = '\0';
 	// std::cout << "----->" << bytesrecv << std::endl;
-	std::cout << "Request: (read this size = " << bytesrecv << ")\n" << std::string(buffer.begin(), buffer.end()) << std::endl;
+	std::cout << "Request: (read this size = " << bytesrecv << ")\n\n" << std::string(buffer.begin(), buffer.end()) << std::endl;
+	// std::cout << "Request: (read this size = " << bytesrecv << ")\n" << buffer << std::endl;
     if (bytesrecv > 0)
 	{
+		// std::string str(buffer);
 		std::string str(buffer.begin(), buffer.end());
 		std::vector<std::string> request_line;
 		std::stringstream tmp(str);

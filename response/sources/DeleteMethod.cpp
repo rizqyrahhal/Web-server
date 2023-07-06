@@ -68,23 +68,23 @@ void Response::DeleteMethod(server server, request request) {
         
 		/* directory handling */
 		if (_resourceType == DRCT) {
-            // if (location has cgi ) {
-            //     checkForIndexFile(&(*this), server);
-            // }
+            /* CGI */
+            if (server.locations[_matchedLocationPosition].cgi.empty()) {
+                if (!checkIndexInsidDerctory(&_requestedSource))
+                    throw(403);
+                /* run cgi on requested file with DELETE REQUEST_METHOD && then Return the code depending on CGI */
+            }
 			if (deleteDirectory(_requestedSource))
 				throw(204);
         }
 
         /* file handling */
-        // if (location has cgi ) {
-        //     cgi code
-        // }
+        /* CGI */
+        if (server.locations[_matchedLocationPosition].cgi.empty()) {
+            /* Return Code Depend on CGI */
+        }
 		if (std::remove(_requestedSource.c_str()) == 0)
 			throw (204);
-    }
-    else if (_resourceType != DRCT && _resourceType != FILE) {
-                    //cgi
-        /* my be function to excute cgi if file or directory have cgi */
     }
 }
 
