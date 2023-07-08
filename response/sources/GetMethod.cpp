@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:24:42 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/05 21:33:30 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/08 01:04:54 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,15 @@ std::string generateAutoindexFile(std::string requestedSource) {
     return (indexhtml);
 }
 
+
+#include <iostream>
+#include <string>
+#include <unistd.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+
 /* this function for new return a response inside string,
     but for advance return object that contian header indide string,
     and file of body and member function to red from this file by spesific size */
@@ -43,9 +52,45 @@ void Response::GetMethod(server server, request request) {
         else
             std::cout << "DERCTORY\n";
     #endif
+	
     if (_resourceType == DRCT || _resourceType == FILE)
     {
-        if (_resourceType == DRCT) {
+		
+		std::cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
+        if (_requestedSource == "./www/cgi/test.php")
+		{
+			char* argv[] = {
+            (char*)"./www/cgi/php-cgi.exe",
+            (char*)"-f",
+            (char*)"./www/cgi/test.php",
+            nullptr
+        	};
+			int fd[2];
+			pipe(fd);
+			pid_t pid = fork();
+    		if (pid == 0)
+    		{
+				dup2(fd[1], 1);
+				close(fd[1]);
+        		execve("./www/cgi/php-cgi.exe", argv, NULL);
+       			perror("execve");
+        		exit(-1);
+   			}
+    	else
+    	{
+        	int status;
+        	waitpid(pid, &status, 0);
+			dup2(fd[0], 0);
+			close(fd[0]);
+			std::vector<char> buffer(5);
+			int size = read(0, &buffer[0], 5);
+			std::cout << "************** Response Genarated by CGI **************\n Genarate this SIZE: " << size  << "\n" << std::string(buffer.begin(), buffer.end()) << std::endl;
+			throw(std::string(buffer.begin(), buffer.end()));
+    	}
+		}
+		std::cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
+        
+		if (_resourceType == DRCT) {
             checkForIndexFile(&(*this), server);
         }
         Response::GetContentType(_requestedSource, _mimeTypes, _contentType);
@@ -57,6 +102,34 @@ void Response::GetMethod(server server, request request) {
         throw(200);
     }
     else if (_resourceType != DRCT && _resourceType != FILE) {
+
+		/* CGI test work */
+        if (_requestedSource == "index.php")
+		{
+			char* argv[] = {
+            (char*)"./www/cgi/php-cgi.exe",
+            (char*)"-f",
+            (char*)"./www/cgi/test.php",
+            nullptr
+        	};
+			int fd = 0;
+			pid_t pid = fork();
+			dup2(1, fd);
+    		if (pid == 0)
+    		{
+        		execve("./www/cgi/php-cgi.exe", argv, NULL);
+       			perror("execve");
+        		exit(-1);
+   			}
+    	else
+    	{
+        	int status;
+        	waitpid(pid, &status, 0);
+			std::vector<char> buffer(1024);
+			int size = read(fd, &buffer[0], 1024);
+			std::cout << "************** Response Genarated by CGI **************\n Genarate this SIZE: " << size  << "\n" << std::string(buffer.begin(), buffer.end()) << std::endl;
+    	}
+		}
                     //cgi
         /* my be function to excute cgi if file or directory have cgi */
     }

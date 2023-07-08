@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/05 22:10:36 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/07 23:28:45 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@
 
 #define FILE true
 #define DRCT false
+#define PHPCGI 3
+#define BYCGI 4
 
 #ifndef DEBUG
 #define DEBUG

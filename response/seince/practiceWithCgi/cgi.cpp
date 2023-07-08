@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/06 21:48:56 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/07 00:14:56 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/07 23:17:16 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 int main()
 {
         char* argv[] = {
-            (char*)"php-cgi",
+            (char*)"./php-cgi.exe",
             (char*)"-f",
             (char*)"./test.php",
             nullptr
@@ -29,7 +29,7 @@ int main()
 
     if (pid == 0)
     {
-        execve("./php-8.1.21/sapi/cgi/php-cgi.1.in", argv, NULL);
+        execve("./php-cgi.exe", argv, NULL);
         perror("execve");
         exit(-1);
     }

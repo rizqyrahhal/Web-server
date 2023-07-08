@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 11:09:55 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/05 23:25:29 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/08 01:09:14 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,11 +65,10 @@ void Response::DeleteMethod(server server, request request) {
     #endif
     /* affter finish dyrectory error if no error and index take the same floow like file just set the neded information */
     if (_resourceType == DRCT || _resourceType == FILE) {  // change this condition in futere
-        
 		/* directory handling */
 		if (_resourceType == DRCT) {
             /* CGI */
-            if (server.locations[_matchedLocationPosition].cgi.empty()) {
+            if (!server.locations[_matchedLocationPosition].cgi.empty()) {
                 if (!checkIndexInsidDerctory(&_requestedSource))
                     throw(403);
                 /* run cgi on requested file with DELETE REQUEST_METHOD && then Return the code depending on CGI */
