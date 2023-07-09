@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:24:42 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/09 02:57:20 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/09 14:03:05 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ void Response::GetMethod(server server, request request) {
         	};
 			// char* envp[] = {
 			// (char*)"REQUEST_METHOD=GET",
+			// (char*)"REDIRECT_STATUS=0",
 			// // (char*)"",
 			// // (char*)"",
 			// nullptr
@@ -70,16 +71,14 @@ void Response::GetMethod(server server, request request) {
 			int fd[2];
 			pipe(fd);
 			pid_t pid = fork();
-    		if (pid == 0)
-    		{
+    		if (pid == 0) {
 				dup2(fd[1], 1);
 				close(fd[1]);
         		execve("./www/cgi/php-cgi.exe", argv, NULL);
        			perror("execve");
         		exit(-1);
    			}
-    		else
-    		{
+    		else {
         	int status;
         	waitpid(pid, &status, 0);
 			dup2(fd[0], 0);

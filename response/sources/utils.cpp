@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 00:10:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/05 20:44:18 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/09 13:40:05 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,15 @@
 
 
 bool checkIndexInsidDerctory(std::string *path) {
-    std::string index = *path + "index.html";
-    if (access(index.c_str(), 0) == 0) {
-        *path = index;
+    std::string indexhtml = *path + "index.html"; //Just hardecode be to make it check for any index name
+    std::string indexphp = *path + "index.php";
+    // std::string indexpy = *path + "index.py";
+    if (access(indexhtml.c_str(), 0) == 0) {
+        *path = indexhtml;
+        return true;
+    }
+    if (access(indexphp.c_str(), 0) == 0) {
+        *path = indexphp;
         return true;
     }
     return false;
