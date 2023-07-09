@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:24:42 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/08 01:04:54 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/09 02:57:20 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,6 @@ std::string generateAutoindexFile(std::string requestedSource) {
 }
 
 
-#include <iostream>
-#include <string>
-#include <unistd.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 
 
 /* this function for new return a response inside string,
@@ -55,16 +49,24 @@ void Response::GetMethod(server server, request request) {
 	
     if (_resourceType == DRCT || _resourceType == FILE)
     {
+		if (_resourceType == DRCT) {
+            checkForIndexFile(&(*this), server);
+        }
+        Response::GetContentType(_requestedSource, _mimeTypes, _contentType);
 		
-		std::cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
-        if (_requestedSource == "./www/cgi/test.php")
+		if (_contentType.empty())  // here working on cgi files     !!!! (becous the FILS AND DIRECTORYS RELATION IN THE FILE REQUSTED ME BY CHECK THE DYROCTORY IF HAVENT IN INDEX FILE then work as file)
 		{
 			char* argv[] = {
             (char*)"./www/cgi/php-cgi.exe",
-            (char*)"-f",
-            (char*)"./www/cgi/test.php",
+            (char*)_requestedSource.c_str(),
             nullptr
         	};
+			// char* envp[] = {
+			// (char*)"REQUEST_METHOD=GET",
+			// // (char*)"",
+			// // (char*)"",
+			// nullptr
+			// };
 			int fd[2];
 			pipe(fd);
 			pid_t pid = fork();
@@ -76,24 +78,22 @@ void Response::GetMethod(server server, request request) {
        			perror("execve");
         		exit(-1);
    			}
-    	else
-    	{
+    		else
+    		{
         	int status;
         	waitpid(pid, &status, 0);
 			dup2(fd[0], 0);
 			close(fd[0]);
-			std::vector<char> buffer(5);
-			int size = read(0, &buffer[0], 5);
+			std::vector<char> buffer(2606);
+			int size = read(0, &buffer[0], 2606);
 			std::cout << "************** Response Genarated by CGI **************\n Genarate this SIZE: " << size  << "\n" << std::string(buffer.begin(), buffer.end()) << std::endl;
-			throw(std::string(buffer.begin(), buffer.end()));
-    	}
+			
+			std::string str(buffer.begin(), buffer.end());
+			throw(std::string("HTTP/1.1 200 Ok\r\n" + str)); // harde code (the start line exactly the status code  be to make compatible with the cgi status header)
+			// throw(std::string(buffer.begin(), buffer.end()));
+    		}
 		}
-		std::cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
-        
-		if (_resourceType == DRCT) {
-            checkForIndexFile(&(*this), server);
-        }
-        Response::GetContentType(_requestedSource, _mimeTypes, _contentType);
+
         setHeader("Content-Type", _contentType);
         #ifdef DEBUG
             std::cout << "contentType : " << _contentType << std::endl;
@@ -101,14 +101,13 @@ void Response::GetMethod(server server, request request) {
         setBody(generatBody(_requestedSource));
         throw(200);
     }
-    else if (_resourceType != DRCT && _resourceType != FILE) {
+    else if (_resourceType != DRCT && _resourceType != FILE) { // for now not enter to this condition in any way
 
 		/* CGI test work */
         if (_requestedSource == "index.php")
 		{
 			char* argv[] = {
             (char*)"./www/cgi/php-cgi.exe",
-            (char*)"-f",
             (char*)"./www/cgi/test.php",
             nullptr
         	};
@@ -135,6 +134,11 @@ void Response::GetMethod(server server, request request) {
     }
 }
 
+
+
+
+
+     /* autoindex template */
 // <!-- DOCTYPE html -->
 // <html>
 // <head><title>Directory Listing</title></head>
@@ -152,3 +156,60 @@ void Response::GetMethod(server server, request request) {
 // </ul>
 // </body>
 // </html>
+
+
+
+
+
+
+
+
+						/* the cgi testing work */
+
+// #include <iostream>
+// #include <string>
+// #include <unistd.h>
+// #include <unistd.h>
+// #include <sys/types.h>
+// #include <sys/wait.h>
+		// std::cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
+        // if (_requestedSource == "./tools/cgi-scripts/php/upload_simple.php")
+		// {
+		// 	char* argv[] = {
+        //     (char*)"./www/cgi/php-cgi.exe",
+        //     (char*)"./tools/cgi-scripts/php/upload_simple.php",
+        //     nullptr
+        // 	};
+		// 	// char* envp[] = {
+		// 	// (char*)"REQUEST_METHOD=GET",
+		// 	// // (char*)"",
+		// 	// // (char*)"",
+		// 	// nullptr
+		// 	// };
+		// 	int fd[2];
+		// 	pipe(fd);
+		// 	pid_t pid = fork();
+    	// 	if (pid == 0)
+    	// 	{
+		// 		dup2(fd[1], 1);
+		// 		close(fd[1]);
+        // 		execve("./www/cgi/php-cgi.exe", argv, NULL);
+       	// 		perror("execve");
+        // 		exit(-1);
+   		// 	}
+    	// else
+    	// {
+        // 	int status;
+        // 	waitpid(pid, &status, 0);
+		// 	dup2(fd[0], 0);
+		// 	close(fd[0]);
+		// 	std::vector<char> buffer(2606);
+		// 	int size = read(0, &buffer[0], 2606);
+		// 	std::cout << "************** Response Genarated by CGI **************\n Genarate this SIZE: " << size  << "\n" << std::string(buffer.begin(), buffer.end()) << std::endl;
+			
+		// 	std::string str(buffer.begin(), buffer.end());
+		// 	throw(std::string("HTTP/1.1 200 Ok\r\n" + str));
+		// 	// throw(std::string(buffer.begin(), buffer.end()));
+    	// }
+		// }
+		// std::cout << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";

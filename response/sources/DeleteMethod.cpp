@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 11:09:55 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/08 01:09:14 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/08 15:36:02 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void Response::DeleteMethod(server server, request request) {
 		if (_resourceType == DRCT) {
             /* CGI */
             if (!server.locations[_matchedLocationPosition].cgi.empty()) {
-                if (!checkIndexInsidDerctory(&_requestedSource))
+                if (!checkIndexInsidDerctory(&_requestedSource))  // here be to chenge to check index.php or index.by becouse its cgi
                     throw(403);
                 /* run cgi on requested file with DELETE REQUEST_METHOD && then Return the code depending on CGI */
             }

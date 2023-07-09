@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 16:45:33 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/06 00:14:41 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/09 02:50:47 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void Response::PostMethod(server server, request request) {
         // getFileName(); genarate or detect the filename
 
 		/* here trow some number to return after it the nececery information to upload the body the file where upload it */
+        throw(201);  // Just hardcode be to check if uploaded
     }
     /* here the other way, working on location dosn't support upload */
     else {
@@ -42,7 +43,9 @@ void Response::PostMethod(server server, request request) {
 
         if (_resourceType == DRCT || _resourceType == FILE) {
         	if (_resourceType == DRCT && !checkIndexInsidDerctory(&_requestedSource))
+            {
 				throw(403);
+            }
 			else if (server.locations[_matchedLocationPosition].cgi.empty())
 				throw(403);
 			else {

@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 13:49:31 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/26 04:40:50 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/09 02:47:46 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ std::string getMimeType(std::unordered_map<std::string, std::string> mimetypes, 
         if (it->first == fileextantion)
             return (it->second);
     }
-    return ("Extantion NOT found inside mimeType :( :( :):) \n");
+    return ("");
+    // return ("Extantion NOT found inside mimeType :( :( :):) \n");
 }
 
 /* rest sometype not work */
