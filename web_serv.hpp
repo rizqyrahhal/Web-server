@@ -20,9 +20,12 @@
 #include <sys/socket.h>
 #include <stdlib.h>
 
+#include "client.hpp"
 #include "includes/responsePart.hpp"
 
 #define BUFFER_SIZE 1024
+
+class client;
 
 class locations
 {
@@ -50,7 +53,7 @@ class request
 	public:
 	request(){}
 	request(int max_size);
-	int	read_reqwest(int fd_client);
+	int	read_reqwest(client & client);
 	std::string method;
 	std::string url;
 	std::string query;
@@ -58,27 +61,6 @@ class request
 	std::map<std::string, std::string> map_request;
 	~request(){}
 	
-};
-
-class client
-{
-
-	public:
-	client(/* args */);
-
-	int fd_client;
-	int bytesrecv;
-	struct sockaddr_in client_address;
-	socklen_t clientaddrlenght;
-	int check;
-	int p;
-	int resp;
-	int readFd;
-	int max_client_body_size;
-	request *request_client;
-	unsigned long size;
-	client(int maxBodySize);
-	~client();
 };
 
 class server

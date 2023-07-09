@@ -1,4 +1,6 @@
-#include "web_serv.hpp" 
+#include "web_serv.hpp"
+
+
 #include <sys/socket.h>
 void    creat_socket_and_bind(global & glob)
 {
@@ -65,10 +67,11 @@ client accept_new_connection(server& serv)
 {
     client client(serv.client_body_size);
 	client.fd_client = accept(serv.fd_server, (struct sockaddr *)&client.client_address, &client.clientaddrlenght);
+    fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
 	if (client.fd_client == -1)
 	{
 	   std::cerr<<"failed accept method."<<std::endl;
-		exit(EXIT_FAILURE);
+	// exit(EXIT_FAILURE);
 	}
 	if (server::maxfd < client.fd_client)
 		server::maxfd = client.fd_client;
@@ -79,15 +82,15 @@ client accept_new_connection(server& serv)
 int    send_video(client & client)
 {
     int fd = 0;
-    std::cout <<" i want to send video --->>>"<<std::endl;
+    // std::cout <<" i want to send video --->>>"<<std::endl;
     char *readvideo = new char[1024];
     if (client.p == 0)
     {
-        fd = open("/Users/araysse/Desktop/test.mp4", 0);
+        fd = open("/Users/araysse/Desktop/video.mp4", 0);
         client.readFd = fd;
         std::string header = "HTTP/1.1 200 OK\r\n"
                        "Content-Type: video/mp4\r\n"
-                       "Content-Length: 344248223\r\n"
+                       "Content-Length: 32457473\r\n"
                        "Connection: closed\r\n\r\n";
         send(client.fd_client, header.c_str(), header.size(), 0);
         client.p++;
@@ -101,7 +104,10 @@ int    send_video(client & client)
         // Send the image data
     int snd = send(client.fd_client, readvideo, rd, 0);
     if (snd <= 0)
+    {
+        close(fd);
         return (1);
+    }
     return (0);
 }
 
@@ -127,7 +133,7 @@ void    run_servers(global & glob)
                 client client = accept_new_connection(server);
                 std::cout << "bbb Clients " << server.client.size() << "\n";
 				server.client.push_back(client);
-                std::cout << "Pushing Clients\n";
+                std::cout << "Pushing Clients fd_client : "<<client.fd_client<<std::endl;
                 // exit(0);
             }
             // std::cout << "num clients => " << server.client.size() << std::endl;
@@ -137,13 +143,13 @@ void    run_servers(global & glob)
                 {
 				    client &client = server.client[i];
                         //  std::cout << "CLIENT CHECK => " << client.check << std::endl;
-                     std::cout << "clients => " << server.client.size()  << " i = " << i << std::endl;
+                    // std::cout << "clients => " << server.client.size()  << " i = " << i << std::endl;
 				    // IF statement for Request.
 				    if (FD_ISSET(client.fd_client, &readable) && client.check == 0)
 				    {
-                        client.resp = client.request_client->read_reqwest(client.fd_client);
-                        std::cout<<client.request_client->max_body_size<<std::endl;
-                        std::cout<<client.resp<<std::endl;
+                        client.resp = client.request_client->read_reqwest(client);
+                        // std::cout<<client.request_client->max_body_size<<std::endl;
+                        // std::cout<<client.resp<<std::endl;
 				    	// fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
                         client.check = 1;
 				    }
@@ -155,11 +161,13 @@ void    run_servers(global & glob)
                             send(client.fd_client, GenerateResponseFromStatusCode(client.resp).c_str(), GenerateResponseFromStatusCode(client.resp).size(), 0);
                         }
                         else if (client.resp == 0){
-                            std::cout<<"send video ----->>>>>"<<std::endl;
+                            // std::cout<<"send video ----->>>>>"<<std::endl;
                             pr = send_video(client);
+                            // std::cout<<"sift chi haja hna ::::"<<std::endl;
                             //send correct response
+                            //  std::cout<<"client "<<client.fd_client<<" in sending mode"<<std::endl;
                         }
-                        std::cout << "here "  << pr << "\n";
+                        // std::cout << "here "  << pr << "\n";
                         if (client.resp > 0 || pr) {
                             std::cout<<"client "<<client.fd_client<<" dropped succesfolly"<<std::endl;
                             close(client.fd_client);

@@ -6,7 +6,7 @@ fd_set server::current2 = server::initializer();
 
 int main(int ac, char **av)
 {
- 
+  
     if (ac != 2)
     {
         std::cout<<"invalid argument !"<<std::endl;

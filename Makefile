@@ -2,6 +2,7 @@ SRC = main.cpp \
 	parcing.cpp \
 	web_serv.cpp \
 	networking.cpp \
+	client.cpp \
 	./sources/responsePart.cpp \
 	./sources/HttpResponse.cpp \
 	./sources/error_page.cpp \
