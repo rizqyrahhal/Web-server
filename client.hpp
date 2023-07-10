@@ -41,6 +41,7 @@ class client
 	int check;
 	int p;
 	int resp;
+	int pr;
 	int readFd;
 	int max_client_body_size;
 	request *request_client;

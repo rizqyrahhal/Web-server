@@ -21,5 +21,6 @@ client::client(int maxClientBodySize) {
 	readFd = -1;
 	// size = 0;
 	resp = 0;
-	// header_parced = true;
+	pr = 0;
+	header_parced = true;
 }
