@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:24:42 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/09 14:03:05 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/11 03:14:07 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,48 +46,76 @@ void Response::GetMethod(server server, request request) {
         else
             std::cout << "DERCTORY\n";
     #endif
+
+	if (_resourceType == DRCT) {
+        checkForIndexFile(&(*this), server);
+    }
+    Response::GetContentType(_requestedSource, _mimeTypes, _contentType);
 	
-    if (_resourceType == DRCT || _resourceType == FILE)
-    {
-		if (_resourceType == DRCT) {
-            checkForIndexFile(&(*this), server);
-        }
-        Response::GetContentType(_requestedSource, _mimeTypes, _contentType);
+	if (_contentType.empty())  // here working on cgi files     !!!! (becous the FILS AND DIRECTORYS RELATION IN THE FILE REQUSTED ME BY CHECK THE DYROCTORY IF HAVENT IN INDEX FILE then work as file)
+	{
+		// 	metaVariablesName.push_back("REQUEST_METHOD");
+		// 	metaVariablesName.push_back("QUERY_STRING");
+		// 	metaVariablesName.push_back("CONTENT_LENGTH");
+		// 	metaVariablesName.push_back("CONTENT_TYPE");
+		// 	metaVariablesName.push_back("GATEWAY_INTERFACE");
+		// 	metaVariablesName.push_back("PATH_INFO");
+		// 	metaVariablesName.push_back("REMOTE_ADDR");
+		// 	metaVariablesName.push_back("SCRIPT_NAME");
+		// 	metaVariablesName.push_back("SERVER_NAME");
+		// 	metaVariablesName.push_back("SERVER_PORT");
+		// 	metaVariablesName.push_back("SERVER_PROTOCOL");
+		// 	metaVariablesName.push_back("SERVER_SOFTWARE");
+
+		// _metaVariables = new char*[13];
+		// _metaVariables[0] = new char[15 + request.method.size()];
+		// std::string tafrigh(std::string(metaVariablesName[0]) + "=" + request.method);
+		// _metaVariables[0] = tafrigh.c_str();
 		
-		if (_contentType.empty())  // here working on cgi files     !!!! (becous the FILS AND DIRECTORYS RELATION IN THE FILE REQUSTED ME BY CHECK THE DYROCTORY IF HAVENT IN INDEX FILE then work as file)
-		{
-			char* argv[] = {
-            (char*)"./www/cgi/php-cgi.exe",
-            (char*)_requestedSource.c_str(),
-            nullptr
-        	};
-			// char* envp[] = {
-			// (char*)"REQUEST_METHOD=GET",
-			// (char*)"REDIRECT_STATUS=0",
-			// // (char*)"",
-			// // (char*)"",
-			// nullptr
-			// };
-			int fd[2];
-			pipe(fd);
-			pid_t pid = fork();
-    		if (pid == 0) {
-				dup2(fd[1], 1);
-				close(fd[1]);
-        		execve("./www/cgi/php-cgi.exe", argv, NULL);
-       			perror("execve");
-        		exit(-1);
-   			}
-    		else {
-        	int status;
-        	waitpid(pid, &status, 0);
-			dup2(fd[0], 0);
-			close(fd[0]);
-			std::vector<char> buffer(2606);
-			int size = read(0, &buffer[0], 2606);
-			std::cout << "************** Response Genarated by CGI **************\n Genarate this SIZE: " << size  << "\n" << std::string(buffer.begin(), buffer.end()) << std::endl;
-			
-			std::string str(buffer.begin(), buffer.end());
+		// _metaVariables[1] = new char[13 + request.query.size()];
+		// std::string tafrigh2(std::string(metaVariablesName[1]) + "=" + request.query);
+		// _metaVariables[0] = tafrigh2.c_str();
+
+
+		size_t uy = request.map_request.size();
+		std::cout << "~~~~~~~~~~~~~~~~~~~~ Request Headers ~~~~~~~~~~~~~~~~~~~~\nHEADER_SIZE: "<< uy << std::endl;
+		for (std::map<std::string, std::string>::iterator it = request.map_request.begin(); it != request.map_request.end(); ++it) {
+			std::cout << it->first << "=" << it->second << std::endl << uy << std::endl;
+			uy--;
+		}
+
+		char* argv[] = {
+        (char*)"./www/cgi/php-cgi.exe",
+        (char*)_requestedSource.c_str(),
+        nullptr
+        };
+		// char* envp[] = {
+		// (char*)"REQUEST_METHOD=GET",
+		// (char*)"REDIRECT_STATUS=0",
+		// // (char*)"",
+		// // (char*)"",
+		// nullptr
+		// };
+		int fd[2];
+		pipe(fd);
+		pid_t pid = fork();
+    	if (pid == 0) {
+			dup2(fd[1], 1);
+			close(fd[1]);
+    		execve("./www/cgi/php-cgi.exe", argv, NULL);
+    		perror("execve");
+    		exit(-1);
+   		}
+    	else {
+    	int status;
+    	waitpid(pid, &status, 0);
+		dup2(fd[0], 0);
+		close(fd[0]);
+		std::vector<char> buffer(2606);
+		int size = read(0, &buffer[0], 2606);
+		std::cout << "************** Response Genarated by CGI **************\n Genarate this SIZE: " << size  << "\n" << std::string(buffer.begin(), buffer.end()) << std::endl;
+		
+		std::string str(buffer.begin(), buffer.end());
 			throw(std::string("HTTP/1.1 200 Ok\r\n" + str)); // harde code (the start line exactly the status code  be to make compatible with the cgi status header)
 			// throw(std::string(buffer.begin(), buffer.end()));
     		}
@@ -99,38 +127,6 @@ void Response::GetMethod(server server, request request) {
         #endif
         setBody(generatBody(_requestedSource));
         throw(200);
-    }
-    else if (_resourceType != DRCT && _resourceType != FILE) { // for now not enter to this condition in any way
-
-		/* CGI test work */
-        if (_requestedSource == "index.php")
-		{
-			char* argv[] = {
-            (char*)"./www/cgi/php-cgi.exe",
-            (char*)"./www/cgi/test.php",
-            nullptr
-        	};
-			int fd = 0;
-			pid_t pid = fork();
-			dup2(1, fd);
-    		if (pid == 0)
-    		{
-        		execve("./www/cgi/php-cgi.exe", argv, NULL);
-       			perror("execve");
-        		exit(-1);
-   			}
-    	else
-    	{
-        	int status;
-        	waitpid(pid, &status, 0);
-			std::vector<char> buffer(1024);
-			int size = read(fd, &buffer[0], 1024);
-			std::cout << "************** Response Genarated by CGI **************\n Genarate this SIZE: " << size  << "\n" << std::string(buffer.begin(), buffer.end()) << std::endl;
-    	}
-		}
-                    //cgi
-        /* my be function to excute cgi if file or directory have cgi */
-    }
 }
 
 

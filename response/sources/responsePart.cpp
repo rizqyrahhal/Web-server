@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/08 00:59:20 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/11 03:21:35 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,12 @@ std::string Response::CreatResponse(server server, request request) {
         // std::map<int, std::string> map_err_page;
         
         // server.locations[0].index = "./www/app/html/index.html"; // need to addd in parssing !!!!
-        
+
+
+        // i need specefication about index file
+
+
+
         /* this is the second comment : END OF COMMENT */
         
         Response response;

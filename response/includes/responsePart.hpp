@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/09 02:38:43 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/11 02:54:31 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ class Response : public  HttpResponse
 {
 	private:
 		std::unordered_map<std::string, std::string> _mimeTypes;
+		// std::vector<char*> metaVariablesName; 
+		// char **_metaVariables;
 	    static size_t _matchedLocationPosition;
 		std::string _matchedLocation;
 		std::string _requestedSource;

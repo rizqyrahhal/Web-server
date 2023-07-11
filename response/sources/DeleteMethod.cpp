@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 11:09:55 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/08 15:36:02 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/11 03:32:40 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,21 +67,59 @@ void Response::DeleteMethod(server server, request request) {
     if (_resourceType == DRCT || _resourceType == FILE) {  // change this condition in futere
 		/* directory handling */
 		if (_resourceType == DRCT) {
-            /* CGI */
-            if (!server.locations[_matchedLocationPosition].cgi.empty()) {
+            if (!server.locations[_matchedLocationPosition].cgi.empty()) { /* CGI */
                 if (!checkIndexInsidDerctory(&_requestedSource))  // here be to chenge to check index.php or index.by becouse its cgi
                     throw(403);
-                /* run cgi on requested file with DELETE REQUEST_METHOD && then Return the code depending on CGI */
+                /* run cgi on requested file with DELETE REQUEST_METHOD && then Return the code depending on CGI */ // doing that in cgi condition beloow
             }
-			if (deleteDirectory(_requestedSource))
+			else if (deleteDirectory(_requestedSource)) // change it to else if in 11-07-2023
 				throw(204);
         }
 
-        /* file handling */
         /* CGI */
         if (server.locations[_matchedLocationPosition].cgi.empty()) {
             /* Return Code Depend on CGI */
+
+            char* argv[] = {
+            (char*)"./www/cgi/php-cgi.exe",
+            (char*)_requestedSource.c_str(),
+            nullptr
+        	};
+
+			char* envp[] = {
+			(char*)"REQUEST_METHOD=DELETE",
+			(char*)"REDIRECT_STATUS=0",
+			// (char*)"",
+			// (char*)"",
+			nullptr
+			};
+			int fd[2];
+			pipe(fd);
+			pid_t pid = fork();
+    		if (pid == 0) {
+				dup2(fd[1], 1);
+				close(fd[1]);
+        		execve("./www/cgi/php-cgi.exe", argv, envp);
+       			perror("execve");
+        		exit(-1);
+   			}
+    		else {
+        	int status;
+        	waitpid(pid, &status, 0);
+			dup2(fd[0], 0);
+			close(fd[0]);
+			std::vector<char> buffer(2606);
+			int size = read(0, &buffer[0], 2606);
+			std::cout << "************** Response Genarated by CGI **************\n Genarate this SIZE: " << size  << "\n" << std::string(buffer.begin(), buffer.end()) << std::endl;
+			
+			std::string str(buffer.begin(), buffer.end());
+			throw(std::string("HTTP/1.1 200 Ok\r\n" + str)); // harde code (the start line exactly the status code  be to make compatible with the cgi status header)
+			// throw(std::string(buffer.begin(), buffer.end()));
+    		}
+
         }
+
+        /* file handling */
 		if (std::remove(_requestedSource.c_str()) == 0)
 			throw (204);
     }
