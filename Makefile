@@ -17,6 +17,9 @@ SRCS = main.cpp \
 	response/sources/responseutils.cpp \
 	response/sources/utils.cpp \
 	response/sources/mimeTypes.cpp \
+	response/sources/cgi.cpp \
+	response/sources/Response.cpp \
+
 
 
 

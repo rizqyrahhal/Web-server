@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/11 02:54:31 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/13 03:39:09 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 
 #include "HttpResponse.hpp"
 #include "statuscode.hpp"
+#include "Response.hpp"
 #include "../../networking/web_serv.hpp"
 
 #define FILE true
@@ -45,22 +46,10 @@
 // #define CURENT_DEBUG
 #endif
 
-
-
-
-// class switch
-// {
-// 	private:
-// 		std::string header;
-// 		int fd;
-// 	public:
-// 		std::string readforsend(short sizetoread);
-// };
-
-
 class request;
 class server;
 class locations;
+class ResponseReturned;
 
 class Response : public  HttpResponse
 {
@@ -76,16 +65,22 @@ class Response : public  HttpResponse
 		// std::string _path;
 		std::string _method;
 
+		bool isCgi;
+		std::string bodyfile;
+		bool isfile;
+
 		std::string GetMatchedLocationRequestUrl(std::vector<locations> locations, std::string requesturi);
 		static void IsLocationHaveRedirection(locations matchedlocation, Response &response);
 		static void IsMethodAllowedInLocation(std::vector<std::string> allowedmethod, std::string requestmethod, Response &response);
-		void GetMethod(server server, request request);
+		void GetMethod(server server, request request, std::string &bodyfile, bool &isfile);
 		void DeleteMethod(server server, request request);
 		void PostMethod(server server, request request);
+		// cgi
+		void cgi(server server, request request);
 	public:
 		Response();
-		std::string CreatResponse(server server, request request);
-		std::string ResponseGeneratedFromStatusCode(int statuscode, server server, request request);
+		ResponseReturned CreatResponse(server server, request request);
+		std::string ResponseGeneratedFromStatusCode(int statuscode, server server, request request, std::string &bodyfile, bool &isfile);
 
 		/* seters */
 		/* geters */
@@ -94,12 +89,10 @@ class Response : public  HttpResponse
 		/* response utilse */
 		static void GetContentType(std::string requestedSource, std::unordered_map<std::string, std::string> mimetypes, std::string &contenttype);
 		static std::string GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method);
-		static void checkForIndexFile(Response *response, server server);
+		static void checkForIndexFile(Response *response, server server, std::string &bodyfile, bool &isfile);
 };
 
 std::string GenerateResponseFromStatusCode(int statuscode);
-std::string GenerateResponseFromStatusCode(int statuscode, Response response);
-
 
 /* mimetypes and content type function */
 void fillMimeTypes(std::unordered_map<std::string, std::string> &mimeTypes);
@@ -109,6 +102,7 @@ std::string getMimeType(std::unordered_map<std::string, std::string> mimetypes, 
 /* utils */
 bool checkIndexInsidDerctory(std::string *path);
 const std::string generatBody(std::string _requestedSource);
+int calculeBodySize(std::string _requestedSource);
 std::string generateAutoindexFile(std::string requestedSource); // in GET method
 
 
@@ -117,6 +111,9 @@ const std::string GenerateErrorPage(int statuscode, std::string statusmessage);
 std::string SearchAboutErrorPageFormTowPlaces(int statuscode, std::map<int, std::string> g_err_page, std::map<int, std::string> l_err_page);
 std::string SearchAboutErrorPage(int statuscode, std::map<int, std::string> g_err_page);
 std::string ReadErrorPage(std::string errpage);
+
+
+
 
 
 

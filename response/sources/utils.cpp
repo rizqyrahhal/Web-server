@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 00:10:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/09 13:40:05 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/13 01:56:52 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,4 +43,17 @@ const std::string generatBody(std::string _requestedSource) {
     file.close();
 
     return (std::string(buffer.begin(), buffer.end()));
+}
+
+int calculeBodySize(std::string _requestedSource) {
+    std::ifstream file(_requestedSource.c_str(), std::ifstream::binary);
+    if (!file.is_open())
+        throw(403);
+
+    file.seekg(0, std::ios::end);
+    int length = file.tellg();
+    file.seekg(0, std::ios::beg);
+    
+    file.close();
+    return (length);
 }

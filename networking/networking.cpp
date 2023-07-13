@@ -130,9 +130,10 @@ void    run_servers(global & glob)
                     {
                         std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
                         Response response;
-                        std::string res = response.CreatResponse(server, *client.request_client);
-                            std::cout << "\n***** Response ***** \n" << res << "\n----------------------------------\n";
-                        int sending = send(client.fd_client, res.c_str(), res.size(), 0);
+                        ResponseReturned res = response.CreatResponse(server, *client.request_client);
+                        std::cout << "isFile: " << res.getIsFile() << std::endl << "BodyFile: " << res.getBody() << std::endl;
+                            std::cout << "\n***** Response ***** \n" << (res.getHeaders() + res.readfile()) << "\n----------------------------------\n";
+                        int sending = send(client.fd_client, (res.getHeaders() + res.readfile()).c_str(), (res.getHeaders() + res.readfile()).size(), 0);
                         std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
                         std::cout << "\n###################################################################################################################################################\n\n";
                         //send correct response
