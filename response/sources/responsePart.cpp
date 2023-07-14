@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/14 07:53:58 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/14 16:20:02 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ void Response::cgi(server server, request request) {
 	(void)server;
 	Cgi cgi;
 
-	cgi.fillEnvp(request.map_request, request.method, request.query, _requestedSource);
+	cgi.fillEnvp(request, server, _requestedSource);
 
 		size_t uy = request.map_request.size();
 		std::cout << "~~~~~~~~~~~~~~~~~~~~ Request Headers ~~~~~~~~~~~~~~~~~~~~\nHEADER_SIZE: "<< uy << std::endl;

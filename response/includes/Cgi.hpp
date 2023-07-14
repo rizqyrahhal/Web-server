@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/14 03:15:57 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/14 07:53:07 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/14 16:21:41 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,10 @@
 #include <string>
 #include <vector>
 #include <map>
-// #include "../includes/responsePart.hpp"
+#include "../includes/responsePart.hpp"
+
+class request;
+class server;
 
 class Cgi
 {
@@ -27,7 +30,7 @@ class Cgi
 		// searchInRequestedHeader(std::string envpName);
 	public:
 		Cgi();
-		void fillEnvp(std::map<std::string, std::string> &map_request, std::string method, std::string query, std::string requstedsource);
+		void fillEnvp(request request, server server, std::string requstedsource);
 		void execut(std::string cgibin, char **argv, char **envp, std::string _requestedSource);
 		~Cgi();
 };

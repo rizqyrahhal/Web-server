@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 00:10:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/13 01:56:52 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/14 16:27:35 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,3 +57,32 @@ int calculeBodySize(std::string _requestedSource) {
     file.close();
     return (length);
 }
+
+
+
+
+
+
+
+
+
+
+                    // else if (resp == 0)
+                    // {
+                    //     std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
+                    //     Response response;
+                    //     ResponseReturned res = response.CreatResponse(server, *client.request_client);
+                    //     // std::cout << "isFile: " << res.getIsFile() << std::endl << "BodyFile: " << res.getBody() << std::endl;
+                    //     //     std::cout << "\n***** Response ***** \n" << (res.getHeaders() + res.readfile()) << "\n----------------------------------\n";
+                    //     // int sending = send(client.fd_client, (res.getHeaders()).c_str(), (res.getHeaders()).size(), 0);
+                    //     std::string chunck = res.GetChanckFromResponse(255);
+                    //     while(!chunck.empty()) {
+                    //         int sending = send(client.fd_client, chunck.c_str(), chunck.size(), 0);
+                    //         (void)sending;
+                    //         // std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
+                    //         chunck = res.GetChanckFromResponse(255);
+                    //     }
+                    //     std::cout << "\n###################################################################################################################################################\n\n";
+                    //     //send correct response
+                    //     sen = true; /// change with client_status_life
+                    // }
