@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:24:42 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/13 04:25:44 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/14 18:10:00 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,10 @@ void Response::GetMethod(server server, request request, std::string &bodyfile, 
     }
     Response::GetContentType(_requestedSource, _mimeTypes, _contentType);
 	
-	if (_contentType.empty())
+	if (_contentType == "application/x-httpd-php" || _contentType == "application/x-python-code")
 		cgi(server, request);
+	// if (_contentType.empty())
+	// 	cgi(server, request);
 
     setHeader("Content-Type", _contentType);
     #ifdef DEBUG

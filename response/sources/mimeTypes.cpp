@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 13:49:31 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/09 02:47:46 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/14 18:10:54 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -672,6 +672,8 @@ void fillMimeTypes(std::unordered_map<std::string, std::string> &mimeTypes) {
     mimeTypes[".xwd"] = "image/x-xwindowdump";
     mimeTypes[".z"] = "application/x-compress";
     mimeTypes[".zip"] = "application/zip";
+    mimeTypes[".php"] = "application/x-httpd-php"; // PHP CGI
+    mimeTypes[".py"] = "application/x-python-code"; // Python CGI
 
     
     // mimeTypes["application/fsharp-script"] = ".fsx";

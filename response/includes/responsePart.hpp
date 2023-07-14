@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/14 07:18:07 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/14 20:27:41 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@
 #define DRCT false
 
 #ifndef DEBUG
-// #define DEBUG
+#define DEBUG
 #endif
 
 #ifndef CURENT_DEBUG
@@ -63,6 +63,9 @@ class Response : public  HttpResponse
 		std::string _contentType; // if it is file (.html, .css, .js, .png, .mp4 ..) my be fill it in map and construct it at constructer
 		// std::string _path;
 		std::string _method;
+
+		/* Cgi*/
+		std::string _cgiBinPath;
 
 		/* functionalite */
 		std::string ResponseGeneratedFromStatusCode(int statuscode, server server, request request, std::string &bodyfile, bool &isfile);

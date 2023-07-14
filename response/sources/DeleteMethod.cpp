@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 11:09:55 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/14 01:54:33 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/14 20:31:20 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,11 @@ void Response::DeleteMethod(server server, request request) {
 
     /* CGI */
     if (!server.locations[_matchedLocationPosition].cgi.empty())
+    {
+        std::cout << ":;::: -_-------------------------------------- IN CGI -----------";
+    /// working here !!!!!!!!!!! //////
 		cgi(server, request);
+    }
 
     /* file handling */
 	if (std::remove(_requestedSource.c_str()) == 0)
