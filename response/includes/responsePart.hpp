@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/13 03:39:09 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/14 07:18:07 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,14 @@
 #include "HttpResponse.hpp"
 #include "statuscode.hpp"
 #include "Response.hpp"
+#include "Cgi.hpp"
 #include "../../networking/web_serv.hpp"
 
 #define FILE true
 #define DRCT false
-#define PHPCGI 3
-#define BYCGI 4
 
 #ifndef DEBUG
-#define DEBUG
+// #define DEBUG
 #endif
 
 #ifndef CURENT_DEBUG
@@ -53,43 +52,39 @@ class ResponseReturned;
 
 class Response : public  HttpResponse
 {
-	private:
+	private: /* data management */
 		std::unordered_map<std::string, std::string> _mimeTypes;
 		// std::vector<char*> metaVariablesName; 
 		// char **_metaVariables;
 	    static size_t _matchedLocationPosition;
 		std::string _matchedLocation;
 		std::string _requestedSource;
-		bool _resourceType; /* bool */ // dyrictore Vs file
+		bool _resourceType; /* dyrictore Vs file */
 		std::string _contentType; // if it is file (.html, .css, .js, .png, .mp4 ..) my be fill it in map and construct it at constructer
 		// std::string _path;
 		std::string _method;
 
-		bool isCgi;
-		std::string bodyfile;
-		bool isfile;
-
+		/* functionalite */
+		std::string ResponseGeneratedFromStatusCode(int statuscode, server server, request request, std::string &bodyfile, bool &isfile);
 		std::string GetMatchedLocationRequestUrl(std::vector<locations> locations, std::string requesturi);
 		static void IsLocationHaveRedirection(locations matchedlocation, Response &response);
 		static void IsMethodAllowedInLocation(std::vector<std::string> allowedmethod, std::string requestmethod, Response &response);
 		void GetMethod(server server, request request, std::string &bodyfile, bool &isfile);
 		void DeleteMethod(server server, request request);
 		void PostMethod(server server, request request);
-		// cgi
 		void cgi(server server, request request);
-	public:
-		Response();
-		ResponseReturned CreatResponse(server server, request request);
-		std::string ResponseGeneratedFromStatusCode(int statuscode, server server, request request, std::string &bodyfile, bool &isfile);
 
-		/* seters */
-		/* geters */
-		~Response();
-	private:
 		/* response utilse */
 		static void GetContentType(std::string requestedSource, std::unordered_map<std::string, std::string> mimetypes, std::string &contenttype);
 		static std::string GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method);
 		static void checkForIndexFile(Response *response, server server, std::string &bodyfile, bool &isfile);
+	public:
+		Response();
+		ResponseReturned CreatResponse(server server, request request);
+		~Response();
+	private: /* switched data */
+		std::string bodyfile;
+		bool isfile;
 };
 
 std::string GenerateResponseFromStatusCode(int statuscode);
@@ -103,8 +98,7 @@ std::string getMimeType(std::unordered_map<std::string, std::string> mimetypes, 
 bool checkIndexInsidDerctory(std::string *path);
 const std::string generatBody(std::string _requestedSource);
 int calculeBodySize(std::string _requestedSource);
-std::string generateAutoindexFile(std::string requestedSource); // in GET method
-
+std::string generateAutoindexFile(std::string requestedSource); /* in GET method */
 
 // error page 
 const std::string GenerateErrorPage(int statuscode, std::string statusmessage);

@@ -1,5 +1,8 @@
 #include "web_serv.hpp" 
 #include <sys/socket.h>
+
+// size_t ResponseReturned::currentIndex;
+
 void    creat_socket_and_bind(global & glob)
 {
     for (size_t i = 0; i < glob.server.size(); i++)
@@ -131,10 +134,16 @@ void    run_servers(global & glob)
                         std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
                         Response response;
                         ResponseReturned res = response.CreatResponse(server, *client.request_client);
-                        std::cout << "isFile: " << res.getIsFile() << std::endl << "BodyFile: " << res.getBody() << std::endl;
-                            std::cout << "\n***** Response ***** \n" << (res.getHeaders() + res.readfile()) << "\n----------------------------------\n";
-                        int sending = send(client.fd_client, (res.getHeaders() + res.readfile()).c_str(), (res.getHeaders() + res.readfile()).size(), 0);
-                        std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
+                        // std::cout << "isFile: " << res.getIsFile() << std::endl << "BodyFile: " << res.getBody() << std::endl;
+                        //     std::cout << "\n***** Response ***** \n" << (res.getHeaders() + res.readfile()) << "\n----------------------------------\n";
+                        // int sending = send(client.fd_client, (res.getHeaders()).c_str(), (res.getHeaders()).size(), 0);
+                        std::string chunck = res.GetChanckFromResponse(255);
+                        while(!chunck.empty()) {
+                            int sending = send(client.fd_client, chunck.c_str(), chunck.size(), 0);
+                            (void)sending;
+                            // std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
+                            chunck = res.GetChanckFromResponse(255);
+                        }
                         std::cout << "\n###################################################################################################################################################\n\n";
                         //send correct response
                         sen = true; /// change with client_status_life

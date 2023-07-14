@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:28:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/13 04:16:15 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/14 01:48:29 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,14 @@
 void Response::checkForIndexFile(Response *response, server server, std::string &bodyfile, bool &isfile) {
     if (server.locations[response->_matchedLocationPosition].index.empty())
     {
-        if (checkIndexInsidDerctory(&response->_requestedSource)) // return bool and append index.html to requstedSource if existe
+        if (checkIndexInsidDerctory(&response->_requestedSource)) /* return bool and append index.html to requstedSource if existe */
             return;
         if (server.locations[response->_matchedLocationPosition].autoindex == "on")
         {
-            // generate outoindex
 
+            /* generate outoindex */
             bodyfile = generateAutoindexFile(response->_requestedSource);
             isfile = false;
-            // response->setBody(generateAutoindexFile(response->_requestedSource)); /* problem but from the requsted source genaratore, the Url taked in the place at need the root*/ // remove after make the function to read by chunck  
-            // response->setBody(generateAutoindexFile("." + server.locations[response->_matchedLocationPosition].root));
             throw(200);
         }
         else

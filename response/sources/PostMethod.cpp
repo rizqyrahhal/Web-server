@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 16:45:33 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/13 03:47:39 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/14 01:55:23 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void Response::PostMethod(server server, request request) {
     if(supportUpload(server.locations[_matchedLocationPosition])) {
         // getFileName(); genarate or detect the filename
 
-		/* tafrigh mo7tawa uploaded file to the filename in the needed place */
+		//  tafrigh mo7tawa uploaded file to the filename in the needed place
         throw(201);
     }
     /* here the other way, working on location dosn't support upload */
