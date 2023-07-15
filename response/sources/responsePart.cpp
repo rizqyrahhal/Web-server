@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/15 02:45:16 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/15 21:02:04 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,23 +17,24 @@ size_t Response::_matchedLocationPosition;
 
 
 Response::Response() {
-    fillMimeTypes(_mimeTypes); // this data move to initial it in the beginig of programe one time to evit time delia in any response {!!!!!!!}
+    // fillMimeTypes(_mimeTypes); // this data move to initial it in the beginig of programe one time to evit time delia in any response {!!!!!!!}
+    // _mimeTypes(readMimeTypes("./template/mime.types"));
+    _cgi_mimeTypes = readMimeTypes("./template/cgi-mime.types");
+    _mimeTypes = readMimeTypes("./template/mime.types");  //this data move to initial it in the beginig of programe one time to evit time delia in any response {!!!!!!!}
+
 }
 
 ResponseReturned Response::CreatResponse(server server, request request) {
 
 
     // add python cgi to config parssing 
-    // it is a space in the begin of any headers value, remove it pleas 
-    std::cout << "########## eenrtrer ###########" << std::endl;
-    for (std::map<std::string, std::string>::iterator it = request.map_request.begin(); it != request.map_request.end(); it++) {
-        std::cout << it->first << "=" << it->second << std::endl;
-        it->second.erase(0, 1);
-    }
-    std::cout << "########## ssorteee ###########" << std::endl << std::endl;
-
-
-
+    // it is a space in the begin of any headers value inside (request.map_request), remove it pleas 
+    // std::cout << "########## eenrtrer ###########" << std::endl;
+    // for (std::map<std::string, std::string>::iterator it = server.locations[6].cgi.begin(); it != server.locations[6].cgi.end(); it++) {
+    //     std::cout << it->first << "=" << it->second << std::endl;
+    //     // it->second.erase(0, 1);
+    // }
+    // std::cout << "########## ssorteee ###########" << std::endl << std::endl;
 
     request.bodyFile = open("./bodysfile", 666);
     
@@ -90,7 +91,18 @@ void Response::cgi(server server, request request) {
 	Cgi cgi;
     int file = 0;
 
-    _cgiBinPath = cgi.getCgiPath(server.locations[_matchedLocationPosition].cgi, _contentType);    
+        std::cout << "########## eenrtrer ###########" << std::endl;
+    for (std::map<std::string, std::string>::iterator it = server.locations[6].cgi.begin(); it != server.locations[6].cgi.end(); it++) {
+        std::cout << it->first << "=" << it->second << std::endl;
+        // it->second.erase(0, 1);
+    }   
+    std::cout << "########## ssorteee ###########" << std::endl << std::endl;
+
+    //  here here // in this funcion py bin not work or not found or somthing    .////// STOOOOP HERE
+    _cgiBinPath = cgi.getCgiPath(server.locations[_matchedLocationPosition].cgi, _contentType);  
+    #ifdef CGI_DEBUG
+       std::cout << "_cgiBinPath: " << _cgiBinPath << std::endl;
+    #endif
 	cgi.fillEnvp(request, server, _requestedSource, _contentType);
     cgi.fillArgv(_cgiBinPath, _requestedSource);
     char **envp = cgi.vectorToCharArray(cgi._envp);
@@ -154,7 +166,7 @@ Response::~Response() {
 /* the WORK rest :
     cgi handlig of the env \| but need more testing
     cgi flow and detecting the status code
-    the index.php and index.by   in dyrectory 
+    the index.php and index.by   in dyrectory
     the read and set file in the case uplod
 
     matched location and matched source need work blkhosos source

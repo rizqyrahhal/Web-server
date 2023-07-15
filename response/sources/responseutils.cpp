@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:28:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/14 01:48:29 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/15 19:20:11 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,15 @@ void Response::checkForIndexFile(Response *response, server server, std::string 
     }
 }
 
-void Response::GetContentType(std::string requestedSource, std::unordered_map<std::string, std::string> mimetypes, std::string &contenttype) {
+bool Response::isCgi() {
+    for (std::map<std::string, std::string>::iterator it = _cgi_mimeTypes.begin(); it != _cgi_mimeTypes.end(); it++) {
+        if (_contentType == it->second)
+            return true;
+    }
+    return false;
+}
+
+void Response::GetContentType(std::string requestedSource, std::map<std::string, std::string> mimetypes, std::string &contenttype) {
     contenttype = getMimeType(mimetypes, getFileExtantion(requestedSource));
 }
 
@@ -149,8 +157,6 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
     throw(404);
 }
 /* in this above function thire is more and more hardcoding !!!! */
-
-
 
 
 

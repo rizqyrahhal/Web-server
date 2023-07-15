@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:24:42 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/15 02:33:06 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/15 19:18:33 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,17 +44,19 @@ void Response::GetMethod(server server, request request, std::string &bodyfile, 
 	if (_resourceType == DRCT) {
         checkForIndexFile(&(*this), server, bodyfile, isfile);
     }
+
     Response::GetContentType(_requestedSource, _mimeTypes, _contentType);
-	
-	if (_contentType == "application/x-httpd-php" || _contentType == "application/x-python-code")
-		cgi(server, request);
+    #ifdef DEBUG
+        std::cout << "contentType : " << _contentType << std::endl;
+    #endif
+    if (isCgi())
+        cgi(server, request);
+	// if (_contentType == "application/x-httpd-php" || _contentType == "application/x-python-code")
+	// 	cgi(server, request);
 	// if (_contentType.empty())
 	// 	cgi(server, request);
 
     setHeader("Content-Type", _contentType);
-    #ifdef DEBUG
-        std::cout << "contentType : " << _contentType << std::endl;
-    #endif
 	setHeader("Content-Length", std::to_string(calculeBodySize(_requestedSource)));
 	bodyfile = _requestedSource;
 	isfile = true;

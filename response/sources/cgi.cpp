@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 03:33:15 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/15 02:40:46 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/15 21:00:55 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <signal.h>
 
 Cgi::Cgi() {
-	
+
 }
 
 char* strdup98(const char* str) {
@@ -36,19 +36,26 @@ std::string searchInRequestedHeader(const std::map<std::string, std::string>& Ma
     return "";  // Return an empty string if the key is not found
 }
 
-std::string Cgi::getCgiPath(std::map<std::string, std::string> map, std::string _contentType) {
+std::string Cgi::getCgiPath(std::map<std::string, std::string> cgi_map, std::string _contentType) {
 	std::string cgi_bin;
-    if (!map.empty()) {
-		
-        if (_contentType == "application/x-httpd-php")
-            cgi_bin = map["php"];
-        else if (_contentType == "application/x-python-code"){
-			
-            cgi_bin = map["by"];
-    	// std::cout << map["by"] << " ------ ------ ------ ------ ------ ------\n";    //// !!!! here when stop bucouse cgi need more parse
+	std::string extantion;
+	std::map<std::string, std::string> mime_map  = readMimeTypes("template/cgi-mime.types"); // when make a mimeTypes global use it and not use this function 
+    if (!cgi_map.empty()) {
+		for(std::map<std::string, std::string>::iterator it = mime_map.begin(); it != mime_map.end(); it++) {
+			if (it->second == _contentType) {
+				extantion = it->first;
+				extantion.erase(0, 1);
+			}
+		}
+		if (!extantion.empty()) {	
+			for(std::map<std::string, std::string>::iterator it = cgi_map.begin(); it != cgi_map.end(); it++) {
+				if (it->first == extantion)
+					cgi_bin = it->second;
+				break;
+			}
 		}
     }
-    if (cgi_bin.empty())		
+    if (cgi_bin.empty())
         throw(500);
 	return (cgi_bin);
 }
@@ -161,7 +168,6 @@ void Cgi::execut(std::string cgibin, char **argv, char **envp, std::string _requ
 }
 
 Cgi::~Cgi() {
-
 	// this too function be to delete memory leak if exist after check
 	_envp.clear();
 	_argv.clear();

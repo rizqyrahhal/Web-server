@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/14 20:27:41 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/15 20:04:25 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,10 @@
 #define DEBUG
 #endif
 
+#ifndef CGI_DEBUG
+#define CGI_DEBUG
+#endif
+
 #ifndef CURENT_DEBUG
 // #define CURENT_DEBUG
 #endif
@@ -53,7 +57,8 @@ class ResponseReturned;
 class Response : public  HttpResponse
 {
 	private: /* data management */
-		std::unordered_map<std::string, std::string> _mimeTypes;
+		std::map<std::string, std::string> _mimeTypes;
+		std::map<std::string, std::string> _cgi_mimeTypes;
 		// std::vector<char*> metaVariablesName; 
 		// char **_metaVariables;
 	    static size_t _matchedLocationPosition;
@@ -75,10 +80,11 @@ class Response : public  HttpResponse
 		void GetMethod(server server, request request, std::string &bodyfile, bool &isfile);
 		void DeleteMethod(server server, request request);
 		void PostMethod(server server, request request);
+		bool isCgi();
 		void cgi(server server, request request);
 
 		/* response utilse */
-		static void GetContentType(std::string requestedSource, std::unordered_map<std::string, std::string> mimetypes, std::string &contenttype);
+		static void GetContentType(std::string requestedSource, std::map<std::string, std::string> mimetypes, std::string &contenttype);
 		static std::string GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method);
 		static void checkForIndexFile(Response *response, server server, std::string &bodyfile, bool &isfile);
 	public:
@@ -93,9 +99,10 @@ class Response : public  HttpResponse
 std::string GenerateResponseFromStatusCode(int statuscode);
 
 /* mimetypes and content type function */
-void fillMimeTypes(std::unordered_map<std::string, std::string> &mimeTypes);
+void fillMimeTypes(std::map<std::string, std::string> &mimeTypes);
+std::map<std::string, std::string> readMimeTypes(const std::string& filePath);
 std::string getFileExtantion(std::string requestedsource);
-std::string getMimeType(std::unordered_map<std::string, std::string> mimetypes, std::string fileextantion);
+std::string getMimeType(std::map<std::string, std::string> mimetypes, std::string fileextantion);
 
 /* utils */
 bool checkIndexInsidDerctory(std::string *path);

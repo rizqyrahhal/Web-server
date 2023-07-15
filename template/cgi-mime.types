@@ -1,0 +1,5 @@
+types {
+#   --- cgi ---
+    application/x-httpd-php     php;
+    application/x-python-code   py;
+}
