@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 00:10:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/14 16:47:40 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/15 02:31:33 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,17 @@
 bool checkIndexInsidDerctory(std::string *path) {
     std::string indexhtml = *path + "index.html"; //Just hardecode be to make it check for any index name
     std::string indexphp = *path + "index.php";
-    // std::string indexpy = *path + "index.py";
+    std::string indexpy = *path + "index.py";
     if (access(indexhtml.c_str(), 0) == 0) {
         *path = indexhtml;
         return true;
     }
     if (access(indexphp.c_str(), 0) == 0) {
         *path = indexphp;
+        return true;
+    }
+    if (access(indexpy.c_str(), 0) == 0) {
+        *path = indexpy;
         return true;
     }
     return false;
@@ -53,7 +57,7 @@ int calculeBodySize(std::string _requestedSource) {
     file.seekg(0, std::ios::end);
     int length = file.tellg();
     file.seekg(0, std::ios::beg);
-    
+
     file.close();
     return (length);
 }

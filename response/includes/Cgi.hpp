@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/14 03:15:57 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/14 19:27:17 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/15 00:48:42 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ class Cgi
 
 		char** vectorToCharArray(std::vector<const char*> vec);
 	    void fillArgv(std::string &cgibinpath, std::string &_requestedSource);
-		void fillEnvp(request request, server server, std::string requstedsource);
-		void execut(std::string cgibin, char **argv, char **envp, std::string _requestedSource);
+		void fillEnvp(request request, server server, std::string requstedsource, std::string contenttype);
+		void execut(std::string cgibin, char **argv, char **envp, std::string _requestedSource, int file);
 		~Cgi();
 };
 

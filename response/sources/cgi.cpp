@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 03:33:15 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/14 20:26:05 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/15 02:40:46 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,16 @@ std::string searchInRequestedHeader(const std::map<std::string, std::string>& Ma
 std::string Cgi::getCgiPath(std::map<std::string, std::string> map, std::string _contentType) {
 	std::string cgi_bin;
     if (!map.empty()) {
+		
         if (_contentType == "application/x-httpd-php")
             cgi_bin = map["php"];
-        else if (_contentType == "application/x-python-code")
+        else if (_contentType == "application/x-python-code"){
+			
             cgi_bin = map["by"];
+    	// std::cout << map["by"] << " ------ ------ ------ ------ ------ ------\n";    //// !!!! here when stop bucouse cgi need more parse
+		}
     }
-    if (cgi_bin.empty())
+    if (cgi_bin.empty())		
         throw(500);
 	return (cgi_bin);
 }
@@ -63,32 +67,59 @@ void Cgi::fillArgv(std::string &cgibinpath, std::string &_requestedSource) {
 	_argv.push_back(NULL);
 }
 
-void Cgi::fillEnvp(request request, server server, std::string requstedsource) { //add contentType as parameter mani nt2akad bla ghi hiya li kjhasa
+void Cgi::fillEnvp(request request, server server, std::string requstedsource, std::string contenttype) {
+	_envp.push_back(strdup98(std::string("SERVER_PROTOCOL=HTTP/1.1").c_str()));
+	_envp.push_back(strdup98(std::string("REDIRECT_STATUS=200").c_str()));
+	_envp.push_back(strdup98(std::string("SERVER_SOFTWARE=HTTP/1.1").c_str()));
 	_envp.push_back(strdup98(std::string("REQUEST_METHOD=" + request.method).c_str()));
 	_envp.push_back(strdup98(std::string("QUERY_STRING=" + request.query).c_str()));
-	_envp.push_back(strdup98(std::string("SERVER_PROTOCOL=HTTP/1.1").c_str()));
 	_envp.push_back(strdup98(std::string("PATH_INFO=" + requstedsource).c_str()));
-	if (!searchInRequestedHeader(request.map_request, "CONTENT_LENGTH").empty())
-		_envp.push_back(strdup98(std::string("CONTENT_LENGTH=" + searchInRequestedHeader(request.map_request, "CONTENT_LENGTH")).c_str()));
-	else
+	_envp.push_back(strdup98(std::string("HTTP_COOKIE=" + searchInRequestedHeader(request.map_request, "Cookie")).c_str()));
+	if (!searchInRequestedHeader(request.map_request, "Content-Length").empty()){
+		_envp.push_back(strdup98(std::string("CONTENT_LENGTH=" + searchInRequestedHeader(request.map_request, "Content-Length")).c_str()));
+	}
+	else if(!requstedsource.empty()){
 		_envp.push_back(strdup98(std::string("CONTENT_LENGTH=" + std::to_string(calculeBodySize(requstedsource))).c_str()));
-
-	// _envp.push_back(strdup98(std::string("CONTENT_TYPE=" + searchInRequestedHeader(request.map_request, "CONTENT_TYPE")).c_str()));
-	_envp.push_back(strdup98(std::string("CONTENT_TYPE=application/x-httpd-php").c_str()));
-	_envp.push_back(strdup98(std::string("GATEWAY_INTERFACE=").c_str()));
+	}
+	else
+		_envp.push_back(strdup98(std::string("CONTENT_LENGTH=").c_str()));
+	if (!searchInRequestedHeader(request.map_request, "Content-Type").empty())
+		_envp.push_back(strdup98(std::string("CONTENT_TYPE=" + searchInRequestedHeader(request.map_request, "Content-Type")).c_str()));
+	else if(!contenttype.empty()) 
+		_envp.push_back(strdup98(std::string("CONTENT_TYPE=" + contenttype).c_str()));
+	else
+		_envp.push_back(strdup98(std::string("CONTENT_TYPE=").c_str()));
+	_envp.push_back(strdup98(std::string("GATEWAY_INTERFACE=CGI/1.1").c_str()));
 	_envp.push_back(strdup98(std::string("REMOTE_ADDR=" + server.ip_address).c_str()));
 	_envp.push_back(strdup98(std::string("SCRIPT_NAME=" + requstedsource).c_str()));
 	_envp.push_back(strdup98(std::string("SCRIPT_FILENAME=" + requstedsource).c_str()));
-	_envp.push_back(strdup98(std::string("SERVER_NAME=").c_str()));
-	_envp.push_back(strdup98(std::string("REMOTE_HOST=").c_str()));
+	_envp.push_back(strdup98(std::string("SERVER_NAME=" + server.server_name).c_str()));
+	_envp.push_back(strdup98(std::string("REMOTE_HOST=" + searchInRequestedHeader(request.map_request, "Host")).c_str()));
 	_envp.push_back(strdup98(std::string("SERVER_PORT=").c_str()));
-	_envp.push_back(strdup98(std::string("SERVER_SOFTWARE=CGI/1.1").c_str()));
-	_envp.push_back(strdup98(std::string("REDIRECT_STATUS=200").c_str()));
 	_envp.push_back(NULL);
+
+
+	
+	// std::cout << "Vector[0]: " << _envp[0] << std::endl;
+	// std::cout << "Vector[0]: " << _envp[1] << std::endl;
+	// std::cout << "Vector[0]: " << _envp[2] << std::endl;
+	// std::cout << "Vector[0]: " << _envp[3] << std::endl;
+	// std::cout << "Vector[0]: " << _envp[4] << std::endl;
+	// std::cout << "Vector[0]: " << _envp[5] << std::endl;
+	// std::cout << "Vector[0]: " << _envp[6] << std::endl;
+	// std::cout << "Vector[0]: " << _envp[7] << std::endl;
+	// std::cout << "Vector[0]: " << _envp[8] << std::endl;
+	// std::cout << "Vector[0]: " << _envp[9] << std::endl;
+	// std::cout << "Vector[0]: " << _envp[10] << std::endl;
+	// std::cout << "Vector[0]: " << _envp[11] << std::endl;
+	// std::cout << "Vector[0]: " << _envp[12] << std::endl;
+	// std::cout << "Vector[0]: " << _envp[13] << std::endl;
+	// std::cout << "Vector[0]: " << _envp[14] << std::endl;
 }
 
-void Cgi::execut(std::string cgibin, char **argv, char **envp, std::string _requestedSource) {
-	int file = open(_requestedSource.c_str(), 666);
+void Cgi::execut(std::string cgibin, char **argv, char **envp, std::string _requestedSource, int file) {
+	// int file = open(_requestedSource.c_str(), 666);
+	(void)_requestedSource;
 	int fd[2];
 	pipe(fd);
 	pid_t pid = fork();
@@ -98,8 +129,13 @@ void Cgi::execut(std::string cgibin, char **argv, char **envp, std::string _requ
 		close(fd[1]);
 		dup2(file, 0);
 		close(file);
+		// execve(cgibin.c_str(), argv, envp);
 		if (execve(cgibin.c_str(), argv, envp) == -1)
+		{
+			// perror("execve:");
+			// std::cout << "--------------------iiiiiii--------------\n";
 			throw(500);
+		}
 	}
 	else {
 		int status;
@@ -112,7 +148,7 @@ void Cgi::execut(std::string cgibin, char **argv, char **envp, std::string _requ
 		close(fd[1]);
 		dup2(fd[0], 0);
 		close(fd[0]);
-		std::vector<char> buffer(2606); // calculate this size before all  !!!!!!!!!!!!!!!!!!!! this is Just hard code
+		std::vector<char> buffer(2606); // calculate this size before all  !!!!!!!!!!!!!!!!!!!! this is Just hard code  (use getline() or some thing like this read pares andd assinge in string body)
 		int size = read(0, &buffer[0], 2606);
 	(void)size;
         #ifdef DEBUG
@@ -140,16 +176,3 @@ Cgi::~Cgi() {
 
 
 
-
-	// std::cout << "Vector[0]: " << _envp[0] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[1] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[2] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[3] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[4] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[5] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[6] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[7] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[8] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[9] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[10] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[11] << std::endl;

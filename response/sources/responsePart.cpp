@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/14 20:18:03 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/15 02:45:16 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,23 @@ Response::Response() {
 }
 
 ResponseReturned Response::CreatResponse(server server, request request) {
+
+
+    // add python cgi to config parssing 
+    // it is a space in the begin of any headers value, remove it pleas 
+    std::cout << "########## eenrtrer ###########" << std::endl;
+    for (std::map<std::string, std::string>::iterator it = request.map_request.begin(); it != request.map_request.end(); it++) {
+        std::cout << it->first << "=" << it->second << std::endl;
+        it->second.erase(0, 1);
+    }
+    std::cout << "########## ssorteee ###########" << std::endl << std::endl;
+
+
+
+
+    request.bodyFile = open("./bodysfile", 666);
+    
+
     Response response;
     try
     {
@@ -71,13 +88,21 @@ ResponseReturned Response::CreatResponse(server server, request request) {
 
 void Response::cgi(server server, request request) {
 	Cgi cgi;
+    int file = 0;
 
-    _cgiBinPath = cgi.getCgiPath(server.locations[_matchedLocationPosition].cgi, _contentType);
-	cgi.fillEnvp(request, server, _requestedSource);
+    _cgiBinPath = cgi.getCgiPath(server.locations[_matchedLocationPosition].cgi, _contentType);    
+	cgi.fillEnvp(request, server, _requestedSource, _contentType);
     cgi.fillArgv(_cgiBinPath, _requestedSource);
     char **envp = cgi.vectorToCharArray(cgi._envp);
     char **argv = cgi.vectorToCharArray(cgi._argv);
-	cgi.execut(argv[0], argv, envp, _requestedSource);
+    if (request.method == "GET") {
+        file = open(_requestedSource.c_str(), 666);
+    }
+    else if (request.method == "POST") {
+        std::cout << "-------- daz man hna ---------\n";
+        file = request.bodyFile;
+    }
+	cgi.execut(argv[0], argv, envp, _requestedSource, file);
     delete[] envp;
     delete[] argv;
 }
@@ -127,11 +152,14 @@ Response::~Response() {
 }
 
 /* the WORK rest :
-    cgi handlig of the env \|
-    cgi flow and detecting the status code 
+    cgi handlig of the env \| but need more testing
+    cgi flow and detecting the status code
     the index.php and index.by   in dyrectory 
     the read and set file in the case uplod
-    set the content type of .php and .by in the meme_types and check for it in content type \| rest DELETE and POST
+
+    matched location and matched source need work blkhosos source
+    
+    read the cgi file output by specific size or by getline and parss the header to its or the both header and body 
 
     make more test in the matched location and the searching about requested source 
 */

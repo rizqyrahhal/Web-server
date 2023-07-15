@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 16:45:33 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/14 01:55:23 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/15 00:40:09 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,17 @@ void Response::PostMethod(server server, request request) {
         else
             std::cout << "DERCTORY\n";
         #endif
-
+        Response::GetContentType(_requestedSource, _mimeTypes, _contentType);
+        #ifdef DEBUG
+            std::cout << "contentType : " << _contentType << std::endl;
+        #endif
         if (_resourceType == DRCT && !checkIndexInsidDerctory(&_requestedSource)) {
 			throw(403);
         }
 		else if (server.locations[_matchedLocationPosition].cgi.empty())
 			throw(403);
 		else {
+            std::cout << "--------- Me by here ----------\n";
 			/* run cgi on requested file with POST request_method */
 			cgi(server, request);
         }

@@ -42,8 +42,6 @@ public:
 	~locations(){}
 };
 
-
-
 class request
 {
 	public:
@@ -54,6 +52,7 @@ class request
 	std::string url;
 	std::string query;
 	int max_body_size;
+	int bodyFile;
 	std::map<std::string, std::string> map_request;
 	~request(){}
 };
@@ -110,7 +109,6 @@ public:
 	~global(){}
 	std::vector<server> server;
 };
-
 
 void    ft_parce_config(char **av, global &global);
 void    creat_socket_and_bind(global & glob);
