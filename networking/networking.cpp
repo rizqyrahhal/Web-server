@@ -66,8 +66,8 @@ client accept_new_connection(server& serv)
 	client.fd_client = accept(serv.fd_server, (struct sockaddr *)&client.client_address, &client.clientaddrlenght);
 	if (client.fd_client == -1)
 	{
-	   std::cerr<<"failed accept method."<<std::endl;
-		// exit(EXIT_FAILURE);
+	    std::cerr<<"failed accept method."<<std::endl;
+	    // exit(EXIT_FAILURE);
 	}
 	if (server::maxfd < client.fd_client)
 		server::maxfd = client.fd_client;
@@ -75,18 +75,64 @@ client accept_new_connection(server& serv)
 	return (client);
 }
 
+int    send_video(client & client)
+{
+
+    // std::cout <<" i want to send video --->>>"<<std::endl;
+    char *readvideo = new char[1024];
+    if (client.p == 0)
+    {
+
+        client.readFd = open("/Users/araysse/Desktop/arsenal.png", 0);
+        std::string header = "HTTP/1.1 200 OK\r\n"
+                       "Content-Type: image/png\r\n"
+                       "Content-Length: 213946\r\n"
+                       "Connection: closed\r\n\r\n";
+        if (send(client.fd_client, header.c_str(), header.size(), 0) <= 0)
+        {
+            // std::cout<<"send salat******"<< "returned value : "<<snd<<std::endl;
+            std::cout<<strerror(errno)<<"\n\n\n"<<std::endl;
+            close(client.readFd);
+            return (1);
+        }
+        client.p++;
+        return (0);
+    }
+    if (client.readFd <= 0)
+    {
+        std::cout<<"open video failed"<<std::endl;
+        return (1);
+    }
+    int rd = read(client.readFd, readvideo, 1024);
+    if (rd <= 0)
+    {
+       std::cout<<"read salat"<<std::endl;
+       close(client.readFd);
+       return(1);
+    }
+    int snd = send(client.fd_client, readvideo, rd, 0);
+    // std::cout<<"send == "<<snd<<std::endl;
+    if (snd <= 0)
+    {
+        std::cout<<"send salat******"<< "returned value : "<<snd<<std::endl;
+        std::cout<<strerror(errno)<<std::endl;
+        close(client.readFd);
+        return (1);
+    }
+    return (0);
+}
+
 void    run_servers(global & glob)
 {
     signal(SIGPIPE, SIG_IGN);
-    int resp = 0;
     int tmp = 0;
-    bool sen = false;
 	while (1)
 	{
 		fd_set writable = server::current;
 		fd_set readable = server::current;
 		tmp = select(server::maxfd + 1, &readable, &writable, nullptr, 0);
-		if (tmp < 0) {
+		if (tmp < 0)
+        {
 			std::perror("select() Error ");
 			continue;
 		}
@@ -100,32 +146,26 @@ void    run_servers(global & glob)
 				server.client.push_back(accept_new_connection(server));
                 std::cout << "########### number of client:  " << server.client.size() << std::endl;
             }
-            // std::cout << "########### FD_client:  " << server.client.fd_client << std::endl;
-            // std::cout << "num clients => " << server.client.size() << std::endl;
+
 			for (size_t i = 0; i < server.client.size() ; i++) // in this i <= Just to evet loop
 			{
-                // std::cout << "++++++++++++++++++++++++++++++++\n";
                 if (server.client.size() != 0)
                 {
 				    client &client = server.client[i];
-                    // std::cout << "CLIENT CHECK => " << client.check << std::endl;
-				    // IF statement for Request.
-				    if (FD_ISSET(client.fd_client, &readable) && client.check == 0 )
+				    if (FD_ISSET(client.fd_client, &readable) && client.check == 0)
 				    {
-                        resp = client.request_client->read_reqwest(client);
-                        // std::cout<<client.request_client->max_body_size<<std::endl;
-                        // std::cout<<resp<<std::endl;
-				    	// fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
+                        std::cout<<"read request hna ******\n";
+                        client.resp = client.request_client->read_reqwest(client);
+				        fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
                         // client.check = 1;
 				    }
-                    // std::cout << "Client -> " << client.fd_client << std::endl;
 				    else if (FD_ISSET(client.fd_client, &writable) && client.check == 1)
                     {
-                        if (resp > 0){
-                            std::cout<<"hello from statc code : "<<std::endl;
-                            send(client.fd_client, GenerateResponseFromStatusCode(resp).c_str(), GenerateResponseFromStatusCode(resp).size(), 0);
+                        if (client.resp > 0){
+                            std::cout<<"static code *-*"<<std::endl;
+                            send(client.fd_client, GenerateResponseFromStatusCode(client.resp).c_str(), GenerateResponseFromStatusCode(client.resp).size(), 0);
                         }
-                        else if (resp == 0)
+                        else if (client.resp == 0)
                         {
                             std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
                             Response response;
@@ -134,28 +174,22 @@ void    run_servers(global & glob)
                             int sending = send(client.fd_client, res.c_str(), res.size(), 0);
                             std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
                             std::cout << "\n###################################################################################################################################################\n\n";
-                            //send correct response
-                            sen = true; /// change with client_status_life
+                            // send(client.fd_client, GenerateResponseFromStatusCode(404).c_str(), GenerateResponseFromStatusCode(404).size(), 0);
+                            client.pr = 1; /// change with client_status_life
+                            // client.pr = send_video(client);   
                         }
-                        if (resp > 0 || sen) {
-                            close(client.fd_client);
-                            FD_CLR(client.fd_client, &server::current);
-                            server.client.erase(server.client.begin() + i);
-
-                            std::cout << "server.client.size() : " << server.client.size() << "   ) :)\n";
-                            // exit (0);
-                        }
-                        //    exit(0);
                     }
-                    // else{
-                    //     close(client.fd_client);
-                    //     FD_CLR(client.fd_client, &server::current);
-                    //     server.client.erase(server.client.begin() + i);
-                    //     std::cout << "server.client.size() : " << server.client.size() << "   ) :)\n";
-                    // }
+                    if (client.resp == -1 || client.resp > 0 || client.pr) 
+                    {
+                        std::cout<<"client "<<client.fd_client<<" dropped succesfolly"<<std::endl;
+                        close(client.fd_client);
+                        FD_CLR(client.fd_client, &server::current);
+                        close(client.readFd);
+                        server.client.erase(server.client.begin() + i);
+                        server::maxfd--;
+
+                    }  
                 }
-                else
-                    break;
 			}
 		}
 

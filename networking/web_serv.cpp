@@ -61,7 +61,6 @@ void request::parce_chunks(std::string body, int ffd, client & client)
 	size_t i = 0;
 	std::cout<<body.size()<<std::endl;
 	body2 = body;
-	// write(ffd, body.c_str(), body.size());
 	
 	while (i < body.size())
 	{
@@ -84,26 +83,64 @@ void request::parce_chunks(std::string body, int ffd, client & client)
 					return ;
 				}
 			body2 = body2.substr(rn + 2);
-			std::cout << "body size 1:"  << body2.size() << "\n";
 			
 		}
-		else if (body2.size() < sizehex)
+		else if (body2.size() < sizehex && add_it_to_body == 0)
 		{
+			std::cout<<"salam khouya ana sgher mn sizehexa"<<std::endl;
 			write(ffd, body2.c_str(), body2.size());
-			std::cout << "body size 2:"  << body2.size() << "\n";
 			sizehex -= body2.size();
-
 			return ;
 		}
+		// tal hna mzyaaaan
 		else if (body2.size() >= sizehex)
 		{
-			write(ffd, body2.c_str(), sizehex);
-			std::cout << "body size 3:"  << body2.size() << "\n";
-			body2 = body2.substr(sizehex + 2);
-			std::cout << "body size 333:"  << body2.size()  << " body = |" << body2 << "|" << "\n";
-			i += sizehex + 2;
-			std::cout << " i == " << i << " size: " << body.size() << std::endl;
-			sizehex = 0;
+			if (add_it_to_body == 0)
+			{
+				std::string tomp = body2.substr(sizehex);
+				int fnd = tomp.find("\r\n");
+				if (fnd != -1)
+				{
+					tomp = tomp.substr(2);
+					int f2 = tomp.find("\r\n");
+					if (f2 != -1)
+					{
+						write(ffd, body2.c_str(), sizehex);
+						body2 = body2.substr(sizehex + 2);
+						// std::cout << "body size 333:"  << body2.size()  << " body = |" << body2 << "|" << "\n";
+						i += sizehex + 2;
+						std::cout << " i == " << i << " size: " << body.size() << std::endl;
+						sizehex = 0;
+					}
+					else
+					{
+						write(ffd, body2.c_str(), sizehex);
+						body2 = body2.substr(sizehex + 2);
+						// i += sizehex + 2;
+						add_it_to_body = 1;
+						string_to_add = body2;
+						return ;
+					}
+				}
+				else 
+				{
+					write(ffd, body2.c_str(), sizehex);
+					if (!tomp.empty())
+					{
+						string_to_add = tomp;
+						add_it_to_body = 1;
+					}
+					return ;
+				}
+			}
+			else{
+				body2 = string_to_add + body2;
+				if (body2[0] == '\r')
+					body2 = body2.substr(2);
+				sizehex = 0;
+				add_it_to_body = 0;
+				i += string_to_add.size();
+			}
 		}
 	}
 }
@@ -111,22 +148,25 @@ void request::parce_chunks(std::string body, int ffd, client & client)
 int request::read_reqwest(client & client)
 {
 	std::vector<char> buffer(1024); // Adding by rarahhal
+	std::cout<<"*********** before recive **************"<<std::endl;
 	int bytesrecv = recv(client.fd_client, &buffer[0], 1024, 0); // Adding by rarahhal
-	if (bytesrecv == 0)
+	std::cout<<"*********** after recive **************"<<std::endl;
+	std::cout<<"read request for client : "<<client.fd_client<<std::endl;
+	if (!bytesrecv)
 	{
 		client.check = 1;
-		return(0);
+		return(-1);
 	}
 	std::cout<<"byte receive : "<< bytesrecv<<std::endl;
 	if (client.header_parced)
 	{
 		sizehex = 0;
+		add_it_to_body = 0;
 		std::string str1(buffer.begin(), buffer.begin() + bytesrecv);
 		int found1 = str1.find("\r\n\r\n", 0);
 		std::string header = str1.substr(0, found1);
 		std::cout<<"header : ***********************************************"<<std::endl;
 		std::cout<<header<<std::endl;
-		//std::string body = str1.substr(found1 + 4, bytesrecv);
 		std::string body = std::string(str1.c_str() + found1 + 4, bytesrecv - (found1 + 4));
 		std::cout<<"body : ***********************************************"<<std::endl;
 		std::cout<<body<<std::endl;
@@ -137,29 +177,36 @@ int request::read_reqwest(client & client)
 			client.check = 1;
 			return (staticcode);
 		}
-		
-
-		ffd = open("image.png", O_WRONLY);
-		std::cout<<"ffd = "<<ffd<<std::endl;
-		std::cout<<"bodydd receive : "<< body.size()<< std::endl;
-		if (map_request["Transfer-Encoding"] == "chunked")
+		//check which method
+		if (method != "GET" && method != "DELETE")
 		{
-			// std::cout << "write : " << write(ffd, body.c_str(), body.size()) << std::endl;
-			// std::cout<<"ana f chchunked"<<std::endl;
-			parce_chunks(body, ffd, client);
-			client.header_parced = false;
-		}
-		else{
-			write(ffd, body.c_str(), body.size());
-			client.header_parced = false;
-			lenght = lenght - body.size();
-			std::cout<<"lenght first == "<<lenght<<std::endl;
-			if (lenght <= 0)
+			ffd = open("video.mp4", O_WRONLY);
+			std::cout<<"ffd = "<<ffd<<std::endl;
+			std::cout<<"bodydd receive : "<< body.size()<< std::endl;
+			if (map_request["Transfer-Encoding"] == "chunked")
 			{
-				std::cout<<"byte recive < 1024"<<std::endl;
-				close(ffd);
-				client.check = 1;
+				// std::cout << "write : " << write(ffd, body.c_str(), body.size()) << std::endl;
+				std::cout<<"ana f chchunked"<<std::endl;
+				parce_chunks(body, ffd, client);
+				client.header_parced = false;
 			}
+			else{
+				write(ffd, body.c_str(), body.size());
+				client.header_parced = false;
+				lenght = lenght - body.size();
+				// std::cout<<"lenght first == "<<lenght<<std::endl;
+				if (bytesrecv <= 0)
+				{
+					std::cout<<"byte recive < 1024"<<std::endl;
+					close(ffd);
+					client.check = 1;
+				}
+			}
+		}
+		else
+		{
+			std::cout<<"saliinaa mn get\n";
+			client.check = 1;
 		}
 		return (0);
 	}
@@ -169,9 +216,9 @@ int request::read_reqwest(client & client)
 	printf("str2 length ==  %lu\n",  str2.size());
 	if (map_request["Transfer-Encoding"] == "chunked")
 	{
-		// std::cout << "write : " << write(ffd, str2.c_str(), bytesrecv) << std::endl;;
 		std::cout<<"ana f chchunked 3awtany *_*"<<std::endl;
 		parce_chunks(str2, ffd, client);
+		std::cout<<"ffd = "<<ffd<<std::endl;
 	}
 	else{
 		write(ffd, str2.c_str(), bytesrecv);

@@ -65,6 +65,8 @@ class request
 	std::string	body2;
 	int size_hexa_string;
 	int lenght;
+	int add_it_to_body;
+	std::string string_to_add;
 
 	~request(){}
 };
