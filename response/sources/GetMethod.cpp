@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:24:42 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/15 19:18:33 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/15 22:14:13 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,11 @@ void Response::GetMethod(server server, request request, std::string &bodyfile, 
     #ifdef DEBUG
         std::cout << "contentType : " << _contentType << std::endl;
     #endif
-    if (isCgi())
-        cgi(server, request);
+    if (isCgi()) {
+        if (!server.locations[_matchedLocationPosition].cgi.empty())
+            cgi(server, request);
+        _contentType = "text/plain";
+    }
 	// if (_contentType == "application/x-httpd-php" || _contentType == "application/x-python-code")
 	// 	cgi(server, request);
 	// if (_contentType.empty())

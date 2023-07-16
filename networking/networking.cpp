@@ -135,15 +135,19 @@ void    run_servers(global & glob)
                         Response response;
                         ResponseReturned res = response.CreatResponse(server, *client.request_client);
                         // std::cout << "isFile: " << res.getIsFile() << std::endl << "BodyFile: " << res.getBody() << std::endl;
-                        //     std::cout << "\n***** Response ***** \n" << (res.getHeaders() + res.readfile()) << "\n----------------------------------\n";
+                        if (res.getHeaders().empty())
+                            std::cout << "\n***** Response ***** \n" << (res.readfile()) << "\n----------------------------------\n";
+                        else
+                            std::cout << "\n***** Response ***** \n" << (res.getHeaders() + res.readfile()) << "\n----------------------------------\n";
                         // int sending = send(client.fd_client, (res.getHeaders()).c_str(), (res.getHeaders()).size(), 0);
                         std::string chunck = res.GetChanckFromResponse(255);
                         while(!chunck.empty()) {
                             int sending = send(client.fd_client, chunck.c_str(), chunck.size(), 0);
-                            (void)sending;
                             // std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
+                            (void)sending;
                             chunck = res.GetChanckFromResponse(255);
                         }
+
                         std::cout << "\n###################################################################################################################################################\n\n";
                         //send correct response
                         sen = true; /// change with client_status_life
