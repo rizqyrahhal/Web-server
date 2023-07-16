@@ -56,6 +56,8 @@ int request::parce_header(std::string header)
 	return (0);
 }
 
+
+
 void request::parce_chunks(std::string body, int ffd, client & client)
 {
 	size_t i = 0;
@@ -68,6 +70,10 @@ void request::parce_chunks(std::string body, int ffd, client & client)
 		if (sizehex == 0)
 		{
 			int rn = body2.find("\r\n");
+			if (rn == 0) {
+				body2 = body2.substr(2);
+				rn = body2.find("\r\n");
+			}
 			std::cout<<"rn == "<<rn<< " aa == " << body2[0] << std::endl;
 			std::string hexa = body2.substr(0, rn);
 			size_hexa_string = hexa.size();
@@ -117,19 +123,25 @@ void request::parce_chunks(std::string body, int ffd, client & client)
 						write(ffd, body2.c_str(), sizehex);
 						body2 = body2.substr(sizehex + 2);
 						// i += sizehex + 2;
+						sizehex = 1;
 						add_it_to_body = 1;
-						string_to_add = body2;
+						string_to_add = tomp;
 						return ;
 					}
 				}
 				else 
 				{
 					write(ffd, body2.c_str(), sizehex);
-					if (!tomp.empty())
+					if (sizehex == body2.size()) {
+						sizehex = 0;
+					}
+					else if (!tomp.empty())
 					{
 						string_to_add = tomp;
 						add_it_to_body = 1;
+						sizehex = 1;
 					}
+					
 					return ;
 				}
 			}
@@ -180,18 +192,18 @@ int request::read_reqwest(client & client)
 		//check which method
 		if (method != "GET" && method != "DELETE")
 		{
-			ffd = open("video.mp4", O_WRONLY);
+			bodyFile = open("video.mp4", O_WRONLY);
 			std::cout<<"ffd = "<<ffd<<std::endl;
 			std::cout<<"bodydd receive : "<< body.size()<< std::endl;
 			if (map_request["Transfer-Encoding"] == "chunked")
 			{
 				// std::cout << "write : " << write(ffd, body.c_str(), body.size()) << std::endl;
 				std::cout<<"ana f chchunked"<<std::endl;
-				parce_chunks(body, ffd, client);
+				parce_chunks(body, bodyFile, client);
 				client.header_parced = false;
 			}
 			else{
-				write(ffd, body.c_str(), body.size());
+				write(bodyFile, body.c_str(), body.size());
 				client.header_parced = false;
 				lenght = lenght - body.size();
 				// std::cout<<"lenght first == "<<lenght<<std::endl;
@@ -217,11 +229,11 @@ int request::read_reqwest(client & client)
 	if (map_request["Transfer-Encoding"] == "chunked")
 	{
 		std::cout<<"ana f chchunked 3awtany *_*"<<std::endl;
-		parce_chunks(str2, ffd, client);
+		parce_chunks(str2, bodyFile, client);
 		std::cout<<"ffd = "<<ffd<<std::endl;
 	}
 	else{
-		write(ffd, str2.c_str(), bytesrecv);
+		write(bodyFile, str2.c_str(), bytesrecv);
 		lenght = lenght - bytesrecv;
 		std::cout<<"lenght loop == "<<lenght<<std::endl;
 		std::cout<<"ffd after write"<<ffd<<std::endl;

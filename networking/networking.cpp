@@ -83,10 +83,10 @@ int    send_video(client & client)
     if (client.p == 0)
     {
 
-        client.readFd = open("/Users/araysse/Desktop/arsenal.png", 0);
+        client.readFd = open("/Users/araysse/Desktop/test.mp4", 0);
         std::string header = "HTTP/1.1 200 OK\r\n"
-                       "Content-Type: image/png\r\n"
-                       "Content-Length: 213946\r\n"
+                       "Content-Type: video/mp4\r\n"
+                       "Content-Length: 344248223\r\n"
                        "Connection: closed\r\n\r\n";
         if (send(client.fd_client, header.c_str(), header.size(), 0) <= 0)
         {
@@ -167,16 +167,16 @@ void    run_servers(global & glob)
                         }
                         else if (client.resp == 0)
                         {
-                            std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
-                            Response response;
-                            std::string res = response.CreatResponse(server, *client.request_client);
-                                std::cout << "\n***** Response ***** \n" << res << "\n----------------------------------\n";
-                            int sending = send(client.fd_client, res.c_str(), res.size(), 0);
-                            std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
-                            std::cout << "\n###################################################################################################################################################\n\n";
-                            // send(client.fd_client, GenerateResponseFromStatusCode(404).c_str(), GenerateResponseFromStatusCode(404).size(), 0);
-                            client.pr = 1; /// change with client_status_life
-                            // client.pr = send_video(client);   
+                            // std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
+                            // Response response;
+                            // std::string res = response.CreatResponse(server, *client.request_client);
+                            //     std::cout << "\n***** Response ***** \n" << res << "\n----------------------------------\n";
+                            // int sending = send(client.fd_client, res.c_str(), res.size(), 0);
+                            // std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
+                            // std::cout << "\n###################################################################################################################################################\n\n";
+                            // // send(client.fd_client, GenerateResponseFromStatusCode(404).c_str(), GenerateResponseFromStatusCode(404).size(), 0);
+                            // client.pr = 1; /// change with client_status_life
+                            client.pr = send_video(client);   
                         }
                     }
                     if (client.resp == -1 || client.resp > 0 || client.pr) 

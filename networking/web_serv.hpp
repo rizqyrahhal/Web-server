@@ -67,7 +67,7 @@ class request
 	int lenght;
 	int add_it_to_body;
 	std::string string_to_add;
-
+	int bodyFile;
 	~request(){}
 };
 
