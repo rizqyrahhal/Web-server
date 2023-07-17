@@ -19,7 +19,7 @@ int request::parce_header(std::string header)
 	//check allow methods
 	method = s;
 	tmp1 >> s;
-	if (s.length() > 20)
+	if (s.length() > 2048)
 		return(414);	//check for allow caracter
 	std::string caracter = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%";
 	for(size_t j = 0; j < s.length(); j++)
@@ -157,7 +157,7 @@ void request::parce_chunks(std::string body, int ffd, client & client)
 	}
 }
 
-int request::read_reqwest(client & client)
+int request::read_reqwest(client & client, std::vector<server> & servers, int index_client)
 {
 	std::vector<char> buffer(1024); // Adding by rarahhal
 	std::cout<<"*********** before recive **************"<<std::endl;
@@ -189,9 +189,24 @@ int request::read_reqwest(client & client)
 			client.check = 1;
 			return (staticcode);
 		}
+		std::string host =  map_request["Host"];
+		for (size_t i = 1; i < servers.size(); i++)
+		{
+			if (servers[i].server_name == host)
+			{
+				servers[0].client.erase(servers[0].client.begin() + index_client);
+				servers[i].client.push_back(client);
+				break;
+			}
+		}
 		//check which method
 		if (method != "GET" && method != "DELETE")
 		{
+				// std::string name_file = 
+				// fstream file;
+    			// file.open("test.txt");
+    			// file << "test";
+    			// file.close();
 			bodyFile = open("video.mp4", O_WRONLY);
 			std::cout<<"ffd = "<<ffd<<std::endl;
 			std::cout<<"bodydd receive : "<< body.size()<< std::endl;
@@ -207,7 +222,7 @@ int request::read_reqwest(client & client)
 				client.header_parced = false;
 				lenght = lenght - body.size();
 				// std::cout<<"lenght first == "<<lenght<<std::endl;
-				if (bytesrecv <= 0)
+				if (lenght <= 0)
 				{
 					std::cout<<"byte recive < 1024"<<std::endl;
 					close(ffd);

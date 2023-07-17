@@ -50,7 +50,7 @@ class request
 	public:
 	request(){}
 	request(int max_size);
-	int	read_reqwest(client & client);
+	int	read_reqwest(client & client, std::vector<server> & servers, int index_client);
 	std::string method;
 	std::string url;
 	std::string query;
@@ -109,8 +109,8 @@ public:
 
 
 void    ft_parce_config(char **av, global &global);
-void    creat_socket_and_bind(global & glob);
-void    listen_new_connection(global & glob);
-void    run_servers(global & glob);
+void    creat_socket_and_bind(std::map<std::string, std::vector<server> > & map);
+void    listen_new_connection(std::map<std::string, std::vector<server> > & map);
+void    run_servers(std::map<std::string, std::vector<server> > & map);
 
 # endif
