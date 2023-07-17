@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:24:42 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/15 22:14:13 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/17 01:02:14 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,10 @@ void Response::GetMethod(server server, request request, std::string &bodyfile, 
 
 	if (_resourceType == DRCT) {
         checkForIndexFile(&(*this), server, bodyfile, isfile);
+    
+        #ifdef DEBUG
+            std::cout << "_requestedSource: " << _requestedSource << std::endl;
+        #endif
     }
 
     Response::GetContentType(_requestedSource, _mimeTypes, _contentType);

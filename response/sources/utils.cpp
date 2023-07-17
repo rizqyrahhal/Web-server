@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 00:10:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/15 02:31:33 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/17 05:05:21 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 
 bool checkIndexInsidDerctory(std::string *path) {
-    std::string indexhtml = *path + "index.html"; //Just hardecode be to make it check for any index name
+    std::string indexhtml = *path + "index.html"; // this is hard code but work less like that
     std::string indexphp = *path + "index.php";
     std::string indexpy = *path + "index.py";
     if (access(indexhtml.c_str(), 0) == 0) {
@@ -62,8 +62,15 @@ int calculeBodySize(std::string _requestedSource) {
     return (length);
 }
 
+std::string getCurrentDate() { // this function is Just harde code it have an forbiden functionalite
+    std::time_t currentTime = std::time(nullptr);
+    std::tm* localTime = std::localtime(&currentTime);
 
+    std::ostringstream oss;
+    oss << std::put_time(localTime, "%a, %d %b %Y %H:%M:%S %Z");
 
+    return oss.str();
+}
 
 
 

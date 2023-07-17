@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Response.hpp                                       :+:      :+:    :+:   */
+/*   ResponseReturned.hpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/11 05:29:02 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/14 01:11:58 by rarahhal         ###   ########.fr       */
+/*   Created: 2023/07/17 07:01:11 by rarahhal          #+#    #+#             */
+/*   Updated: 2023/07/17 07:01:15 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include "responsePart.hpp"
+
+class request;
+class server;
+class locations;
 
 const std::string generatBody(std::string _requestedSource);
 
@@ -27,6 +32,7 @@ class ResponseReturned
         bool _isFile;
         size_t _currentIndex;
     public:
+        ResponseReturned(server server, request request);
         ResponseReturned();
         std::string GetChanckFromResponse(size_t size_to_read);
         // static std::string readData(std::string& str, int size);

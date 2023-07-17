@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/16 03:14:31 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/17 07:08:49 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,7 @@ Response::Response() {
 
 ResponseReturned Response::CreatResponse(server server, request request) {
 
-
-    // it is a space in the begin of any headers value inside (request.map_request), remove it pleas 
+    // it is a space in the begin of any headers value inside (request.map_request), remove it pleas
     // std::cout << "########## eenrtrer ###########" << std::endl;
     // for (std::map<std::string, std::string>::iterator it = server.locations[6].cgi.begin(); it != server.locations[6].cgi.end(); it++) {
     //     std::cout << it->first << "=" << it->second << std::endl;
@@ -33,10 +32,11 @@ ResponseReturned Response::CreatResponse(server server, request request) {
     // std::cout << "########## ssorteee ###########" << std::endl << std::endl;
 
 
+    // the use of open is forbiden, from that we need to use ifstream to handl files (if it is a way to get fd we steel use fd in bodyFile if not switch to pass the path of file)
     // if  request a Post Method and have form-data need to be in Content-Type the Content-Type in the body
     // the same behavoir with thae filename 
 
-    request.bodyFile = open("./bodysfile", 666);
+    request.bodyFile = open("./Music.mp4", 666);
 
     Response response;
     try
@@ -45,6 +45,7 @@ ResponseReturned Response::CreatResponse(server server, request request) {
         #ifdef DEBUG
             std::cout << "_matchedLocationPosition: " << _matchedLocationPosition << "\n_matchedLocation: " << _matchedLocation << std::endl;
             std::cout << "_matchedLocation.root: " << server.locations[_matchedLocationPosition].root << std::endl;
+            std::cout << "Method: " << request.method << std::endl;
         #endif
         Response::IsMethodAllowedInLocation(server.locations[_matchedLocationPosition].allow_methods, request.method, response);
         Response::IsLocationHaveRedirection(server.locations[_matchedLocationPosition], response);
@@ -111,10 +112,12 @@ void Response::cgi(server server, request request) {
         file = open(_requestedSource.c_str(), 666);
     }
     else if (request.method == "POST") {
-        std::cout << "-------- daz man hna ---------\n";
         file = request.bodyFile;
     }
-	cgi.execut(argv[0], argv, envp, _requestedSource, file);
+	cgi.execut(argv[0], argv, envp, _requestedSource, file); // make this return an string of cgi resp
+
+    // here when pars the resp and set it in the body file
+    
     delete[] envp;
     delete[] argv;
 }
@@ -128,7 +131,7 @@ std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server ser
 	setStatusMessage(getReason(statuscode));
 
     /* set default headers */
-	// setHeader("Date: ", generateDate());
+	setHeader("Date: ", getCurrentDate());
 	setHeader("Connection", "close"); // from map headers (request data)   request.getHeaderValue(std::string key)  <---- this function global to get any header from map headers in the request (key in this case = "Conection")
 	// setHeader("Connection", "keep-alive"); // from map headers (request data)   request.getHeaderValue(std::string key)  <---- this function global to get any header from map headers in the request (key in this case = "Conection")
 
@@ -140,7 +143,7 @@ std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server ser
 		    bodyfile = err_page;
             isfile = true;
         }
-        else{
+        else {
             bodyfile = GenerateErrorPage(statuscode, getReason(statuscode));
             setHeader("Content-Length", std::to_string(bodyfile.size()));
             isfile = false;
@@ -154,6 +157,7 @@ std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server ser
 
 	// GENERATE_THE_FINALE_RESPONSE();
     std::string res = generateResponse();
+    
 
     return res;
 }
@@ -172,14 +176,26 @@ Response::~Response() {
 
     cgi handlig of the env \| but need more testing
     cgi flow and detecting the status code
-    the index.php and index.by   in dyrectory
+    the index.php and index.by   in dyrectory // not mandatory just a *hawas* 
     the read and set file in the case upload just structiring and sincronize it
-    
+
     matched location and matched source need work blkhosos source
-    
-    read the cgi file output by specific size or by getline and parss the header to its or the both header and body 
+
+    CGI rest test cokis and pars the header and change the throw str to throw number to define is a cgi  work here beffor all
 
     make more test in the matched location and the searching about requested source 
+
+
+
+
+
+    @@@@@@    in the switch data if the confle rest by server and requste return to the call of response class and take from it the res to the request.responseReturned     @@@@@@
+
+
+
+
+
+    mal server_name 3la achmen server matched taydwi abdl3alim wo ana aslan tanakhod one server and one request
 
 */
 

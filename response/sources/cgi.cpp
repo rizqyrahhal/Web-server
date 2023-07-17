@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 03:33:15 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/16 03:07:26 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/17 06:18:55 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,17 +165,30 @@ void Cgi::execut(std::string cgibin, char **argv, char **envp, std::string _requ
 		dup2(fd[0], 0);
 		close(fd[0]);
 
+		
+		char buffer[1025];
+		int size_read;
+		std::string cgiOutput;
+		while((size_read = read(0, buffer, 1024)) > 0) {
+            	buffer[size_read] = '\0';
+				cgiOutput += std::string(buffer);
+            	// int size_write = write(fd, buffer, size_read);
+            	std::cout << "I read this size to 0 :->> " << size_read << std::endl;
+        	}
+		std::cout << "cgiOutput: " << cgiOutput << std::endl;
 		// read by char[] and close it by '\0'
-		std::vector<char> buffer(2606); // calculate this size before all  !!!!!!!!!!!!!!!!!!!! this is Just hard code  (use getline() or some thing like this read pares andd assinge in string body)
-		int size = read(0, &buffer[0], 2606);
-		buffer[size] = '\0';
-		(void)size;
-        #ifdef DEBUG
-		std::cout << "************** Response Genarated by CGI **************\n Genarate this SIZE: " << size  \
-					<< "\n" << std::string(buffer.begin(), buffer.begin() + size) << std::endl;
-        #endif
+		
+		// std::vector<char> buffer(2606); // calculate this size before all  !!!!!!!!!!!!!!!!!!!! this is Just hard code  (use getline() or some thing like this read pares andd assinge in string body)
+		// int size = read(0, &buffer[0], 2606);
+		// // buffer[size] = '\0';
+		// (void)size;
+        // #ifdef DEBUG
+		// std::cout << "************** Response Genarated by CGI **************\n Genarate this SIZE: " << size  \
+		// 			<< "\n" << std::string(buffer.begin(), buffer.begin() + size) << std::endl;
+        // #endif
 
-		throw(std::string(buffer.begin(), buffer.begin() + size)); // ila ma7ayadtihach lmara jaya ayoub ghayssabak
+		throw(cgiOutput); // ila ma7ayadtihach lmara jaya ayoub ghayssabak // pares cgi resp here and throw status code
+		// throw(std::string(buffer.begin(), buffer.begin() + size)); // ila ma7ayadtihach lmara jaya ayoub ghayssabak // pares cgi resp here and throw status code
 	}
 }
 

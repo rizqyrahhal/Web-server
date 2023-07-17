@@ -26,7 +26,6 @@
 class locations
 {
 public:
-
 	locations(/* args */){}
 	std::string name;
 	std::string root;
@@ -41,6 +40,7 @@ public:
 
 	~locations(){}
 };
+
 
 class request
 {

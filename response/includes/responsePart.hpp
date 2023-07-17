@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/15 20:04:25 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/17 05:41:11 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 
 #include "HttpResponse.hpp"
 #include "statuscode.hpp"
-#include "Response.hpp"
+#include "ResponseReturned.hpp"
 #include "Cgi.hpp"
 #include "../../networking/web_serv.hpp"
 
@@ -107,8 +107,9 @@ std::string getMimeType(std::map<std::string, std::string> mimetypes, std::strin
 /* utils */
 bool checkIndexInsidDerctory(std::string *path);
 const std::string generatBody(std::string _requestedSource);
-int calculeBodySize(std::string _requestedSource);
+int calculeBodySize(std::string _requestedSource); // make this return long
 std::string generateAutoindexFile(std::string requestedSource); /* in GET method */
+std::string getCurrentDate();
 
 // error page 
 const std::string GenerateErrorPage(int statuscode, std::string statusmessage);

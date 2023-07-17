@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:28:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/15 19:20:11 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/17 04:44:21 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void Response::checkForIndexFile(Response *response, server server, std::string 
     if (server.locations[response->_matchedLocationPosition].index.empty())
     {
         if (checkIndexInsidDerctory(&response->_requestedSource)) /* return bool and append index.html to requstedSource if existe */
-            return;
+            return; // this condition me be remove if not mandatory
         if (server.locations[response->_matchedLocationPosition].autoindex == "on")
         {
 
@@ -28,7 +28,7 @@ void Response::checkForIndexFile(Response *response, server server, std::string 
         else
             throw(403);
     }
-    if (!server.locations[response->_matchedLocationPosition].index.empty())
+    if (!server.locations[response->_matchedLocationPosition].index.empty()) // here need to ask what beffor sherch in derectory or in derective
     {
         response->_requestedSource = server.locations[_matchedLocationPosition].index;
         return ;

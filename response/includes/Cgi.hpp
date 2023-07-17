@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/14 03:15:57 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/15 22:30:40 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/17 06:25:38 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,11 @@
 #include <map>
 #include "responsePart.hpp"
 
+
 class request;
 class server;
-// class Response;
 
-class Cgi // : public Response
+class Cgi// : public Response
 {
     private:
 		std::string cgiBinPath;
