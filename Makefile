@@ -6,8 +6,8 @@ CC = c++
 SRCS = main.cpp \
 	networking/parcing.cpp \
 	networking/web_serv.cpp \
-	networking/client.cpp \
 	networking/networking.cpp \
+	networking/client.cpp \
 	response/sources/responsePart.cpp \
 	response/sources/HttpResponse.cpp \
 	response/sources/error_page.cpp \
@@ -18,6 +18,9 @@ SRCS = main.cpp \
 	response/sources/responseutils.cpp \
 	response/sources/utils.cpp \
 	response/sources/mimeTypes.cpp \
+	response/sources/cgi.cpp \
+	response/sources/Response.cpp \
+
 
 
 

@@ -14,6 +14,10 @@
 
 #include "responsePart.hpp"
 
+#ifndef HTTP_RESONSE_DEBUG
+// #define HTTP_RESONSE_DEBUG
+#endif
+
 class HttpResponse
 {
 	protected:
@@ -33,6 +37,5 @@ class HttpResponse
 		void setBody(const std::string &body);
 		unsigned int getBodySize() const;
 		std::string generateResponse();
-		// std::string mygenerateResponse();
 		~HttpResponse();
 };

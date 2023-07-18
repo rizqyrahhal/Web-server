@@ -21,12 +21,14 @@
 #include <stdlib.h>
 
 #include "web_serv.hpp"
-// #include "includes/responsePart.hpp"
+#include "../response/includes/ResponseReturned.hpp"
+
 
 
 #define BUFFER_SIZE 1024
 
 class request;
+class ResponseReturned;
 
 class client
 {
@@ -45,6 +47,9 @@ class client
 	int readFd;
 	int max_client_body_size;
 	request *request_client;
+	ResponseReturned response_client;
+	bool generateResponseObject;
+
 	// unsigned long size;
 	client(int maxBodySize);
 	bool siftna_response;

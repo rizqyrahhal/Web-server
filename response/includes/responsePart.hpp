@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/09 02:38:43 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/18 05:04:09 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,91 +30,96 @@
 
 #include "HttpResponse.hpp"
 #include "statuscode.hpp"
+#include "ResponseReturned.hpp"
+#include "Cgi.hpp"
 #include "../../networking/web_serv.hpp"
 
 #define FILE true
 #define DRCT false
-#define PHPCGI 3
-#define BYCGI 4
 
 #ifndef DEBUG
 #define DEBUG
+#endif
+
+#ifndef CGI_DEBUG
+#define CGI_DEBUG
 #endif
 
 #ifndef CURENT_DEBUG
 // #define CURENT_DEBUG
 #endif
 
-
-
-
-// class switch
-// {
-// 	private:
-// 		std::string header;
-// 		int fd;
-// 	public:
-// 		std::string readforsend(short sizetoread);
-// };
-
-
 class request;
 class server;
 class locations;
+class ResponseReturned;
 
 class Response : public  HttpResponse
 {
-	private:
-		std::unordered_map<std::string, std::string> _mimeTypes;
+	private: /* data management */
+		std::map<std::string, std::string> _mimeTypes;
+		std::map<std::string, std::string> _cgi_mimeTypes;
+		// std::vector<char*> metaVariablesName; 
+		// char **_metaVariables;
 	    static size_t _matchedLocationPosition;
 		std::string _matchedLocation;
 		std::string _requestedSource;
-		bool _resourceType; /* bool */ // dyrictore Vs file
+		bool _resourceType; /* dyrictore Vs file */
 		std::string _contentType; // if it is file (.html, .css, .js, .png, .mp4 ..) my be fill it in map and construct it at constructer
 		// std::string _path;
 		std::string _method;
 
+		/* Cgi*/
+		std::string _cgiBinPath;
+		std::string _cgiOutput;
+
+		/* functionalite */
+		std::string ResponseGeneratedFromStatusCode(int statuscode, server server, request request, std::string &bodyfile, bool &isfile);
 		std::string GetMatchedLocationRequestUrl(std::vector<locations> locations, std::string requesturi);
 		static void IsLocationHaveRedirection(locations matchedlocation, Response &response);
 		static void IsMethodAllowedInLocation(std::vector<std::string> allowedmethod, std::string requestmethod, Response &response);
-		void GetMethod(server server, request request);
+		void GetMethod(server server, request request, std::string &bodyfile, bool &isfile);
 		void DeleteMethod(server server, request request);
 		void PostMethod(server server, request request);
+		bool isCgi();
+		void cgi(server server, request request);
+
+		/* response utilse */
+		static void GetContentType(std::string requestedSource, std::map<std::string, std::string> mimetypes, std::string &contenttype);
+		static std::string GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method);
+		static void checkForIndexFile(Response *response, server server, std::string &bodyfile, bool &isfile);
 	public:
 		Response();
-		std::string CreatResponse(server server, request request);
-		std::string ResponseGeneratedFromStatusCode(int statuscode, server server, request request);
-
-		/* seters */
-		/* geters */
+		ResponseReturned CreatResponse(server server, request request);
 		~Response();
-	private:
-		/* response utilse */
-		static void GetContentType(std::string requestedSource, std::unordered_map<std::string, std::string> mimetypes, std::string &contenttype);
-		static std::string GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method);
-		static void checkForIndexFile(Response *response, server server);
+	private: /* switched data */
+		std::string bodyfile;
+		bool isfile;
 };
 
 std::string GenerateResponseFromStatusCode(int statuscode);
-std::string GenerateResponseFromStatusCode(int statuscode, Response response);
-
 
 /* mimetypes and content type function */
-void fillMimeTypes(std::unordered_map<std::string, std::string> &mimeTypes);
+void fillMimeTypes(std::map<std::string, std::string> &mimeTypes);
+std::map<std::string, std::string> readMimeTypes(const std::string& filePath);
 std::string getFileExtantion(std::string requestedsource);
-std::string getMimeType(std::unordered_map<std::string, std::string> mimetypes, std::string fileextantion);
+std::string getMimeType(std::map<std::string, std::string> mimetypes, std::string fileextantion);
 
 /* utils */
 bool checkIndexInsidDerctory(std::string *path);
 const std::string generatBody(std::string _requestedSource);
-std::string generateAutoindexFile(std::string requestedSource); // in GET method
-
+int calculeBodySize(std::string _requestedSource); // make this return long
+std::string generateAutoindexFile(std::string requestedSource); /* in GET method */
+std::string getCurrentDate();
 
 // error page 
 const std::string GenerateErrorPage(int statuscode, std::string statusmessage);
 std::string SearchAboutErrorPageFormTowPlaces(int statuscode, std::map<int, std::string> g_err_page, std::map<int, std::string> l_err_page);
 std::string SearchAboutErrorPage(int statuscode, std::map<int, std::string> g_err_page);
 std::string ReadErrorPage(std::string errpage);
+
+
+
 
 
 

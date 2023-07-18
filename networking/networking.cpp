@@ -175,23 +175,45 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
                             std::cout<<"static code *-*"<<std::endl;
                             send(client.fd_client, GenerateResponseFromStatusCode(client.resp).c_str(), GenerateResponseFromStatusCode(client.resp).size(), 0);
                         }
-                        else if (client.resp == 0)
-                        {
+                        else if (client.resp == 0) {
+                            std::cout << "I WORK ON THIS CLIENT: " << client.fd_client << std::endl;
                             std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
-                            std::string res;
-                            if (client.siftna_response == true)
-                            {
-                            Response response;
-                            res = response.CreatResponse(it->second[0], *client.request_client);
-                            client.siftna_response = false;
+                            
+                            if (!client.generateResponseObject) {
+                                Response response;
+                                client.response_client = response.CreatResponse(it->second[0], *client.request_client);
+                                client.generateResponseObject = true;
                             }
-                                // std::cout << "\n***** Response ***** \n" << res << "\n----------------------------------\n";
-                            int sending = send(client.fd_client, res.c_str(), res.size(), 0);
-                            std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
+
+                            // if (client.response_client.getHeaders().empty())
+                            //     std::cout << "\n***** Response ***** \n" << (client.response_client.readfile()) << "\n----------------------------------\n";
+                            // else
+                            //     std::cout << "\n***** Response ***** \n" << (client.response_client.getHeaders() + client.response_client.readfile()) << "\n----------------------------------\n";
+                            
+                            
+                            std::string chunck = client.response_client.GetChanckFromResponse(255);
+                            if (chunck.empty()) {
+                                client.pr = 1; // chof m3a hada 
+                                // sen = true; /// change with client_status_life
+
+                            }
+                            else {
+                                send(client.fd_client, chunck.c_str(), chunck.size(), 0);
+                            }
+                            
+                            // while(!chunck.empty()) {
+                            //     chunck = client.response_client.GetChanckFromResponse(255);
+                            // }
+
+
+
+
+
+
+                            std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << std::endl;
+
                             std::cout << "\n###################################################################################################################################################\n\n";
-                            send(client.fd_client, GenerateResponseFromStatusCode(404).c_str(), GenerateResponseFromStatusCode(404).size(), 0);
-                            client.pr = 1; /// change with client_status_life
-                            // client.pr = send_video(client);
+                            //send correct response
                         }
                         if (client.resp == -1 || client.resp > 0 || client.pr) 
                         {
@@ -212,7 +234,28 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
    
 }
 
+
+
+                        // else if (client.resp == 0)
+                        // {
+                        //     std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
+                        //     std::string res;
+                        //     if (client.siftna_response == true)
+                        //     {
+                        //     Response response;
+                        //     res = response.CreatResponse(it->second[0], *client.request_client);
+                        //     client.siftna_response = false;
+                        //     }
+                        //         // std::cout << "\n***** Response ***** \n" << res << "\n----------------------------------\n";
+                        //     int sending = send(client.fd_client, res.c_str(), res.size(), 0);
+                        //     std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
+                        //     std::cout << "\n###################################################################################################################################################\n\n";
+                        //     send(client.fd_client, GenerateResponseFromStatusCode(404).c_str(), GenerateResponseFromStatusCode(404).size(), 0);
+                        //     client.pr = 1; /// change with client_status_life
+                        //     // client.pr = send_video(client);
+                        // }
 /*
+
 
 ParseRequest(client, servers, int idxClientInDefaultServer) {
     if (parsingHeader) {

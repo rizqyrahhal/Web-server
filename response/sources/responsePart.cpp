@@ -6,90 +6,135 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/08 00:59:20 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/18 05:05:11 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/responsePart.hpp"
 
-
 size_t Response::_matchedLocationPosition;
 
-
 Response::Response() {
-    fillMimeTypes(_mimeTypes); // this data move to initial it in the beginig of programe one time to evit time delia in any response {!!!!!!!}
+    // fillMimeTypes(_mimeTypes); // this data move to initial it in the beginig of programe one time to evit time delia in any response {!!!!!!!}
+    // _mimeTypes(readMimeTypes("./template/mime.types"));
+    _cgi_mimeTypes = readMimeTypes("./template/cgi-mime.types");
+    _mimeTypes = readMimeTypes("./template/mime.types");  //this data move to initial it in the beginig of programe one time to evit time delia in any response {!!!!!!!}
+    isfile = false;
 }
 
-std::string Response::CreatResponse(server server, request request) {
-    // (void)servder;
-    // (void)requdest;
-        // Server server;
-	    // Request request;
+ResponseReturned Response::CreatResponse(server server, request request) {
 
-        /* this data between this tow comment need to adding by parser */
-        // parsing of config file need more check about the existing and permetion of any files or folder set inside its ...
-        // std::map<int, std::string> map_err_page;
-        
-        // server.locations[0].index = "./www/app/html/index.html"; // need to addd in parssing !!!!
-        
-        /* this is the second comment : END OF COMMENT */
-        
-        Response response;
-        try
-        {
-            /* First handling */
+    // it is a space in the begin of any headers value inside (request.map_request), remove it pleas
+    // std::cout << "########## eenrtrer ###########" << std::endl;
+    // for (std::map<std::string, std::string>::iterator it = server.locations[6].cgi.begin(); it != server.locations[6].cgi.end(); it++) {
+    //     std::cout << it->first << "=" << it->second << std::endl;
+    //     // it->second.erase(0, 1);
+    // }
+    // std::cout << "########## ssorteee ###########" << std::endl << std::endl;
 
 
-            // for (size_t i = 0; i < server.locations.size(); i++)
-            // {
-            //     std::cout << "locations.name[" << i << "] name: " << server.locations[i].root << std::endl;
-            // }
-            // std::cout << "URL: " << request.url << std::endl;
+    // the use of open is forbiden, from that we need to use ifstream to handl files (if it is a way to get fd we steel use fd in bodyFile if not switch to pass the path of file)
+    // if  request a Post Method and have form-data need to be in Content-Type the Content-Type in the body
+    // the same behavoir with thae filename 
 
-            _matchedLocation = response.GetMatchedLocationRequestUrl(server.locations, request.url);
-            #ifdef DEBUG
-                std::cout << "_matchedLocationPosition: " << _matchedLocationPosition << "\n_matchedLocation: " << _matchedLocation << std::endl;
-                std::cout << "_matchedLocation.root: " << server.locations[_matchedLocationPosition].root << std::endl;
-            #endif
-            Response::IsMethodAllowedInLocation(server.locations[_matchedLocationPosition].allow_methods, request.method, response);
-            Response::IsLocationHaveRedirection(server.locations[_matchedLocationPosition], response);
+    request.bodyFile = open("./filedata", 666);
 
-            /*       Start Working On Method Type */ // for new it is OK but a don't know all casase to check
+    Response response;
+    try
+    {
+        _matchedLocation = response.GetMatchedLocationRequestUrl(server.locations, request.url);
+        #ifdef DEBUG
+            std::cout << "_matchedLocationPosition: " << _matchedLocationPosition << "\n_matchedLocation: " << _matchedLocation << std::endl;
+            std::cout << "_matchedLocation.root: " << server.locations[_matchedLocationPosition].root << std::endl;
+            std::cout << "Method: " << request.method << std::endl;
+        #endif
+        Response::IsMethodAllowedInLocation(server.locations[_matchedLocationPosition].allow_methods, request.method, response);
+        Response::IsLocationHaveRedirection(server.locations[_matchedLocationPosition], response);
 
-            /* Check Which Requested Method */
-            if (request.method == "GET")
-                response.GetMethod(server, request);
-            else if (request.method == "DELETE")
-                response.DeleteMethod(server, request);
-            else if (request.method == "POST")
-                    response.PostMethod(server, request);
-            else
-                std::cout << "IF SHOWING THIS LINE IT IS A PROBLEME BEFORE WORKING ON THE REQUESTED METHOD !!!!!!!!!\n";
-            // throw(403); // just to be work !!!!!!!!!!!!!!
-        }
-        catch(int statuscode) { //change int by short in futere
-                std::string *res = new std::string(response.ResponseGeneratedFromStatusCode(statuscode, server, request));
-                // #ifdef DEBUG
-                //     std::cout << "***** Response OK ***** \n" << res << "\n----------------------------------\n";
-                // #endif
-                return (*res); /* this res need to be inside the Response class to destroy it when finshed sending response to client */
-        }
-        catch(std::string str)
-        {
-            std::string *res = new std::string(str); 
-            return (*res); /* this res need to be inside the Response class to destroy it when finshed sending response to client */
-        }
+        /* Check Which Requested Method */
+        if (request.method == "GET")
+            response.GetMethod(server, request, bodyfile, isfile);
+        else if (request.method == "DELETE")
+            response.DeleteMethod(server, request);
+        else if (request.method == "POST")
+                response.PostMethod(server, request);
+        else
+            std::cout << "IF SHOWING THIS LINE IT IS A PROBLEME BEFORE WORKING ON THE REQUESTED METHOD !!!!!!!!!\n";
+    }
+    catch(int statuscode) {
+            std::string *res = new std::string(response.ResponseGeneratedFromStatusCode(statuscode, server, request, bodyfile, isfile));
+            ResponseReturned resp;
+            resp.setHeaders(*res);
+            if (!bodyfile.empty()) {
+                resp.setBody(bodyfile);
+                resp.setIsFile(isfile);
+            }
+            if (!isfile && statuscode == 200)
+                setHeader("Content-Length", std::to_string(bodyfile.size()));
+            return (resp);
+    }
+    catch(std::string cgi) /* Cgi */
+    {
+        // Content-Type: text/html\r\n
+        std::string *res = new std::string("HTTP/1.1 200 Ok\r\n" + cgi);
+        // std::string res = "HTTP/1.1 200 Ok\r\n" + _cgiOutput;
+        /* here check and add the needed status to the response generated by cgi */ // add content lenght and date and start line
+        ResponseReturned resp;
+        resp.setBody(*res);
+        // resp.setIsFile(isfile);
+        // std::cout << "Dody Cgi SIZE : " << resp.getBody().size() << std::endl;
+        return (resp);
+    }
 
-    // response from cgi
-    return (NULL);
-    // return ("ERROR *************************************\n");
+    /* here just to evet the return value error */
+    ResponseReturned resp;
+    return (resp);
 }
 
-/* rest small choise not handling in headers !!!!!!!!!!!!! */                // TRY  to merge this function with the abouve function in some sulution (my be make it a template function or something like this)
-std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server server, request request) {
-	// request request;
-	// Server	server;
+void Response::cgi(server server, request request) {
+	Cgi cgi;
+    int file = 0;
 
+        std::cout << "########## eenrtrer ###########" << std::endl;
+    for (std::map<std::string, std::string>::iterator it = server.locations[6].cgi.begin(); it != server.locations[6].cgi.end(); it++) {
+        std::cout << it->first << "=" << it->second << std::endl;
+        // it->second.erase(0, 1);
+    }
+    std::cout << "########## ssorteee ###########" << std::endl << std::endl;
+
+    //  here here // in this funcion py bin not work or not found or somthing    .////// STOOOOP HERE
+    _cgiBinPath = cgi.getCgiPath(server.locations[_matchedLocationPosition].cgi, _contentType);  
+    #ifdef CGI_DEBUG
+       std::cout << "_cgiBinPath: " << _cgiBinPath << std::endl;
+    #endif
+	cgi.fillEnvp(request, server, _requestedSource, _contentType);
+    cgi.fillArgv(_cgiBinPath, _requestedSource);
+    char **envp = cgi.vectorToCharArray(cgi._envp);
+    char **argv = cgi.vectorToCharArray(cgi._argv);
+    if (request.method == "GET") {
+        file = open(_requestedSource.c_str(), 666);
+    }
+    else if (request.method == "POST") {
+        file = request.bodyFile;
+    }
+    // _cgiOutput = new std::string(cgi.execut(argv[0], argv, envp, _requestedSource, file));
+	_cgiOutput = cgi.execut(argv[0], argv, envp, _requestedSource, file); //make this function  set the resp in a string insid the Response class
+    delete[] envp;
+    delete[] argv;
+
+    
+        // std::cout << "ATAFINEK: " << _cgiOutput << std::endl;
+
+    throw(_cgiOutput);
+
+    
+
+    // here when pars the resp and set it in the body file
+    
+}
+
+/* rest small choise not handling in headers !!!!!!!!!!!!! */
+std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server server, request request, std::string &bodyfile, bool &isfile) {
     (void)request;
     /* Start line element */
     setVersion("HTTP/1.1");
@@ -97,40 +142,73 @@ std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server ser
 	setStatusMessage(getReason(statuscode));
 
     /* set default headers */
-	// setHeader("Date: ", generateDate());
+	setHeader("Date: ", getCurrentDate());
 	setHeader("Connection", "close"); // from map headers (request data)   request.getHeaderValue(std::string key)  <---- this function global to get any header from map headers in the request (key in this case = "Conection")
+	// setHeader("Connection", "keep-alive"); // from map headers (request data)   request.getHeaderValue(std::string key)  <---- this function global to get any header from map headers in the request (key in this case = "Conection")
 
-    /* HERE response have rederect message not have any body or something like this her is the probleme*/
-	/* search about error page in map_error page */
-
-    if (statuscode != 200 && statuscode != 201 && statuscode != 204)   // change this with categore redirection-error
+    if (statuscode != 200 && statuscode != 201 && statuscode != 204)
     {
-		// std::string err_page = SearchAboutErrorPage(statuscode, server.map_err_page);
 		std::string err_page = SearchAboutErrorPageFormTowPlaces(statuscode, server.map_err_page, server.locations[_matchedLocationPosition].map_err_page); //the last map not implemented by parser
-        if (!err_page.empty())
-        	setBody(ReadErrorPage(err_page));
-        else
-            setBody(GenerateErrorPage(statuscode, getReason(statuscode)));
-        setHeader("Content-Type", "text/html"); //generateContentType(), that is oky for new becous the error type in all time html and the other way detecte and assigne in the same place
+        if (!err_page.empty()) {
+            setHeader("Content-Length", std::to_string(calculeBodySize(err_page)));
+		    bodyfile = err_page;
+            isfile = true;
+        }
+        else {
+            bodyfile = GenerateErrorPage(statuscode, getReason(statuscode));
+            setHeader("Content-Length", std::to_string(bodyfile.size()));
+            isfile = false;
+        }
+        setHeader("Content-Type", "text/html");
     }
 
     /* adding headers */
-    if (statuscode != 201 && statuscode != 204)
-        setHeader("Content-Length", std::to_string(getBodySize()));
-    
+    // if (statuscode != 201 && statuscode != 204 && statuscode != 200)
+    // setHeader("Content-Length", std::to_string(getBodySize()));
+
 	// GENERATE_THE_FINALE_RESPONSE();
     std::string res = generateResponse();
     
+
     return res;
 }
+
+
 
 Response::~Response() {
 
 }
 
-// change from throw response to throw status code \|
-// add the reading file  in vector \|
-// swap between check rederection and check allowd methods, but need confinm with nginx
+/* the WORK rest :
+
+    WHEN THE MEERG WORK AS NEED  REPLACE THE NETWORKIN FOLDER BY THE SAME ONE IN THE meerg REPO (THIS METHOD OF WORK BE ALL TIME OF WORKIN ON WEBSERV) 
+
+    STOP --> in check the floow of the too status 201 and 500 to be knew the position of error where (lme be the method of creation 500 correct then the 201)
+
+    cgi handlig of the env \| but need more testing
+    cgi flow and detecting the status code
+    the index.php and index.by   in dyrectory // not mandatory just a *hawas*
+    the read and set file in the case upload just structiring and sincronize it
+
+    matched location and matched source need work blkhosos source
+
+    CGI rest test cokis and pars the header and change the throw str to throw number to define is a cgi  work here beffor all
+
+    make more test in the matched location and the searching about requested source 
+
+
+
+
+
+    @@@@@@    in the switch data if the confle rest by server and requste return to the call of response class and take from it the res to the request.responseReturned     @@@@@@
+
+
+
+
+
+    mal server_name 3la achmen server matched taydwi abdl3alim wo ana aslan tanakhod one server and one request
+
+*/
 
 
 
@@ -139,6 +217,62 @@ Response::~Response() {
 
 
 
-/* new in DELETE METHOD handl file and directory 409 rest 403 and 500 and cgi for both file and directory */
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		// char* envp[] = {
+		// (char*)"SERVER_PROTOCOL=HTTP/1.1",
+		// (char*)"REQUEST_METHOD=GET",
+		// (char*)"PATH_INFO=/Users/rarahhal/Desktop/meerge/tools/cgi-scripts/php/hello.php",
+		// (char*)"REDIRECT_STATUS=200",
+        // (char*)"SERVER_PORT=8080",
+		// (char*)"AUTH_TYPE",
+		// (char*)"CONTENT_LENGTH",
+        // (char*)"CONTENT_TYPE=application/x-httpd-php",
+		// (char*)"GATEWAY_INTERFACE",
+		// (char*)"PATH_TRANSLATED",
+        // (char*)"QUERY_STRING",
+		// (char*)"REMOTE_ADDR",
+        // (char*)"REMOTE_HOST",
+		// (char*)"REMOTE_IDENT",
+        // (char*)"REMOTE_USER",
+        // (char*)"SCRIPT_NAME=/Users/rarahhal/Desktop/meerge/tools/cgi-scripts/php/hello.php",
+        // (char*)"SCRIPT_FILENAME=/Users/rarahhal/Desktop/meerge/tools/cgi-scripts/php/hello.php",
+		// (char*)"SERVER_NAME",
+        // (char*)"SERVER_SOFTWARE=CGI/1.1",
+		// // (char*)"Accept-Encoding=gzip, deflate, br",
+		// // (char*)"Accept-Language=en-US,en;q=0.9",
+		// // (char*)"Cache-Control=max-age=0",
+		// // (char*)"Connection=keep-alive",
+		// // (char*)"Cookie=_ga=GA1.1.1276071924.1689035207; _ga_BVS1XM9LYJ=GS1.1.1689035207.1.1.1689035438.8.0.0; __gads=ID=d57167e481e2e578-223635ec3ae00050:T=1689035229:RT=1689036300:S=ALNI_MZeZpUb6CJn5WXJvh1UhjY-QILGAw; __gpi=UID=00000c65db6194a3:T=1689035229:RT=1689036300:S=ALNI_MZg5-InE8f8kHbBfHhC8yHKkIfFeg; PHPSESSID=a6dd5c948bdbfebf6dc11f830e45afb3",
+		// // (char*)"Host=localhost:8080",
+		// // (char*)"Sec-Fetch-Dest=document",
+		// // (char*)"Sec-Fetch-Mode=navigate",
+		// // (char*)"Sec-Fetch-Site=none",
+		// // (char*)"Sec-Fetch-User=?1",
+		// // (char*)"Upgrade-Insecure-Requests=1",
+		// // (char*)"User-Agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+		// // (char*)"sec-ch-ua='Not.A/Brand';v='8', 'Chromium';v='114', 'Google Chrome';v='114'",
+		// // (char*)"sec-ch-ua-mobile=?0",
+		// // (char*)"sec-ch-ua-platform='macOS'",
+		// // (char*)"Accept=text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+		// // (char*)"",
+		// // (char*)"",
+		// nullptr
+		// };

@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 16:45:33 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/09 02:50:47 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/18 02:46:03 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,57 @@ bool supportUpload(locations matchedlocation) {
     return false;
 }
 
+
+    // struct stat fileInfo;
+    // if (fstat(fileDescriptor, &fileInfo) == -1) {
+    //     // Error handling for fstat error
+    //     std::cout << "Failed to get file information." << std::endl;
+    //     close(fileDescriptor); // Close the file descriptor
+    //     return 1;
+    // }
+
+    // off_t fileSize = fileInfo.st_size;
+
 void Response::PostMethod(server server, request request) {
-    std::cout << "Upload_pass: " << server.locations[_matchedLocationPosition].upload_pass\
-              << std::endl << "Requested Method: " << request.method << std::endl;
-    
+    #ifdef DEBUG
+    	std::cout << "Upload_pass: " << server.locations[_matchedLocationPosition].upload_pass\
+            << std::endl << "Requested Method: " << request.method << std::endl;
+    #endif
     /* in this condition setup the position to upload the body of request */
     if(supportUpload(server.locations[_matchedLocationPosition])) {
-        // getFileName(); genarate or detect the filename
+        // FILL all this on toow function upload_data_managememnt() and creatin_file()
+        
+        // getFileName(); use searchInRequestedHeader() if set in header or take it from requset ase _filename
+        // gitextantion(); make this function that tak map of _mimetype and searech by Conetent-Type about extantion
+        // int file = open((getFileName() + gitextantion()), WITH flag to creat); // me be use ifstream to be sample to appand in file
 
-		/* here trow some number to return after it the nececery information to upload the body the file where upload it */
-        throw(201);  // Just hardcode be to check if uploaded
+        std::ifstream infile("videoplayback.mp4",std::ifstream::binary);
+        std::ofstream outfile ("filename.mp4",std::ofstream::binary);
+
+        int size = calculeBodySize("videoplayback.mp4");
+        /* using vector becouse when use the char* the binry have an \0 in your content */
+        std::vector<char> buffer(size + 1);
+        infile.read(&buffer[0],size);
+        buffer[size] = '\0';
+        outfile.write(&buffer[0],size);
+        outfile.close();
+        infile.close();
+
+        // // open not allowed
+        // int fd = open("filename.mp4", O_TRUNC | O_CREAT | O_EXCL | O_RDWR, 0777); // O_EXCL -->(error if O_CREAT and the file exists)
+        // if (fd == -1)
+        //     throw(500);
+        // char buffer[1025];
+        // int size_read;
+        // while((size_read = read(request.bodyFile, buffer, 1024)) > 0) {
+        //     buffer[size_read] = '\0';
+        //     int size_write = write(fd, buffer, size_read);
+        //     std::cout << "I write this size to filename.png :->> " << size_write << std::endl;
+        // }
+        // close(fd);
+
+        // throw(500); // becous when return 201 it is a probleme where i dont new but need to fixe   (check in the both floow of 500 and 201 response creation )
+        throw(201);
     }
     /* here the other way, working on location dosn't support upload */
     else {
@@ -40,20 +81,19 @@ void Response::PostMethod(server server, request request) {
         else
             std::cout << "DERCTORY\n";
         #endif
-
-        if (_resourceType == DRCT || _resourceType == FILE) {
-        	if (_resourceType == DRCT && !checkIndexInsidDerctory(&_requestedSource))
-            {
-				throw(403);
-            }
-			else if (server.locations[_matchedLocationPosition].cgi.empty())
-				throw(403);
-			else {
-				/* run cgi on requested file with POST request_method 
-				Return code Depend on CGI */
-
-			/* here trow some number to return after it the nececery information to run cgi with requsted file */
-			}
-    	}
+        if (_resourceType == DRCT && !checkIndexInsidDerctory(&_requestedSource)) {
+			throw(403);
+        }
+        Response::GetContentType(_requestedSource, _mimeTypes, _contentType);
+        #ifdef DEBUG
+            std::cout << "contentType : " << _contentType << std::endl;
+        #endif
+		if (server.locations[_matchedLocationPosition].cgi.empty())
+			throw(403);
+		else {
+            std::cout << "--------- Me by here ----------\n";
+			/* run cgi on requested file with POST request_method */
+			cgi(server, request);
+        }
     }
 }

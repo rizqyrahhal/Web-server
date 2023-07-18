@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 21:10:59 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/26 22:49:27 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/14 02:48:15 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ const std::string GenerateErrorPage(int statuscode, std::string statusmessage) {
     return errorpage;
 }
 
- /* this  function for error after determine matchedlocation (using inside ResponseGeneratedFromStatusCode() function) */
+/* this  function for error after determine matchedlocation (using inside ResponseGeneratedFromStatusCode() function) */
 std::string SearchAboutErrorPageFormTowPlaces(int statuscode, std::map<int, std::string> g_err_page, std::map<int, std::string> l_err_page) {
     std::string string;
 	for (std::map<int, std::string>::iterator l_it = l_err_page.begin(); l_it != l_err_page.end(); l_it++)
@@ -36,6 +36,7 @@ std::string SearchAboutErrorPageFormTowPlaces(int statuscode, std::map<int, std:
 	return (string);
 }
 
+// thhis function when change in GenerateResponseFromStatusCode() by SearchAboutErrorPageFormTowPlaces() delete it
 std::string SearchAboutErrorPage(int statuscode, std::map<int, std::string> g_err_page) {
     std::string string;
 	for (std::map<int, std::string>::iterator g_it = g_err_page.begin(); g_it != g_err_page.end(); g_it++)
@@ -44,7 +45,7 @@ std::string SearchAboutErrorPage(int statuscode, std::map<int, std::string> g_er
 	return (string);
 }
 
-// read err_page file  (my be make it like a globale function to read any file) 
+/* read err_page file */
 std::string ReadErrorPage(std::string errpage) {
 	std::ifstream file(errpage.c_str(), std::ifstream::binary);
     if (!file.is_open())
@@ -64,7 +65,8 @@ std::string ReadErrorPage(std::string errpage) {
 }
 
 /* rest small choise not handling in headers !!!!!!!!!!!!! */
-// the header in htis function is fixed for all time         MY BE in the futer work with the standard function
+//  the header in htis function is fixed for all time
+// this function need to add server to get from it the error page map
 std::string GenerateResponseFromStatusCode(int statuscode) { // adding argement to take server for the error page
     HttpResponse response;
 	// Request request;
@@ -83,7 +85,7 @@ std::string GenerateResponseFromStatusCode(int statuscode) { // adding argement 
 		response.setHeader("Conection", "close"); // from map headers (request data)   request.getConection()
 
 		// search about error page in map_error page
-		std::string err_page = SearchAboutErrorPage(statuscode, server._map_err_page);
+		std::string err_page = SearchAboutErrorPage(statuscode, server._map_err_page); // this function need to be SearchAboutErrorPageFormTowPlaces()
         if (!err_page.empty())
         	response.setBody(ReadErrorPage(err_page));
         else
@@ -92,37 +94,6 @@ std::string GenerateResponseFromStatusCode(int statuscode) { // adding argement 
         response.setHeader("Content-Type", "text/html"); //generateContentType()
         response.setHeader("Content-Length", std::to_string(response.getBodySize()));
 	}
-
-	// GENERATE_THE_FINALE_RESPONSE();
-    return response.generateResponse();
-}
-
-/* rest small choise not handling in headers !!!!!!!!!!!!! */                // TRY  to merge this function with the abouve function in some sulution (my be make it a template function or something like this)
-std::string GenerateResponseFromStatusCode(int statuscode, Response response) {
-	// request request;
-	Server	server;
-
-    /* Start line element */
-    response.setVersion("HTTP/1.1");
-	response.setStatusCode(statuscode);
-	response.setStatusMessage(getReason(statuscode));
-
-    /* set default headers */
-	// new_response.setHeader("Date: ", generateDate());
-	response.setHeader("Conection", "close"); // from map headers (request data)   request.getHeaderValue(std::string key)  <---- this function global to get any header from map headers in the request (key in this case = "Conection")
-
-    /* HERE response have rederect message not have any body or something like this her is the probleme*/
-	/* search about error page in map_error page */
-    if (statuscode < 300 || statuscode >= 400)   // change this with categore redirection-error
-    {
-		std::string err_page = SearchAboutErrorPage(statuscode, server._map_err_page);
-        if (!err_page.empty())
-        	response.setBody(ReadErrorPage(err_page));
-        else
-            response.setBody(GenerateErrorPage(statuscode, getReason(statuscode)));           
-        response.setHeader("Content-Type", "text/html"); //generateContentType()
-        response.setHeader("Content-Length", std::to_string(response.getBodySize()));
-    }
 
 	// GENERATE_THE_FINALE_RESPONSE();
     return response.generateResponse();

@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 11:09:55 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/08 15:36:02 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/15 00:07:39 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ bool deleteDirectory(std::string requestedSource) {
     return (true);
 }
 
-void Response::DeleteMethod(server server, request request) {
+void Response::DeleteMethod(server server, request request) { /* Delete Metthod dosn't support Cgi */
     _requestedSource = Response::GetRequestedSource(server.locations[Response::_matchedLocationPosition], request.url, _resourceType, &(*this), request.method);
     #ifdef DEBUG
         std::cout << "_requestedSource: " << _requestedSource << std::endl;
@@ -63,70 +63,31 @@ void Response::DeleteMethod(server server, request request) {
         else
             std::cout << "DERCTORY\n";
     #endif
-    /* affter finish dyrectory error if no error and index take the same floow like file just set the neded information */
-    if (_resourceType == DRCT || _resourceType == FILE) {  // change this condition in futere
-		/* directory handling */
-		if (_resourceType == DRCT) {
-            /* CGI */
-            if (!server.locations[_matchedLocationPosition].cgi.empty()) {
-                if (!checkIndexInsidDerctory(&_requestedSource))  // here be to chenge to check index.php or index.by becouse its cgi
-                    throw(403);
-                /* run cgi on requested file with DELETE REQUEST_METHOD && then Return the code depending on CGI */
-            }
-			if (deleteDirectory(_requestedSource))
-				throw(204);
-        }
-
-        /* file handling */
-        /* CGI */
-        if (server.locations[_matchedLocationPosition].cgi.empty()) {
-            /* Return Code Depend on CGI */
-        }
-		if (std::remove(_requestedSource.c_str()) == 0)
-			throw (204);
+	/* directory handling */
+	if (_resourceType == DRCT) {
+        // if (!server.locations[_matchedLocationPosition].cgi.empty()) { /* CGI */
+        //     if (!checkIndexInsidDerctory(&_requestedSource))  // here be to chenge to check index.php or index.by becouse its cgi !!!!!!
+        //         throw(403);
+        //     /* run cgi on requested file with DELETE REQUEST_METHOD && then Return the code depending on CGI -->  doing that in cgi condition beloow */
+        // }
+		// else if (deleteDirectory(_requestedSource))
+		// 	throw(204);
+		if (deleteDirectory(_requestedSource))
+			throw(204);
     }
+    Response::GetContentType(_requestedSource, _mimeTypes, _contentType);
+    #ifdef DEBUG
+        std::cout << "contentType : " << _contentType << std::endl;
+    #endif
+    /* CGI */
+    // if (!server.locations[_matchedLocationPosition].cgi.empty())
+    // {
+    //     std::cout << ":;::: -_-------------------------------------- IN CGI -----------";
+    // /// working here !!!!!!!!!!! //////
+	// 	cgi(server, request);
+    // }
+
+    /* file handling */
+	if (std::remove(_requestedSource.c_str()) == 0)
+		throw (204);
 }
-
-
-
-
-
-
-
-
-
-
-/* the First implementation of this algo */
-// bool deleteDirectory(std::string requestedSource) {
-//     std::cout << "-------- ------------- :" << requestedSource << std::endl;
-//     bool why = true;
-//     DIR* dr = opendir(requestedSource.c_str());
-//     if (dr != NULL)
-//     {
-//         struct dirent *dir = NULL;
-//         while ((dir = readdir(dr))) {
-// 			std::string name(dir->d_name);
-// 			if (name == "." || name == "..")
-// 				continue;
-// 			if (opendir((requestedSource + name + "/").c_str()) != NULL)
-// 			{
-// 				if (!deleteDirectory(std::string(requestedSource + name + "/")))
-// 					why = false;
-// 			}
-// 			if (std::remove((requestedSource + name + "/").c_str()) == 0)
-// 				continue;
-// 			else
-// 			{
-//         		// closedir(dr);
-// 				why = false;
-// 			}
-// 		}
-//         // closedir(dr);
-//     }
-//     else
-//     {
-//         std::cout << "ERROR IN OPENING DIRECTORY (this error be to check about it in parsing!!!)";
-//         return false;
-//     }
-//     return (true);
-// }

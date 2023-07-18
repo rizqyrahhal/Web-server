@@ -6,35 +6,44 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:28:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/27 00:07:23 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/17 04:44:21 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/responsePart.hpp"
 
-void Response::checkForIndexFile(Response *response, server server) {
+void Response::checkForIndexFile(Response *response, server server, std::string &bodyfile, bool &isfile) {
     if (server.locations[response->_matchedLocationPosition].index.empty())
     {
-        if (checkIndexInsidDerctory(&response->_requestedSource)) // return bool and append index.html to requstedSource if existe
-            return;
+        if (checkIndexInsidDerctory(&response->_requestedSource)) /* return bool and append index.html to requstedSource if existe */
+            return; // this condition me be remove if not mandatory
         if (server.locations[response->_matchedLocationPosition].autoindex == "on")
         {
-            // generate outoindex
-            response->setBody(generateAutoindexFile(response->_requestedSource)); /* problem but from the requsted source genaratore, the Url taked in the place at need the root*/
-            // response->setBody(generateAutoindexFile("." + server.locations[response->_matchedLocationPosition].root));
+
+            /* generate outoindex */
+            bodyfile = generateAutoindexFile(response->_requestedSource);
+            isfile = false;
             throw(200);
         }
         else
             throw(403);
     }
-    if (!server.locations[response->_matchedLocationPosition].index.empty())
+    if (!server.locations[response->_matchedLocationPosition].index.empty()) // here need to ask what beffor sherch in derectory or in derective
     {
         response->_requestedSource = server.locations[_matchedLocationPosition].index;
         return ;
     }
 }
 
-void Response::GetContentType(std::string requestedSource, std::unordered_map<std::string, std::string> mimetypes, std::string &contenttype) {
+bool Response::isCgi() {
+    for (std::map<std::string, std::string>::iterator it = _cgi_mimeTypes.begin(); it != _cgi_mimeTypes.end(); it++) {
+        if (_contentType == it->second)
+            return true;
+    }
+    return false;
+}
+
+void Response::GetContentType(std::string requestedSource, std::map<std::string, std::string> mimetypes, std::string &contenttype) {
     contenttype = getMimeType(mimetypes, getFileExtantion(requestedSource));
 }
 
@@ -148,8 +157,6 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
     throw(404);
 }
 /* in this above function thire is more and more hardcoding !!!! */
-
-
 
 
 
