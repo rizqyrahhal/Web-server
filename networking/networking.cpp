@@ -21,6 +21,7 @@ void    creat_socket_and_bind(std::map<std::string, std::vector<server> > & map)
         }
         it->second[0].fd_server = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
         FD_SET(it->second[0].fd_server,&server::current);
+        FD_SET(it->second[0].fd_server,&server::current2);
         if (server::maxfd < it->second[0].fd_server)
             server::maxfd = it->second[0].fd_server;
         if (it->second[0].fd_server == -1)
@@ -73,6 +74,7 @@ client accept_new_connection(server& serv)
 	if (server::maxfd < client.fd_client)
 		server::maxfd = client.fd_client;
 	FD_SET(client.fd_client, &server::current);
+	FD_SET(client.fd_client, &server::current2);
 	return (client);
 }
 
@@ -80,14 +82,14 @@ int    send_video(client & client)
 {
 
     // std::cout <<" i want to send video --->>>"<<std::endl;
-    char *readvideo = new char[1024];
+    char *readvideo = new char[2025]();
     if (client.p == 0)
     {
 
-        client.readFd = open("/Users/araysse/Desktop/test.mp4", 0);
+        client.readFd = open("/Users/araysse/Desktop/video.mp4", 0);
         std::string header = "HTTP/1.1 200 OK\r\n"
                        "Content-Type: video/mp4\r\n"
-                       "Content-Length: 344248223\r\n"
+                       "Content-Length: 32457473\r\n"
                        "Connection: closed\r\n\r\n";
         if (send(client.fd_client, header.c_str(), header.size(), 0) <= 0)
         {
@@ -104,7 +106,7 @@ int    send_video(client & client)
         std::cout<<"open video failed"<<std::endl;
         return (1);
     }
-    int rd = read(client.readFd, readvideo, 1024);
+    int rd = read(client.readFd, readvideo, 2024);
     if (rd <= 0)
     {
        std::cout<<"read salat"<<std::endl;
@@ -127,11 +129,15 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
 {
     signal(SIGPIPE, SIG_IGN);
     int tmp = 0;
-    int sen = 0;
 	while (1)
 	{
 		fd_set writable = server::current;
-		fd_set readable = server::current;
+		fd_set readable = server::current2;
+        struct timeval timeout;
+
+        // Set the timeout value to 5 seconds
+        timeout.tv_sec = 1;
+        timeout.tv_usec = 0;
 		tmp = select(server::maxfd + 1, &readable, &writable, nullptr, 0);
 		if (tmp < 0)
         {
@@ -145,18 +151,20 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
 			{
                 std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  Pushing Clients @@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n";
 				it->second[0].client.push_back(accept_new_connection(it->second[0]));
-                std::cout << "########### number of client:  " << it->second[0].client.size() << std::endl;
+                std::cout << "server socket ---->" << it->second[0].client.size() << std::endl;
             }
 
 			for (size_t i = 0; i < it->second[0].client.size() ; i++) // in this i <= Just to evet loop
 			{
+                // std::cout<<"loooop"<<std::endl;
                 if (it->second[0].client.size() != 0)
                 {
 				    client &client = it->second[0].client[i];
 				    if (FD_ISSET(client.fd_client, &readable) && client.check == 0)
 				    {
-                        std::cout<<"read request hna ******\n";
+
                         client.resp = client.request_client->read_reqwest(client, it->second, i);
+                        std::cout << "client fd set :" << FD_ISSET(client.fd_client, &readable) << std::endl;
 				        fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
                         // client.check = 1;
 				    }
@@ -170,25 +178,29 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
                         else if (client.resp == 0)
                         {
                             std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
+                            std::string res;
+                            if (client.siftna_response == true)
+                            {
                             Response response;
-                            std::string res = response.CreatResponse(it->second[0], *client.request_client);
-                                std::cout << "\n***** Response ***** \n" << res << "\n----------------------------------\n";
+                            res = response.CreatResponse(it->second[0], *client.request_client);
+                            client.siftna_response = false;
+                            }
+                                // std::cout << "\n***** Response ***** \n" << res << "\n----------------------------------\n";
                             int sending = send(client.fd_client, res.c_str(), res.size(), 0);
                             std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
                             std::cout << "\n###################################################################################################################################################\n\n";
-                            // send(client.fd_client, GenerateResponseFromStatusCode(404).c_str(), GenerateResponseFromStatusCode(404).size(), 0);
+                            send(client.fd_client, GenerateResponseFromStatusCode(404).c_str(), GenerateResponseFromStatusCode(404).size(), 0);
                             client.pr = 1; /// change with client_status_life
                             // client.pr = send_video(client);
-                            sen = 1;
                         }
-                        if (client.resp == -1 || client.resp > 0 || client.pr || sen == 1) 
+                        if (client.resp == -1 || client.resp > 0 || client.pr) 
                         {
                             std::cout<<"client "<<client.fd_client<<" dropped succesfolly"<<std::endl;
                             close(client.fd_client);
                             FD_CLR(client.fd_client, &server::current);
-                            close(client.readFd);
+                            FD_CLR(client.fd_client, &server::current2);
                             it->second[0].client.erase(it->second[0].client.begin() + i);
-                            server::maxfd--;
+                            std::cout<<"number of client : "<<it->second[0].client.size()<<std::endl;
 
                         }  
                     }

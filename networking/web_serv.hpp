@@ -21,8 +21,10 @@
 #include "client.hpp"
 #include "../response/includes/responsePart.hpp"
 
+
 #define BUFFER_SIZE 1024
 class client;
+class server;
 
 class locations
 {

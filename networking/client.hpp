@@ -47,6 +47,7 @@ class client
 	request *request_client;
 	// unsigned long size;
 	client(int maxBodySize);
+	bool siftna_response;
 	~client();
 };
 

@@ -66,7 +66,6 @@ void request::parce_chunks(std::string body, int ffd, client & client)
 	
 	while (i < body.size())
 	{
-		printf("sizeHexa == %lu\n",sizehex);
 		if (sizehex == 0)
 		{
 			int rn = body2.find("\r\n");
@@ -159,15 +158,16 @@ void request::parce_chunks(std::string body, int ffd, client & client)
 
 int request::read_reqwest(client & client, std::vector<server> & servers, int index_client)
 {
-	std::vector<char> buffer(1024); // Adding by rarahhal
+	std::vector<char> buffer(2024); // Adding by rarahhal
 	std::cout<<"*********** before recive **************"<<std::endl;
-	int bytesrecv = recv(client.fd_client, &buffer[0], 1024, 0); // Adding by rarahhal
+	int bytesrecv = recv(client.fd_client, &buffer[0], 2024, 0); // Adding by rarahhal
 	std::cout<<"*********** after recive **************"<<std::endl;
-	std::cout<<"read request for client : "<<client.fd_client<<std::endl;
+	std::cout<<"read request for client : "<<client.fd_client<<"  byte recive = : "<<bytesrecv<<std::endl;
 	if (!bytesrecv)
 	{
+		std::cout<<"return from byte recive if "<<std::endl;
 		client.check = 1;
-		return(-1);
+		return(0);
 	}
 	std::cout<<"byte receive : "<< bytesrecv<<std::endl;
 	if (client.header_parced)
@@ -188,6 +188,8 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 		{
 			client.check = 1;
 			return (staticcode);
+			// std::cout<<"kayn chi mochkil f request"<<std::endl;
+			// exit(0);
 		}
 		std::string host =  map_request["Host"];
 		for (size_t i = 1; i < servers.size(); i++)
@@ -235,6 +237,7 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 			std::cout<<"saliinaa mn get\n";
 			client.check = 1;
 		}
+		std::cout<<"return chi haja"<<::std::endl;
 		return (0);
 	}
 	// i finish the header parcing and i go working for body ...

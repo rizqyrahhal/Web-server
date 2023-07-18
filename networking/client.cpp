@@ -23,4 +23,5 @@ client::client(int maxClientBodySize) {
 	resp = 0;
 	pr = 0;
 	header_parced = true;
-}
+	siftna_response = true;
+} 
