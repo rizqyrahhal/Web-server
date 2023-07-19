@@ -32,7 +32,7 @@ void    location_serv(std::string line, server & server)
         {
             tmp1 >> str;
             if (access(str.c_str(), F_OK) == -1) {
-                std::cout<<"Error : root path in location not exist!"<<std::endl;
+                std::cout<<"Error : root path in location "<< vector[0]<<" not exist!"<<std::endl;
                 exit(0);
             }
             location.root = str;

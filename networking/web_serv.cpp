@@ -3,6 +3,7 @@
 request::request(int max_size)
 {
 	this->max_body_size = max_size;
+	std::cout<<"hello"<<std::endl;
 }
 
 int request::parce_header(std::string header)
@@ -61,7 +62,7 @@ int request::parce_header(std::string header)
 void request::parce_chunks(std::string body, int ffd, client & client)
 {
 	size_t i = 0;
-	std::cout<<body.size()<<std::endl;
+	// std::cout<<body.size()<<std::endl;
 	body2 = body;
 	
 	while (i < body.size())
@@ -73,7 +74,7 @@ void request::parce_chunks(std::string body, int ffd, client & client)
 				body2 = body2.substr(2);
 				rn = body2.find("\r\n");
 			}
-			std::cout<<"rn == "<<rn<< " aa == " << body2[0] << std::endl;
+			// std::cout<<"rn == "<<rn<< " aa == " << body2[0] << std::endl;
 			std::string hexa = body2.substr(0, rn);
 			size_hexa_string = hexa.size();
 			std::stringstream hex;
@@ -83,7 +84,7 @@ void request::parce_chunks(std::string body, int ffd, client & client)
 			if (sizehex == 0)
 				{
 					std::cout<<"saliinaa mn chunked\n";
-					close(ffd);
+					close(bodyFile);
 					client.check = 1;
 					return ;
 				}
@@ -114,7 +115,7 @@ void request::parce_chunks(std::string body, int ffd, client & client)
 						body2 = body2.substr(sizehex + 2);
 						// std::cout << "body size 333:"  << body2.size()  << " body = |" << body2 << "|" << "\n";
 						i += sizehex + 2;
-						std::cout << " i == " << i << " size: " << body.size() << std::endl;
+						// std::cout << " i == " << i << " size: " << body.size() << std::endl;
 						sizehex = 0;
 					}
 					else
@@ -159,10 +160,10 @@ void request::parce_chunks(std::string body, int ffd, client & client)
 int request::read_reqwest(client & client, std::vector<server> & servers, int index_client)
 {
 	std::vector<char> buffer(2024); // Adding by rarahhal
-	std::cout<<"*********** before recive **************"<<std::endl;
+	// std::cout<<"*********** before recive **************"<<std::endl;
 	int bytesrecv = recv(client.fd_client, &buffer[0], 2024, 0); // Adding by rarahhal
-	std::cout<<"*********** after recive **************"<<std::endl;
-	std::cout<<"read request for client : "<<client.fd_client<<"  byte recive = : "<<bytesrecv<<std::endl;
+	// std::cout<<"*********** after recive **************"<<std::endl;
+	// std::cout<<"read request for client : "<<client.fd_client<<"  byte recive = : "<<bytesrecv<<std::endl;
 	if (!bytesrecv)
 	{
 		std::cout<<"return from byte recive if "<<std::endl;
@@ -177,7 +178,7 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 		std::string str1(buffer.begin(), buffer.begin() + bytesrecv);
 		int found1 = str1.find("\r\n\r\n", 0);
 		std::string header = str1.substr(0, found1);
-		std::cout<<"header : ***********************************************"<<std::endl;
+		// std::cout<<"header : ***********************************************"<<std::endl;
 		std::cout<<header<<std::endl;
 		std::string body = std::string(str1.c_str() + found1 + 4, bytesrecv - (found1 + 4));
 		std::cout<<"body : ***********************************************"<<std::endl;
@@ -204,14 +205,23 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 		//check which method
 		if (method != "GET" && method != "DELETE")
 		{
-				// std::string name_file = 
-				// fstream file;
-    			// file.open("test.txt");
-    			// file << "test";
-    			// file.close();
-			bodyFile = open("video.mp4", O_WRONLY);
-			std::cout<<"ffd = "<<ffd<<std::endl;
-			std::cout<<"bodydd receive : "<< body.size()<< std::endl;
+			std::string filename;
+			filename = "/Users/araysse/Desktop/web/upload/file";
+			int gen = 0;
+			while (access(filename.c_str(), F_OK) != -1)
+			{
+				filename = filename + std::to_string(gen) +".mp4";
+				gen++;
+			}
+			// std::fstream file(filename);
+			bodyFile = open(filename.c_str(),O_CREAT | O_TRUNC | O_RDWR, S_IRUSR | S_IWUSR);
+			if (bodyFile == -1)
+			{
+				std::cout<<"error !!"<<std::endl;
+				exit(0);
+			}
+			// std::cout<<"ffd = "<<ffd<<std::endl;
+			// std::cout<<"bodydd receive : "<< body.size()<< std::endl;
 			if (map_request["Transfer-Encoding"] == "chunked")
 			{
 				// std::cout << "write : " << write(ffd, body.c_str(), body.size()) << std::endl;
@@ -227,7 +237,7 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 				if (lenght <= 0)
 				{
 					std::cout<<"byte recive < 1024"<<std::endl;
-					close(ffd);
+					close(bodyFile);
 					client.check = 1;
 				}
 			}
@@ -243,22 +253,22 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 	// i finish the header parcing and i go working for body ...
 	std::string str2(buffer.begin(), buffer.begin() + bytesrecv);
 
-	printf("str2 length ==  %lu\n",  str2.size());
+	// printf("str2 length ==  %lu\n",  str2.size());
 	if (map_request["Transfer-Encoding"] == "chunked")
 	{
-		std::cout<<"ana f chchunked 3awtany *_*"<<std::endl;
+		// std::cout<<"ana f chchunked 3awtany *_*"<<std::endl;
 		parce_chunks(str2, bodyFile, client);
-		std::cout<<"ffd = "<<ffd<<std::endl;
+		// std::cout<<"ffd = "<<ffd<<std::endl;
 	}
 	else{
 		write(bodyFile, str2.c_str(), bytesrecv);
 		lenght = lenght - bytesrecv;
 		std::cout<<"lenght loop == "<<lenght<<std::endl;
-		std::cout<<"ffd after write"<<ffd<<std::endl;
+		std::cout<<"ffd after write"<<bodyFile<<std::endl;
   		if (lenght <= 0)
 		{
 			std::cout<<"saliinaa\n";
-			close(ffd); // Close the file
+			close(bodyFile); // Close the file
 			client.check = 1;
 		} // Append the string to the file
 

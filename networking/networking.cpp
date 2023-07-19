@@ -69,7 +69,7 @@ client accept_new_connection(server& serv)
 	if (client.fd_client == -1)
 	{
 	    std::cerr<<"failed accept method."<<std::endl;
-	    // exit(EXIT_FAILURE);
+	    exit(EXIT_FAILURE);
 	}
 	if (server::maxfd < client.fd_client)
 		server::maxfd = client.fd_client;
@@ -87,24 +87,24 @@ int    send_video(client & client)
     {
 
         client.readFd = open("/Users/araysse/Desktop/video.mp4", 0);
+        if (client.readFd <= 0)
+        {
+            std::cout<<"open video failed"<<std::endl;
+            return (1);
+        }
         std::string header = "HTTP/1.1 200 OK\r\n"
                        "Content-Type: video/mp4\r\n"
                        "Content-Length: 32457473\r\n"
                        "Connection: closed\r\n\r\n";
         if (send(client.fd_client, header.c_str(), header.size(), 0) <= 0)
         {
-            // std::cout<<"send salat******"<< "returned value : "<<snd<<std::endl;
+            std::cout<<"send 1 salat******"<<std::endl;
             std::cout<<strerror(errno)<<"\n\n\n"<<std::endl;
             close(client.readFd);
             return (1);
         }
         client.p++;
         return (0);
-    }
-    if (client.readFd <= 0)
-    {
-        std::cout<<"open video failed"<<std::endl;
-        return (1);
     }
     int rd = read(client.readFd, readvideo, 2024);
     if (rd <= 0)
@@ -177,7 +177,7 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
                         }
                         else if (client.resp == 0) {
                             std::cout << "I WORK ON THIS CLIENT: " << client.fd_client << std::endl;
-                            std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
+                            // std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
                             
                             if (!client.generateResponseObject) {
                                 Response response;
@@ -191,14 +191,17 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
                             //     std::cout << "\n***** Response ***** \n" << (client.response_client.getHeaders() + client.response_client.readfile()) << "\n----------------------------------\n";
                             
                             
-                            std::string chunck = client.response_client.GetChanckFromResponse(255);
+                            std::string chunck = client.response_client.GetChanckFromResponse(1024);
                             if (chunck.empty()) {
                                 client.pr = 1; // chof m3a hada 
                                 // sen = true; /// change with client_status_life
-
                             }
                             else {
-                                send(client.fd_client, chunck.c_str(), chunck.size(), 0);
+                                if (send(client.fd_client, chunck.c_str(), chunck.size(), 0) <= 0)
+                                {
+                                    // client.response_client.
+                                    client.pr = 1;
+                                }
                             }
                             
                             // while(!chunck.empty()) {
@@ -213,11 +216,13 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
                             std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << std::endl;
 
                             std::cout << "\n###################################################################################################################################################\n\n";
-                            //send correct response
+                            // send correct response
+                            // client.pr = send_video(client);
+
                         }
                         if (client.resp == -1 || client.resp > 0 || client.pr) 
                         {
-                            std::cout<<"client "<<client.fd_client<<" dropped succesfolly"<<std::endl;
+                            std::cout<<"client "<<client.fd_client<<" dropped succesfolly and MAXFD == "<<server::maxfd<<std::endl;
                             close(client.fd_client);
                             FD_CLR(client.fd_client, &server::current);
                             FD_CLR(client.fd_client, &server::current2);

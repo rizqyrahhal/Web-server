@@ -70,6 +70,7 @@ class request
 	int add_it_to_body;
 	std::string string_to_add;
 	int bodyFile;
+	std::string bodyfile_name;
 	~request(){}
 };
 
