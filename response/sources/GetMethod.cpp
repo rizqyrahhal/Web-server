@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:24:42 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/17 01:02:14 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/19 02:12:45 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ std::string generateAutoindexFile(std::string requestedSource) {
 
 void Response::GetMethod(server server, request request, std::string &bodyfile, bool &isfile) {
     _requestedSource = Response::GetRequestedSource(server.locations[Response::_matchedLocationPosition], request.url, _resourceType, &(*this), request.method);
-    #ifdef DEBUG
+    #ifdef GET_DEBUG
         std::cout << "_requestedSource: " << _requestedSource << std::endl;
         std::cout << "_resourceType: ";
         if(_resourceType)
@@ -44,15 +44,17 @@ void Response::GetMethod(server server, request request, std::string &bodyfile, 
 	if (_resourceType == DRCT) {
         checkForIndexFile(&(*this), server, bodyfile, isfile);
     
-        #ifdef DEBUG
+        #ifdef GET_DEBUG
             std::cout << "_requestedSource: " << _requestedSource << std::endl;
         #endif
     }
 
     Response::GetContentType(_requestedSource, _mimeTypes, _contentType);
-    #ifdef DEBUG
+
+    #ifdef GET_DEBUG
         std::cout << "contentType : " << _contentType << std::endl;
     #endif
+
     if (isCgi()) {
         if (!server.locations[_matchedLocationPosition].cgi.empty())
             cgi(server, request);

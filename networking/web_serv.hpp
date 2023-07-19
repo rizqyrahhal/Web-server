@@ -52,7 +52,9 @@ class request
 	std::string url;
 	std::string query;
 	int max_body_size;
+
 	int bodyFile;
+
 	std::map<std::string, std::string> map_request;
 	~request(){}
 };

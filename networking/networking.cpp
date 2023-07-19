@@ -132,15 +132,15 @@ void    run_servers(global & glob)
                     else if (resp == 0)
                     {
                         std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
-                        // Response response;
-                        // ResponseReturned res = response.CreatResponse(server, *client.request_client);
-                        ResponseReturned res(server, *client.request_client);
+                        Response response;
+                        ResponseReturned res = response.CreatResponse(server, *client.request_client);
+                        // ResponseReturned res(server, *client.request_client);
                         // client.request_client->resp = res;
                         // std::cout << "isFile: " << res.getIsFile() << std::endl << "BodyFile: " << res.getBody() << std::endl;
-                        if (res.getHeaders().empty())
-                            std::cout << "\n***** Response ***** \n" << (res.readfile()) << "\n----------------------------------\n";
-                        else
-                            std::cout << "\n***** Response ***** \n" << (res.getHeaders() + res.readfile()) << "\n----------------------------------\n";
+                        // if (res.getHeaders().empty())
+                        //     std::cout << "\n***** Response ***** \n" << (res.readfile()) << "\n----------------------------------\n";
+                        // else
+                        //     std::cout << "\n***** Response ***** \n" << (res.getHeaders() + res.readfile()) << "\n----------------------------------\n";
                         std::string chunck = res.GetChanckFromResponse(255);
 
                         while(!chunck.empty()) {

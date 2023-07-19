@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 03:33:15 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/17 06:18:55 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/19 00:08:25 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,12 @@ void Cgi::execut(std::string cgibin, char **argv, char **envp, std::string _requ
 		close(fd[1]);
 		dup2(file, 0);
 		close(file);
+		
+		// char buffer[1024];
+		// int size = read(file, buffer, 1024);
+		// buffer[size] = '\0';
+		// std::cout << "\n\nThe content in the 0: \n" << buffer << std::endl;
+		
 		// execve(cgibin.c_str(), argv, envp);
 		if (execve(cgibin.c_str(), argv, envp) == -1)
 		{

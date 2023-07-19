@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/17 05:41:11 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/19 03:01:33 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,27 @@
 #define DEBUG
 #endif
 
+#ifndef GET_DEBUG
+// #define GET_DEBUG
+#endif
+
+#ifndef POST_DEBUG
+// #define POST_DEBUG
+#endif
+
+#ifndef DELETE_DEBUG
+// #define DELETE_DEBUG
+#endif
+
+#ifndef UPLOAD_DEBUG
+#define UPLOAD_DEBUG
+#endif
+
 #ifndef CGI_DEBUG
 #define CGI_DEBUG
 #endif
 
-#ifndef CURENT_DEBUG
-// #define CURENT_DEBUG
-#endif
+
 
 class request;
 class server;
@@ -103,6 +117,7 @@ void fillMimeTypes(std::map<std::string, std::string> &mimeTypes);
 std::map<std::string, std::string> readMimeTypes(const std::string& filePath);
 std::string getFileExtantion(std::string requestedsource);
 std::string getMimeType(std::map<std::string, std::string> mimetypes, std::string fileextantion);
+std::string getExtantion(std::map<std::string, std::string> mimetypes, std::string content_type);
 
 /* utils */
 bool checkIndexInsidDerctory(std::string *path);

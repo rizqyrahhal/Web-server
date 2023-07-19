@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/17 07:08:49 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/19 02:40:38 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ ResponseReturned Response::CreatResponse(server server, request request) {
     // if  request a Post Method and have form-data need to be in Content-Type the Content-Type in the body
     // the same behavoir with thae filename 
 
-    request.bodyFile = open("./Music.mp4", 666);
+    request.bodyFile = open("bodyFile", 666);
+    // request.content_type = "video/mp4";
 
     Response response;
     try
@@ -92,18 +93,20 @@ void Response::cgi(server server, request request) {
 	Cgi cgi;
     int file = 0;
 
-        std::cout << "########## eenrtrer ###########" << std::endl;
-    for (std::map<std::string, std::string>::iterator it = server.locations[6].cgi.begin(); it != server.locations[6].cgi.end(); it++) {
-        std::cout << it->first << "=" << it->second << std::endl;
-        // it->second.erase(0, 1);
-    }   
-    std::cout << "########## ssorteee ###########" << std::endl << std::endl;
+    #ifdef CGI_DEBUG
+        std::cout << "########## Cgi MAP ###########" << std::endl;
+        for (std::map<std::string, std::string>::iterator it = server.locations[6].cgi.begin(); it != server.locations[6].cgi.end(); it++) {
+            std::cout << it->first << "=" << it->second << std::endl;
+        }   
+        std::cout << "########## :) ###########" << std::endl << std::endl;
+    #endif
 
-    //  here here // in this funcion py bin not work or not found or somthing    .////// STOOOOP HERE
     _cgiBinPath = cgi.getCgiPath(server.locations[_matchedLocationPosition].cgi, _contentType);  
+    
     #ifdef CGI_DEBUG
        std::cout << "_cgiBinPath: " << _cgiBinPath << std::endl;
     #endif
+    
 	cgi.fillEnvp(request, server, _requestedSource, _contentType);
     cgi.fillArgv(_cgiBinPath, _requestedSource);
     char **envp = cgi.vectorToCharArray(cgi._envp);
@@ -117,7 +120,7 @@ void Response::cgi(server server, request request) {
 	cgi.execut(argv[0], argv, envp, _requestedSource, file); // make this return an string of cgi resp
 
     // here when pars the resp and set it in the body file
-    
+
     delete[] envp;
     delete[] argv;
 }
@@ -132,6 +135,7 @@ std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server ser
 
     /* set default headers */
 	setHeader("Date: ", getCurrentDate());
+    // setHeader("Server:", getServerName());
 	setHeader("Connection", "close"); // from map headers (request data)   request.getHeaderValue(std::string key)  <---- this function global to get any header from map headers in the request (key in this case = "Conection")
 	// setHeader("Connection", "keep-alive"); // from map headers (request data)   request.getHeaderValue(std::string key)  <---- this function global to get any header from map headers in the request (key in this case = "Conection")
 

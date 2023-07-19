@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/17 07:01:11 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/17 07:01:15 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/19 00:58:12 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ class ResponseReturned
         bool _isFile;
         size_t _currentIndex;
     public:
-        ResponseReturned(server server, request request);
+        // ResponseReturned(server server, request request);
         ResponseReturned();
         std::string GetChanckFromResponse(size_t size_to_read);
         // static std::string readData(std::string& str, int size);

@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 13:49:31 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/15 18:58:54 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/19 01:24:47 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ std::map<std::string, std::string> readMimeTypes(const std::string& filePath) {
 
 
 std::string getFileExtantion(std::string requestedsource) {
-    size_t position = requestedsource.find_last_of("."); 
+    size_t position = requestedsource.find_last_of(".");
     return (requestedsource.substr(position, requestedsource.size()));
 }
 
@@ -69,6 +69,16 @@ std::string getMimeType(std::map<std::string, std::string> mimetypes, std::strin
     for (; it != mimetypes.end(); it++) {
         if (it->first == fileextantion)
             return (it->second);
+    }
+    return ("");
+    // return ("Extantion NOT found inside mimeType :( :( :):) \n");
+}
+
+std::string getExtantion(std::map<std::string, std::string> mimetypes, std::string content_type) {
+    std::map<std::string, std::string>::iterator it = mimetypes.begin();
+    for (; it != mimetypes.end(); it++) {
+        if (it->second == content_type)
+            return (it->first);
     }
     return ("");
     // return ("Extantion NOT found inside mimeType :( :( :):) \n");

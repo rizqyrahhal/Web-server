@@ -6,17 +6,17 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 04:03:03 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/17 06:38:50 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/19 00:57:01 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ResponseReturned.hpp"
 
-ResponseReturned::ResponseReturned(server server, request request) {
-    _currentIndex = 0;
-    Response response;
-    *this = response.CreatResponse(server, request);
-}
+// ResponseReturned::ResponseReturned(server server, request request) {
+//     _currentIndex = 0;
+//     Response response;
+//     *this = response.CreatResponse(server, request);
+// }
 
 ResponseReturned::ResponseReturned() {
     _currentIndex = 0;
