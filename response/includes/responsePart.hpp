@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   responsePart.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rizqy <rizqy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/19 03:01:33 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/19 17:35:32 by rizqy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,9 @@ class Response : public  HttpResponse
 		static void GetContentType(std::string requestedSource, std::map<std::string, std::string> mimetypes, std::string &contenttype);
 		static std::string GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method);
 		static void checkForIndexFile(Response *response, server server, std::string &bodyfile, bool &isfile);
+		
+		std::pair<std::string, std::string> Response::_parseHeader(const std::string& line);
+		void Response::parseCgiOutput( const std::string& cgioutput);	
 	public:
 		Response();
 		ResponseReturned CreatResponse(server server, request request);
@@ -125,6 +128,8 @@ const std::string generatBody(std::string _requestedSource);
 int calculeBodySize(std::string _requestedSource); // make this return long
 std::string generateAutoindexFile(std::string requestedSource); /* in GET method */
 std::string getCurrentDate();
+std::string trim(const std::string& str);
+template <typename T> T toNumber(const std::string& str);
 
 // error page 
 const std::string GenerateErrorPage(int statuscode, std::string statusmessage);

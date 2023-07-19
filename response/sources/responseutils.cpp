@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   responseutils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rizqy <rizqy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:28:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/17 04:44:21 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/19 18:03:58 by rizqy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,69 @@ bool Response::isCgi() {
     }
     return false;
 }
+
+// ################################# adding 
+
+std::pair<std::string, std::string> Response::_parseHeader( const std::string& line )  {
+	std::string _key, _value;
+	size_t _end = 0;
+
+	std::string _line = trim(line);
+	// key
+	while (_end < _line.length() && _line[_end] != ':')	++_end;
+	_key =  trim(_line.substr(0, _end));
+
+	// value
+	if (_end < _line.length())
+		_value = trim(_line.substr(++_end));
+
+	return std::make_pair(_key, _value);
+}
+
+void Response::parseCgiOutput( const std::string& cgioutput) {
+	std::string _line;
+	size_t _seek = 0;
+
+    std::istringstream iss(cgioutput);
+
+	while (std::getline(iss, _line)) {
+		_seek += _line.length() + 1;
+		_line = trim(_line);
+		if (_line.empty()) break;
+		std::pair<std::string, std::string> _header = _parseHeader(_line);
+	    if (_header.first == "X_POWRED_PY:" || _header.first == "Status:") {
+		    if (_header.first == "Status:")
+			    setStatusCode(toNumber<int>(_header.second));
+	    }
+	    else
+			setHeader(_header.first, _header.second);
+	}
+
+    if (!_status_code || _status_code == 200)
+        _status_code == 200;
+    else {
+        throw(502);
+    }
+
+	if (cgioutput.size() <= _seek) {
+		// cgioutput.clear();
+		setHeader("Content-Lenth: ", "0");
+		throw(_status_code);
+	}
+
+    bodyfile = std::string(cgioutput.begin() + _seek, cgioutput.end());
+    isfile = false;
+}
+
+
+
+// adding ##################################
+
+
+
+
+
+
 
 void Response::GetContentType(std::string requestedSource, std::map<std::string, std::string> mimetypes, std::string &contenttype) {
     contenttype = getMimeType(mimetypes, getFileExtantion(requestedSource));

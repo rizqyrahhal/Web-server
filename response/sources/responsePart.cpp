@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   responsePart.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rizqy <rizqy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/19 02:40:38 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/19 18:11:21 by rizqy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ void Response::cgi(server server, request request) {
 
     #ifdef CGI_DEBUG
         std::cout << "########## Cgi MAP ###########" << std::endl;
-        for (std::map<std::string, std::string>::iterator it = server.locations[6].cgi.begin(); it != server.locations[6].cgi.end(); it++) {
+        for (std::map<std::string, std::string>::iterator it = server.locations[_matchedLocationPosition].cgi.begin(); it != server.locations[6].cgi.end(); it++) {
             std::cout << it->first << "=" << it->second << std::endl;
         }   
         std::cout << "########## :) ###########" << std::endl << std::endl;
