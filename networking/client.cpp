@@ -9,10 +9,11 @@ client::client()
 
 client::~client()
 {
+	std::cout<<"heloo from delete"<<std::endl;
 	// delete this->request_client;
 }
 
-client::client(int maxClientBodySize) {
+client::client(size_t maxClientBodySize) {
 	clientaddrlenght = sizeof(client_address);
 	this->max_client_body_size = maxClientBodySize;
 	this->request_client = new request(maxClientBodySize);

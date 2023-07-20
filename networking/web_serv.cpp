@@ -1,9 +1,13 @@
 #include "web_serv.hpp" 
 
-request::request(int max_size)
+request::request(size_t max_size)
 {
 	this->max_body_size = max_size;
-	std::cout<<"hello"<<std::endl;
+}
+
+request::~request()
+{
+	std::cout<<"destructor request"<<std::endl;
 }
 
 int request::parce_header(std::string header)
@@ -50,9 +54,19 @@ int request::parce_header(std::string header)
 		value = request_line[i].substr(sep + 2, r - (sep + 2));
 		map_request.insert(std::make_pair(key, value));
 	}
-	std::stringstream op;
-	op << (map_request["Content-Length"]);
-	op >> lenght;
+
+	if (map_request.count("Transfer-Encoding") > 0 && map_request["Transfer-Encoding"] != "chunked")
+		return(501);
+	if (method == "Post" && map_request.count("Transfer-Encoding") <= 0 && map_request.count("Content-Lenght") <= 0)
+		return(400);
+	if (map_request.count("Content-Lenght") > 0)
+	{
+		std::stringstream op;
+		op << (map_request["Content-Length"]);
+		op >> lenght;
+		if (lenght > max_body_size)
+			return(413);
+	}
 	std::cout<<"length original : "<<lenght<< std::endl;
 	return (0);
 }
@@ -175,6 +189,7 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 	{
 		sizehex = 0;
 		add_it_to_body = 0;
+		lenght = 0;
 		std::string str1(buffer.begin(), buffer.begin() + bytesrecv);
 		int found1 = str1.find("\r\n\r\n", 0);
 		std::string header = str1.substr(0, found1);

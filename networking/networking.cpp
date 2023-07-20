@@ -82,7 +82,7 @@ int    send_video(client & client)
 {
 
     // std::cout <<" i want to send video --->>>"<<std::endl;
-    char *readvideo = new char[2025]();
+    char readvideo[2025];
     if (client.p == 0)
     {
 
@@ -106,14 +106,14 @@ int    send_video(client & client)
         client.p++;
         return (0);
     }
-    int rd = read(client.readFd, readvideo, 2024);
+    int rd = read(client.readFd, &readvideo, 2024);
     if (rd <= 0)
     {
        std::cout<<"read salat"<<std::endl;
        close(client.readFd);
        return(1);
     }
-    int snd = send(client.fd_client, readvideo, rd, 0);
+    int snd = send(client.fd_client, &readvideo, rd, 0);
     // std::cout<<"send == "<<snd<<std::endl;
     if (snd <= 0)
     {
@@ -133,11 +133,6 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
 	{
 		fd_set writable = server::current;
 		fd_set readable = server::current2;
-        struct timeval timeout;
-
-        // Set the timeout value to 5 seconds
-        timeout.tv_sec = 1;
-        timeout.tv_usec = 0;
 		tmp = select(server::maxfd + 1, &readable, &writable, nullptr, 0);
 		if (tmp < 0)
         {
@@ -176,48 +171,48 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
                             send(client.fd_client, GenerateResponseFromStatusCode(client.resp).c_str(), GenerateResponseFromStatusCode(client.resp).size(), 0);
                         }
                         else if (client.resp == 0) {
-                            std::cout << "I WORK ON THIS CLIENT: " << client.fd_client << std::endl;
-                            // std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
+                            // std::cout << "I WORK ON THIS CLIENT: " << client.fd_client << std::endl;
+                            // // std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
                             
-                            if (!client.generateResponseObject) {
-                                Response response;
-                                client.response_client = response.CreatResponse(it->second[0], *client.request_client);
-                                client.generateResponseObject = true;
-                            }
-
-                            // if (client.response_client.getHeaders().empty())
-                            //     std::cout << "\n***** Response ***** \n" << (client.response_client.readfile()) << "\n----------------------------------\n";
-                            // else
-                            //     std::cout << "\n***** Response ***** \n" << (client.response_client.getHeaders() + client.response_client.readfile()) << "\n----------------------------------\n";
-                            
-                            
-                            std::string chunck = client.response_client.GetChanckFromResponse(1024);
-                            if (chunck.empty()) {
-                                client.pr = 1; // chof m3a hada 
-                                // sen = true; /// change with client_status_life
-                            }
-                            else {
-                                if (send(client.fd_client, chunck.c_str(), chunck.size(), 0) <= 0)
-                                {
-                                    // client.response_client.
-                                    client.pr = 1;
-                                }
-                            }
-                            
-                            // while(!chunck.empty()) {
-                            //     chunck = client.response_client.GetChanckFromResponse(255);
+                            // if (!client.generateResponseObject) {
+                            //     Response response;
+                            //     client.response_client = response.CreatResponse(it->second[0], *client.request_client);
+                            //     client.generateResponseObject = true;
                             // }
 
+                            // // if (client.response_client.getHeaders().empty())
+                            // //     std::cout << "\n***** Response ***** \n" << (client.response_client.readfile()) << "\n----------------------------------\n";
+                            // // else
+                            // //     std::cout << "\n***** Response ***** \n" << (client.response_client.getHeaders() + client.response_client.readfile()) << "\n----------------------------------\n";
+                            
+                            
+                            // std::string chunck = client.response_client.GetChanckFromResponse(1024);
+                            // if (chunck.empty()) {
+                            //     client.pr = 1; // chof m3a hada 
+                            //     // sen = true; /// change with client_status_life
+                            // }
+                            // else {
+                            //     if (send(client.fd_client, chunck.c_str(), chunck.size(), 0) <= 0)
+                            //     {
+                            //         // client.response_client.
+                            //         client.pr = 1;
+                            //     }
+                            // }
+                            
+                            // // while(!chunck.empty()) {
+                            // //     chunck = client.response_client.GetChanckFromResponse(255);
+                            // // }
 
 
 
 
 
-                            std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << std::endl;
 
-                            std::cout << "\n###################################################################################################################################################\n\n";
+                            // std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << std::endl;
+
+                            // std::cout << "\n###################################################################################################################################################\n\n";
                             // send correct response
-                            // client.pr = send_video(client);
+                            client.pr = send_video(client);
 
                         }
                         if (client.resp == -1 || client.resp > 0 || client.pr) 
@@ -226,6 +221,7 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
                             close(client.fd_client);
                             FD_CLR(client.fd_client, &server::current);
                             FD_CLR(client.fd_client, &server::current2);
+                            delete client.request_client;
                             it->second[0].client.erase(it->second[0].client.begin() + i);
                             std::cout<<"number of client : "<<it->second[0].client.size()<<std::endl;
 
@@ -234,7 +230,6 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
                 }
 			}
 		}
-
     }
    
 }

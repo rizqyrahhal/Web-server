@@ -170,7 +170,7 @@ void    parce_server(std::string line, global & global)
         }
         else if (str == "client_body_size")
         {
-            int size;
+            size_t size;
             tmp1 >> size;
             server.client_body_size = size;
         }

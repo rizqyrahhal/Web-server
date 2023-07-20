@@ -45,13 +45,13 @@ class client
 	int resp;
 	int pr;
 	int readFd;
-	int max_client_body_size;
+	size_t max_client_body_size;
 	request *request_client;
 	ResponseReturned response_client;
 	bool generateResponseObject;
 
 	// unsigned long size;
-	client(int maxBodySize);
+	client(size_t maxBodySize);
 	bool siftna_response;
 	~client();
 };

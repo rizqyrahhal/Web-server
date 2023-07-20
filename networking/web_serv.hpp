@@ -51,12 +51,12 @@ class request
 {
 	public:
 	request(){}
-	request(int max_size);
+	request(size_t max_size);
 	int	read_reqwest(client & client, std::vector<server> & servers, int index_client);
 	std::string method;
 	std::string url;
 	std::string query;
-	int max_body_size;
+	size_t max_body_size;
 	std::map<std::string, std::string> map_request;
 	int tmp;
 	int ffd;
@@ -66,12 +66,12 @@ class request
 	size_t		sizehex;
 	std::string	body2;
 	int size_hexa_string;
-	int lenght;
+	size_t lenght;
 	int add_it_to_body;
 	std::string string_to_add;
 	int bodyFile;
 	std::string bodyfile_name;
-	~request(){}
+	~request();
 };
 
 class server
@@ -87,7 +87,7 @@ class server
  	std::vector<client> client;
 	std::vector<locations> locations;
 	std::map<int, std::string> map_err_page;
-	int client_body_size;
+	size_t client_body_size;
 
 	struct sockaddr_in addr;
 	struct addrinfo hints;
