@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   responseutils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rizqy <rizqy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:28:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/19 18:03:58 by rizqy            ###   ########.fr       */
+/*   Updated: 2023/07/19 23:28:54 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,54 +45,56 @@ bool Response::isCgi() {
 
 // ################################# adding 
 
-std::pair<std::string, std::string> Response::_parseHeader( const std::string& line )  {
-	std::string _key, _value;
-	size_t _end = 0;
-
-	std::string _line = trim(line);
-	// key
-	while (_end < _line.length() && _line[_end] != ':')	++_end;
-	_key =  trim(_line.substr(0, _end));
-
-	// value
-	if (_end < _line.length())
-		_value = trim(_line.substr(++_end));
-
-	return std::make_pair(_key, _value);
-}
-
 void Response::parseCgiOutput( const std::string& cgioutput) {
 	std::string _line;
 	size_t _seek = 0;
 
+    
+
+    if (cgioutput.empty())
+        throw(502);
+
     std::istringstream iss(cgioutput);
 
+
+    // std::cout << "\n\n";
 	while (std::getline(iss, _line)) {
 		_seek += _line.length() + 1;
+        // std::cout << "LINE: " << _line.size() << std::endl;
 		_line = trim(_line);
-		if (_line.empty()) break;
-		std::pair<std::string, std::string> _header = _parseHeader(_line);
-	    if (_header.first == "X_POWRED_PY:" || _header.first == "Status:") {
-		    if (_header.first == "Status:")
+		if (_line.size() <= 1)
+            break;
+		std::pair<std::string, std::string> _header = parseHeader(_line);
+	    if (_header.first == "X-Powered-By" || _header.first == "Status") {
+		    if (_header.first == "Status")
 			    setStatusCode(toNumber<int>(_header.second));
 	    }
 	    else
 			setHeader(_header.first, _header.second);
 	}
+    // std::cout << "\n\n";
+
+    
+    // std::cout << "STATUS CODE: " << _status_code << std::endl;
+
+
+
+    // std::cout << "HEADERS: \n" << generateHeaders() << std::endl;
+    // std::cout << "-----------------------------------------------\n";
+
 
     if (!_status_code || _status_code == 200)
-        _status_code == 200;
+        _status_code = 200;
     else {
         throw(502);
     }
 
 	if (cgioutput.size() <= _seek) {
 		// cgioutput.clear();
-		setHeader("Content-Lenth: ", "0");
+		setHeader("Content-Length: ", "0");
 		throw(_status_code);
 	}
-
-    bodyfile = std::string(cgioutput.begin() + _seek, cgioutput.end());
+    setBody(std::string(cgioutput.begin() + _seek, cgioutput.end()));
     isfile = false;
 }
 

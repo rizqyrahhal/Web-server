@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   responsePart.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rizqy <rizqy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/19 17:35:32 by rizqy            ###   ########.fr       */
+/*   Updated: 2023/07/19 23:46:14 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ class Response : public  HttpResponse
 
 		/* Cgi*/
 		std::string _cgiBinPath;
+		// std::string _cgiOutput;
 
 		/* functionalite */
 		std::string ResponseGeneratedFromStatusCode(int statuscode, server server, request request, std::string &bodyfile, bool &isfile);
@@ -94,16 +95,16 @@ class Response : public  HttpResponse
 		void GetMethod(server server, request request, std::string &bodyfile, bool &isfile);
 		void DeleteMethod(server server, request request);
 		void PostMethod(server server, request request);
+	
 		bool isCgi();
-		void cgi(server server, request request);
+		void cgi(server server, request request, Response &response);
+		void parseCgiOutput( const std::string& cgioutput);	
 
 		/* response utilse */
 		static void GetContentType(std::string requestedSource, std::map<std::string, std::string> mimetypes, std::string &contenttype);
 		static std::string GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method);
 		static void checkForIndexFile(Response *response, server server, std::string &bodyfile, bool &isfile);
 		
-		std::pair<std::string, std::string> Response::_parseHeader(const std::string& line);
-		void Response::parseCgiOutput( const std::string& cgioutput);	
 	public:
 		Response();
 		ResponseReturned CreatResponse(server server, request request);
@@ -129,7 +130,16 @@ int calculeBodySize(std::string _requestedSource); // make this return long
 std::string generateAutoindexFile(std::string requestedSource); /* in GET method */
 std::string getCurrentDate();
 std::string trim(const std::string& str);
-template <typename T> T toNumber(const std::string& str);
+std::pair<std::string, std::string> parseHeader(const std::string& line);
+std::string searchInRequestedHeader(const std::map<std::string, std::string>& Map, const std::string& key);
+
+template <typename T>
+T toNumber(const std::string& str) {
+    T result;
+    std::istringstream iss(str);
+    iss >> result;
+    return result;
+}
 
 // error page 
 const std::string GenerateErrorPage(int statuscode, std::string statusmessage);

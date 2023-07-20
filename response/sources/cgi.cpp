@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 03:33:15 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/19 00:08:25 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/19 22:53:18 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,12 +133,13 @@ void Cgi::fillEnvp(request request, server server, std::string requstedsource, s
 	// std::cout << "Vector[0]: " << _envp[14] << std::endl;
 }
 
-void Cgi::execut(std::string cgibin, char **argv, char **envp, std::string _requestedSource, int file) {
+std::string &Cgi::execut(std::string cgibin, char **argv, char **envp, std::string _requestedSource, int file) {
 	// int file = open(_requestedSource.c_str(), 666);
 	(void)_requestedSource;
 	int fd[2];
 	pipe(fd);
 	pid_t pid = fork();
+	// std::string cgiOutput;
 	if (pid == 0) {
 		close(fd[0]);
 		dup2(fd[1], 1);
@@ -174,14 +175,13 @@ void Cgi::execut(std::string cgibin, char **argv, char **envp, std::string _requ
 		
 		char buffer[1025];
 		int size_read;
-		std::string cgiOutput;
 		while((size_read = read(0, buffer, 1024)) > 0) {
             	buffer[size_read] = '\0';
 				cgiOutput += std::string(buffer);
             	// int size_write = write(fd, buffer, size_read);
             	std::cout << "I read this size to 0 :->> " << size_read << std::endl;
         	}
-		std::cout << "cgiOutput: " << cgiOutput << std::endl;
+		// std::cout << "cgiOutput: " << cgiOutput << std::endl;
 		// read by char[] and close it by '\0'
 		
 		// std::vector<char> buffer(2606); // calculate this size before all  !!!!!!!!!!!!!!!!!!!! this is Just hard code  (use getline() or some thing like this read pares andd assinge in string body)
@@ -193,9 +193,10 @@ void Cgi::execut(std::string cgibin, char **argv, char **envp, std::string _requ
 		// 			<< "\n" << std::string(buffer.begin(), buffer.begin() + size) << std::endl;
         // #endif
 
-		throw(cgiOutput); // ila ma7ayadtihach lmara jaya ayoub ghayssabak // pares cgi resp here and throw status code
+		// throw(cgiOutput); // ila ma7ayadtihach lmara jaya ayoub ghayssabak // pares cgi resp here and throw status code
 		// throw(std::string(buffer.begin(), buffer.begin() + size)); // ila ma7ayadtihach lmara jaya ayoub ghayssabak // pares cgi resp here and throw status code
 	}
+	return (cgiOutput);
 }
 
 Cgi::~Cgi() {

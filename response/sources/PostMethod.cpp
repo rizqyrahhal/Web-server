@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 16:45:33 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/19 02:18:44 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/20 00:35:18 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,23 +35,26 @@ void Response::PostMethod(server server, request request) {
     #endif
     /* in this condition setup the position to upload the body of request */
     if(supportUpload(server.locations[_matchedLocationPosition])) {
+
         //         data hardcoded  to upload            //
         std::string content_type = "video/mp4";
-        std::string file_name = "upload_name";
+        std::string file_name = "upload_name";        // when test upload take in your maind that is hard code and the 201 have probleme
         std::string tompprare_name = "www/tmp1";
-        //////////////////////////////////////////////////
+        ////////////////////////////////////////////////// 
 
         #ifdef UPLOAD_DEBUG
-            std::cout << "Extantio: " << getExtantion(_mimeTypes, content_type) << std::endl;
-            std::cout << "New Name: " << creatNewName(server.locations[_matchedLocationPosition].upload_pass, (file_name + getExtantion(_mimeTypes, content_type))) << std::endl;
+            // std::cout << "Extantio: " << getExtantion(_mimeTypes, content_type) << std::endl;
+            std::cout << "Extantio: " << getExtantion(_mimeTypes, searchInRequestedHeader(request.map_request, "Content-Type")) << std::endl;
+            std::cout << "New Name: " << creatNewName(server.locations[_matchedLocationPosition].upload_pass, (file_name + getExtantion(_mimeTypes, searchInRequestedHeader(request.map_request, "Content-Type")))) << std::endl;
+            // std::cout << "New Name: " << creatNewName(server.locations[_matchedLocationPosition].upload_pass, (file_name + getExtantion(_mimeTypes, content_type))) << std::endl;
         #endif
 
+        // if (!rename(tompprare_name.c_str() , creatNewName(server.locations[_matchedLocationPosition].upload_pass, (file_name + getExtantion(_mimeTypes, searchInRequestedHeader(request.map_request, "Content-Type")))).c_str()))
         if (!rename(tompprare_name.c_str() , creatNewName(server.locations[_matchedLocationPosition].upload_pass, (file_name + getExtantion(_mimeTypes, content_type))).c_str()))
             throw(201);
         else
             throw(500);
 
-        
 
         // std::ifstream infile("bodyFile",std::ifstream::binary);
         // std::ofstream outfile ("filename.mp4",std::ofstream::binary);
@@ -91,7 +94,8 @@ void Response::PostMethod(server server, request request) {
 			throw(403);
 		else {
 			/* run cgi on requested file with POST request_method */
-			cgi(server, request);
+			cgi(server, request, *this);
+            // throw(1);
         }
     }
 }

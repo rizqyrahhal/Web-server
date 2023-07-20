@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rizqy <rizqy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 00:10:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/19 17:17:27 by rizqy            ###   ########.fr       */
+/*   Updated: 2023/07/19 23:05:32 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,14 +72,6 @@ std::string getCurrentDate() { // this function is Just harde code it have an fo
     return oss.str();
 }
 
-template <typename T>
-T toNumber(const std::string& str) {
-    T result;
-    std::istringstream iss(str);
-    iss >> result;
-    return result;
-}
-
 std::string trim(const std::string& str) {
     size_t first = str.find_first_not_of(' ');
     if (first == std::string::npos)
@@ -89,6 +81,23 @@ std::string trim(const std::string& str) {
     return str.substr(first, (last - first + 1));
 }
 
+std::pair<std::string, std::string> parseHeader( const std::string& line )  {
+	std::string _key, _value;
+	size_t _end = 0;
+
+	std::string _line = trim(line);
+	// key
+	while (_end < _line.length() && _line[_end] != ':')	++_end;
+	_key =  trim(_line.substr(0, _end));
+
+	// value
+	if (_end < _line.length())
+		_value = trim(_line.substr(++_end));
+
+    // std::cout << "_KEY: " << _key << " _VALUE: " << _value << std::endl;
+
+	return std::make_pair(_key, _value);
+}
 
 
 

@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/14 03:15:57 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/17 06:25:38 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/19 22:52:16 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ class Cgi// : public Response
 {
     private:
 		std::string cgiBinPath;
+		std::string cgiOutput;
 	private:
 		// searchInRequestedHeader(std::string envpName);
 	public:
@@ -37,7 +38,7 @@ class Cgi// : public Response
 		char** vectorToCharArray(std::vector<const char*> vec);
 	    void fillArgv(std::string &cgibinpath, std::string &_requestedSource);
 		void fillEnvp(request request, server server, std::string requstedsource, std::string contenttype);
-		void execut(std::string cgibin, char **argv, char **envp, std::string _requestedSource, int file);
+		std::string &execut(std::string cgibin, char **argv, char **envp, std::string _requestedSource, int file);
 		~Cgi();
 };
 
