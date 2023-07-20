@@ -88,7 +88,7 @@ void    location_serv(std::string line, server & server)
             tmp1 >> str1;
             if (access(str1.c_str(), F_OK) == -1) {
                 std::cout<<"Error : cgi path int locations not exist!"<<std::endl;
-                // exit(0);
+                exit(0);
             }
             location.cgi.insert(std::make_pair(str, str1));
         }

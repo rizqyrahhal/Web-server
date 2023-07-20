@@ -6,20 +6,13 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 04:03:03 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/18 17:05:05 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/20 03:01:38 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/ResponseReturned.hpp"
 
-// ResponseReturned::ResponseReturned(server server, request request) {
-//     _currentIndex = 0;
-//     Response response;
-//     *this = response.CreatResponse(server, request);
-// }
-
 ResponseReturned::ResponseReturned() {
-    
     _currentIndex = 0;
 }
 
@@ -45,8 +38,8 @@ std::string readData(size_t size, std::string _body, bool _isFile, size_t &curre
         data = std::string(buffer, file.gcount());
         currentIndex = file.tellg();  /* Update current index with the file pointer position */
         delete[] buffer;
-        if (data.empty())
-            file.close();
+        // if (data.empty())
+        file.close();
     }
     return data;
 }
@@ -62,11 +55,10 @@ std::string ResponseReturned::GetChanckFromResponse(size_t size_to_read) {
     {
         return (readData(size_to_read, _body, _isFile, _currentIndex));
     }
-    return (""); /* when return the Empty string the response is finish sending */
+    return (""); /* When return the Empty string, was finished chunking */
 }
 
 /* Seters */
-
 void ResponseReturned::setHeaders(std::string headers) {
     _headers = headers;
 }
@@ -80,7 +72,6 @@ void ResponseReturned::setIsFile(bool &isfile) {
 }
 
 /* Geters */
-
 std::string ResponseReturned::getHeaders() const {
     return _headers;
 }

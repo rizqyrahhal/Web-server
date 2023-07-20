@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:28:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/17 04:44:21 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/20 05:12:50 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ void Response::checkForIndexFile(Response *response, server server, std::string 
             return; // this condition me be remove if not mandatory
         if (server.locations[response->_matchedLocationPosition].autoindex == "on")
         {
-
             /* generate outoindex */
             bodyfile = generateAutoindexFile(response->_requestedSource);
             isfile = false;
@@ -43,6 +42,44 @@ bool Response::isCgi() {
     return false;
 }
 
+void Response::parseCgiOutput( const std::string& cgioutput) {
+	std::string _line;
+	size_t _seek = 0;
+
+    if (cgioutput.empty())
+        throw(502);
+
+    std::istringstream iss(cgioutput);
+
+	while (std::getline(iss, _line)) {
+		_seek += _line.length() + 1;
+		_line = trim(_line);
+		if (_line.size() <= 1)
+            break;
+		std::pair<std::string, std::string> _header = parseHeader(_line);
+	    if (_header.first == "X-Powered-By" || _header.first == "Status") {
+		    if (_header.first == "Status")
+			    setStatusCode(toNumber<int>(_header.second));
+	    }
+	    else
+			setHeader(_header.first, _header.second);
+	}
+
+    if (!_status_code || _status_code == 200)
+        _status_code = 200;
+    else {
+        throw(502);
+    }
+
+	if (cgioutput.size() <= _seek) {
+		setHeader("Content-Length", "0");
+		throw(_status_code);
+	}
+
+    setBody(std::string(cgioutput.begin() + _seek, cgioutput.end()));
+    isfile = false;
+}
+
 void Response::GetContentType(std::string requestedSource, std::map<std::string, std::string> mimetypes, std::string &contenttype) {
     contenttype = getMimeType(mimetypes, getFileExtantion(requestedSource));
 }
@@ -52,11 +89,11 @@ void Response::GetContentType(std::string requestedSource, std::map<std::string,
  {!!!}new it is work but in simple casae  
  {!!!} case if have root /www/app and the url /www/app/html/ the source generate is /www/app/ ERROR the correct is /www/app/html/
  {!!!} this function need big change like getMatchedLocation */
-std::string Response::GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method) {
+std::string Response::GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method) {   // need to close the oppening directory and optemese the logic
     size_t position = requesturi.find_last_of("/");
     std::string checked, requestedSource, uriplusslash;
     uriplusslash = requesturi + "/";
-
+    DIR *dir;
     #ifdef DEBUG
         std::cout << "matchedlocation.name: " << matchedlocation.name << std::endl;
         std::cout << "matchedlocation.root: " << matchedlocation.root << std::endl;
@@ -69,7 +106,8 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
         {
             requestedSource = "." + matchedlocation.root;
             /* check if exist */
-            if (opendir(requestedSource.c_str()) != NULL) {
+            dir = opendir(requestedSource.c_str());
+            if (dir != NULL) {
                 resourcetype = DRCT;
                 // if (requestedSource[requestedSource.size() - 1] != '/') {
                 //     if (method == "DELETE")
@@ -81,20 +119,27 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
             }
             else if (access(requestedSource.c_str(), 0) == 0) {
                 resourcetype = FILE;
+            closedir(dir);
         	return (requestedSource);
             }
         }
 
         requestedSource = "." + requesturi;
             // requestedSource = "." + matchedlocation.root;
-        if (opendir(requestedSource.c_str()) != NULL) {
+        
+        dir = opendir(requestedSource.c_str());
+        if (dir != NULL) {
             resourcetype = DRCT;
             if (requestedSource[requestedSource.size() - 1] != '/') {
-                if (method == "DELETE")
+                if (method == "DELETE"){
+                    closedir(dir);
                     throw (409);
+                }
                 response->setHeader("Location", uriplusslash);
+                closedir(dir);
                 throw(301);
             }
+            closedir(dir);
         	return (requestedSource);
         }
         else if (access(requestedSource.c_str(), 0) == 0) {
@@ -117,14 +162,19 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
         #endif
     
         /* check if exist */
-        if (opendir(requestedSource.c_str()) != NULL) {
+        dir = opendir(requestedSource.c_str());
+        if (dir != NULL) {
             resourcetype = DRCT;
             if (requestedSource[requestedSource.size() - 1] != '/') {
-                if (method == "DELETE")
+                if (method == "DELETE") {
+                    closedir(dir);
                     throw (409);
+                }
                 response->setHeader("Location", uriplusslash);
+                closedir(dir);
                 throw(301);
             }
+            closedir(dir);
         	return (requestedSource);
         }
         else if (access(requestedSource.c_str(), 0) == 0) {
@@ -138,15 +188,19 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
     
         requestedSource = "." + requesturi;
         /* check if exist */
-        if (opendir(requestedSource.c_str()) != NULL) {
+        dir = opendir(requestedSource.c_str());
+        if (dir != NULL) {
             resourcetype = DRCT;
             if (requestedSource[requestedSource.size() - 1] != '/') {
-
-                if (method == "DELETE")
+                if (method == "DELETE") {
+                    closedir(dir);
                     throw (409);
+                }
                 response->setHeader("Location", uriplusslash);
+                closedir(dir);
                 throw(301);
             }
+            closedir(dir);
         	return (requestedSource);
         }
         else if (access(requestedSource.c_str(), 0) == 0) {

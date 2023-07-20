@@ -7,7 +7,7 @@ request::request(size_t max_size)
 
 request::~request()
 {
-	std::cout<<"destructor request"<<std::endl;
+	
 }
 
 int request::parce_header(std::string header)
@@ -57,9 +57,9 @@ int request::parce_header(std::string header)
 
 	if (map_request.count("Transfer-Encoding") > 0 && map_request["Transfer-Encoding"] != "chunked")
 		return(501);
-	if (method == "Post" && map_request.count("Transfer-Encoding") <= 0 && map_request.count("Content-Lenght") <= 0)
+	if (method == "Post" && map_request.count("Transfer-Encoding") <= 0 && map_request.count("Content-Length") <= 0)
 		return(400);
-	if (map_request.count("Content-Lenght") > 0)
+	if (map_request.count("Content-Length") > 0)
 	{
 		std::stringstream op;
 		op << (map_request["Content-Length"]);
@@ -221,14 +221,14 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 		if (method != "GET" && method != "DELETE")
 		{
 			std::string filename;
-			filename = "/Users/araysse/Desktop/web/upload/file";
+			filename = "/Users/araysse/Desktop/master/upload/file";
 			int gen = 0;
 			while (access(filename.c_str(), F_OK) != -1)
 			{
-				filename = filename + std::to_string(gen) +".mp4";
+				filename = filename + std::to_string(gen);
 				gen++;
 			}
-			// std::fstream file(filename);
+			bodyfile_name = filename;
 			bodyFile = open(filename.c_str(),O_CREAT | O_TRUNC | O_RDWR, S_IRUSR | S_IWUSR);
 			if (bodyFile == -1)
 			{
@@ -271,9 +271,8 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 	// printf("str2 length ==  %lu\n",  str2.size());
 	if (map_request["Transfer-Encoding"] == "chunked")
 	{
-		// std::cout<<"ana f chchunked 3awtany *_*"<<std::endl;
+		std::cout<<"ana f chchunked 3awtany *_*"<<std::endl;
 		parce_chunks(str2, bodyFile, client);
-		// std::cout<<"ffd = "<<ffd<<std::endl;
 	}
 	else{
 		write(bodyFile, str2.c_str(), bytesrecv);

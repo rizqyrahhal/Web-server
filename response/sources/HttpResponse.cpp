@@ -13,6 +13,7 @@
 #include "../includes/responsePart.hpp"
 
 HttpResponse::HttpResponse() {
+	_status_code = 0;
 }
 
 void HttpResponse::setVersion(std::string const &version) {

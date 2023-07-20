@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 03:33:15 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/18 04:52:58 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/20 05:26:12 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ char* strdup98(const char* str) {
     size_t length = strlen(str);
     char* duplicate = new char[length + 1]; // Allocate memory for the duplicate string
     strcpy(duplicate, str); // Copy the string
-    return duplicate;
+    return duplicate; // hada tayrja3 malloce
 }
 
 std::string searchInRequestedHeader(const std::map<std::string, std::string>& Map, const std::string& key) {
@@ -59,7 +59,7 @@ std::string Cgi::getCgiPath(std::map<std::string, std::string> cgi_map, std::str
 			}
 		}
     }
-	std::cout << "-------- -- -- - - - - - - -  - - - npato hna \n";
+	// std::cout << "-------- -- -- - - - - - - -  - - - npato hna \n";
     if (cgi_bin.empty())
         throw(500);
 	return (cgi_bin);
@@ -69,6 +69,9 @@ char** Cgi::vectorToCharArray(std::vector<const char*> vec) {
     char** arr = new char*[vec.size()];
     for (size_t i = 0; i < vec.size(); ++i) {
         arr[i] = const_cast<char *>(vec[i]);
+    }
+    for (size_t i = 0; i < vec.size(); ++i) {
+        delete vec[i];
     }
     return arr;
 }
@@ -133,23 +136,23 @@ void Cgi::fillEnvp(request request, server server, std::string requstedsource, s
 	// std::cout << "Vector[0]: " << _envp[14] << std::endl;
 }
 
-std::string Cgi::execut(std::string cgibin, char **argv, char **envp, std::string _requestedSource, int file) {
-	// int file = open(_requestedSource.c_str(), 666);
+std::string &Cgi::execut(std::string cgibin, char **argv, char **envp, std::string _requestedSource, int file) {
 	(void)_requestedSource;
-	std::string cgiOutput;
 	int fd[2];
 	pipe(fd);
 	pid_t pid = fork();
 	if (pid == 0) {
 		close(fd[0]);
 		dup2(fd[1], 1);
-		close(fd[1]); 
+		close(fd[1]);
 		dup2(file, 0);
 		close(file);
-		// char buffer[23];
-		// int size = read(0, buffer, 22);
+		
+		// char buffer[1024];
+		// int size = read(file, buffer, 1024);
 		// buffer[size] = '\0';
-		// std::cout << "The content in the 0: " << buffer << std::endl;
+		// std::cout << "\n\nThe content in the 0: \n" << buffer << std::endl;
+		
 		// execve(cgibin.c_str(), argv, envp);
 		if (execve(cgibin.c_str(), argv, envp) == -1)
 		{
@@ -179,6 +182,7 @@ std::string Cgi::execut(std::string cgibin, char **argv, char **envp, std::strin
             	// int size_write = write(fd, buffer, size_read);
             	// std::cout << "I read this size to 0 :->> " << size_read << std::endl;
         	}
+		// std::cout << "cgiOutput: " << cgiOutput << std::endl;
 		// read by char[] and close it by '\0'
 		
 		// std::vector<char> buffer(2606); // calculate this size before all  !!!!!!!!!!!!!!!!!!!! this is Just hard code  (use getline() or some thing like this read pares andd assinge in string body)
@@ -190,17 +194,23 @@ std::string Cgi::execut(std::string cgibin, char **argv, char **envp, std::strin
 		// 			<< "\n" << std::string(buffer.begin(), buffer.begin() + size) << std::endl;
         // #endif
 
-
-		// throw(cgiOutput);
+		// throw(cgiOutput); // ila ma7ayadtihach lmara jaya ayoub ghayssabak // pares cgi resp here and throw status code
 		// throw(std::string(buffer.begin(), buffer.begin() + size)); // ila ma7ayadtihach lmara jaya ayoub ghayssabak // pares cgi resp here and throw status code
 	}
-	
-	// 	std::cout << "cgiOutput: \n" << cgiOutput << std::endl;
-	return cgiOutput;
+	return (cgiOutput);
 }
 
 Cgi::~Cgi() {
 	// this too function be to delete memory leak if exist after check
+
+    for (size_t i = 0; i < _envp.size(); ++i) {
+        delete[] _envp[i];
+    }
+
+    for (size_t i = 0; i < _argv.size(); ++i) {
+        delete[] _argv[i];
+    }
+
 	_envp.clear();
 	_argv.clear();
 }

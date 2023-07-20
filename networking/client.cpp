@@ -9,7 +9,6 @@ client::client()
 
 client::~client()
 {
-	std::cout<<"heloo from delete"<<std::endl;
 	// delete this->request_client;
 }
 
