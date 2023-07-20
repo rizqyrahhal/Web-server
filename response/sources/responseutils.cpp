@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:28:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/20 04:05:59 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/20 05:12:50 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
     size_t position = requesturi.find_last_of("/");
     std::string checked, requestedSource, uriplusslash;
     uriplusslash = requesturi + "/";
-
+    DIR *dir;
     #ifdef DEBUG
         std::cout << "matchedlocation.name: " << matchedlocation.name << std::endl;
         std::cout << "matchedlocation.root: " << matchedlocation.root << std::endl;
@@ -106,7 +106,8 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
         {
             requestedSource = "." + matchedlocation.root;
             /* check if exist */
-            if (opendir(requestedSource.c_str()) != NULL) {
+            dir = opendir(requestedSource.c_str());
+            if (dir != NULL) {
                 resourcetype = DRCT;
                 // if (requestedSource[requestedSource.size() - 1] != '/') {
                 //     if (method == "DELETE")
@@ -118,20 +119,27 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
             }
             else if (access(requestedSource.c_str(), 0) == 0) {
                 resourcetype = FILE;
+            closedir(dir);
         	return (requestedSource);
             }
         }
 
         requestedSource = "." + requesturi;
             // requestedSource = "." + matchedlocation.root;
-        if (opendir(requestedSource.c_str()) != NULL) {
+        
+        dir = opendir(requestedSource.c_str());
+        if (dir != NULL) {
             resourcetype = DRCT;
             if (requestedSource[requestedSource.size() - 1] != '/') {
-                if (method == "DELETE")
+                if (method == "DELETE"){
+                    closedir(dir);
                     throw (409);
+                }
                 response->setHeader("Location", uriplusslash);
+                closedir(dir);
                 throw(301);
             }
+            closedir(dir);
         	return (requestedSource);
         }
         else if (access(requestedSource.c_str(), 0) == 0) {
@@ -154,14 +162,19 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
         #endif
     
         /* check if exist */
-        if (opendir(requestedSource.c_str()) != NULL) {
+        dir = opendir(requestedSource.c_str());
+        if (dir != NULL) {
             resourcetype = DRCT;
             if (requestedSource[requestedSource.size() - 1] != '/') {
-                if (method == "DELETE")
+                if (method == "DELETE") {
+                    closedir(dir);
                     throw (409);
+                }
                 response->setHeader("Location", uriplusslash);
+                closedir(dir);
                 throw(301);
             }
+            closedir(dir);
         	return (requestedSource);
         }
         else if (access(requestedSource.c_str(), 0) == 0) {
@@ -175,15 +188,19 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
     
         requestedSource = "." + requesturi;
         /* check if exist */
-        if (opendir(requestedSource.c_str()) != NULL) {
+        dir = opendir(requestedSource.c_str());
+        if (dir != NULL) {
             resourcetype = DRCT;
             if (requestedSource[requestedSource.size() - 1] != '/') {
-
-                if (method == "DELETE")
+                if (method == "DELETE") {
+                    closedir(dir);
                     throw (409);
+                }
                 response->setHeader("Location", uriplusslash);
+                closedir(dir);
                 throw(301);
             }
+            closedir(dir);
         	return (requestedSource);
         }
         else if (access(requestedSource.c_str(), 0) == 0) {

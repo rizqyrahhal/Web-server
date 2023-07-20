@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 03:33:15 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/20 03:14:03 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/20 05:26:12 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,9 @@ char** Cgi::vectorToCharArray(std::vector<const char*> vec) {
     char** arr = new char*[vec.size()];
     for (size_t i = 0; i < vec.size(); ++i) {
         arr[i] = const_cast<char *>(vec[i]);
+    }
+    for (size_t i = 0; i < vec.size(); ++i) {
+        delete vec[i];
     }
     return arr;
 }
@@ -199,6 +202,15 @@ std::string &Cgi::execut(std::string cgibin, char **argv, char **envp, std::stri
 
 Cgi::~Cgi() {
 	// this too function be to delete memory leak if exist after check
+	
+    for (size_t i = 0; i < _envp.size(); ++i) {
+        delete[] _envp[i];
+    }
+	
+    for (size_t i = 0; i < _argv.size(); ++i) {
+        delete[] _argv[i];
+    }
+
 	_envp.clear();
 	_argv.clear();
 }
