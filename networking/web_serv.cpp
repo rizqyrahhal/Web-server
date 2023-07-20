@@ -193,7 +193,7 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 		std::string str1(buffer.begin(), buffer.begin() + bytesrecv);
 		int found1 = str1.find("\r\n\r\n", 0);
 		std::string header = str1.substr(0, found1);
-		// std::cout<<"header : ***********************************************"<<std::endl;
+		std::cout<<"header : ***********************************************"<<std::endl;
 		std::cout<<header<<std::endl;
 		std::string body = std::string(str1.c_str() + found1 + 4, bytesrecv - (found1 + 4));
 		std::cout<<"body : ***********************************************"<<std::endl;
