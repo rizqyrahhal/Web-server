@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/20 01:12:30 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/20 04:13:17 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,7 @@ ResponseReturned Response::CreatResponse(server server, request request) {
     // if  request a Post Method and have form-data need to be in Content-Type the Content-Type in the body
     // the same behavoir with thae filename 
 
-    request.bodyFile = open("bodyFile", 666);
-    // request.content_type = "video/mp4";
+    // request.bodyFile = open("bodyFile", 666); // Just hardecode change when recive it from parser
 
     Response response;
     try
@@ -70,6 +69,8 @@ ResponseReturned Response::CreatResponse(server server, request request) {
                 resp.setBody(bodyfile);
                 resp.setIsFile(isfile);
             }
+            // if (!isfile && statuscode == 200)
+            //     setHeader("Content-Length", std::to_string(bodyfile.size()));
             delete res;
             return (resp);
     }
@@ -127,8 +128,9 @@ std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server ser
     /* set default headers */
 	setHeader("Date", getCurrentDate());
     setHeader("Server", server.server_name);
-	setHeader("Connection", "close"); // from map headers (request data)   request.getHeaderValue(std::string key)  <---- this function global to get any header from map headers in the request (key in this case = "Conection")
-	// setHeader("Connection", "keep-alive"); // from map headers (request data)   request.getHeaderValue(std::string key)  <---- this function global to get any header from map headers in the request (key in this case = "Conection")
+
+	// setHeader("Connection", searchInRequestedHeader(request.map_request, "Connection"));
+	setHeader("Connection", "close"); // from map headers (request data) use the line above when the request.map_request fixed
 
     if (statuscode != 200 && statuscode != 201 && statuscode != 204)
     {
@@ -146,11 +148,15 @@ std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server ser
         setHeader("Content-Type", "text/html");
     }
 
-    /* adding headers */
-    if (!isfile && statuscode == 200 && getBodySize())
+    /* adding headers */      //////////////////   have a small problem with content-length 
+    if (!isfile && statuscode == 200 && getBodySize()) {    
         setHeader("Content-Length", std::to_string(getBodySize()));
+    }
+    else if (!isfile && statuscode == 200 && bodyfile.size())
+        setHeader("Content-Length", std::to_string(bodyfile.size()));
+        
 
-	// GENERATE_THE_FINALE_RESPONSE();
+	/* GENERATE_THE_FINALE_RESPONSE */
     std::string res = generateResponse();
     
 
@@ -168,7 +174,9 @@ Response::~Response() {
     STOP --> in check the floow of the too status 201 and 500 to be knew the position of error where (lme be the method of creation 500 correct then the 201)   the probleme is fixed in the new virsion of networking
 
 
-    make the file read in chanck function closed in any return chunck
+
+    in matched requset be to to close derectory this is the one fd lees open by me !!!!!!!!!!
+
 
     
     the index.php and index.by   in dyrectory // not mandatory just a *hawas* 

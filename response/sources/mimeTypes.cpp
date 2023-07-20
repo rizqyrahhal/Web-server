@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 13:49:31 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/19 01:24:47 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/20 03:12:32 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ std::string getExtantion(std::map<std::string, std::string> mimetypes, std::stri
     // return ("Extantion NOT found inside mimeType :( :( :):) \n");
 }
 
-/* rest sometype not work */
+// hadi mab9itch khadam biha atm7a
 void fillMimeTypes(std::map<std::string, std::string> &mimeTypes) {
     mimeTypes[".323"] = "text/h323";
     mimeTypes[".3g2"] = "video/3gpp2";

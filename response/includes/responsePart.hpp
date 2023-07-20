@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/19 23:46:14 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/20 02:08:08 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,11 @@
 #endif
 
 #ifndef UPLOAD_DEBUG
-#define UPLOAD_DEBUG
+// #define UPLOAD_DEBUG
 #endif
 
 #ifndef CGI_DEBUG
-#define CGI_DEBUG
+// #define CGI_DEBUG
 #endif
 
 

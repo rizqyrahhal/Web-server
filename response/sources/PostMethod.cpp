@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 16:45:33 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/20 00:35:18 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/20 03:19:33 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void Response::PostMethod(server server, request request) {
     	std::cout << "Upload_pass: " << server.locations[_matchedLocationPosition].upload_pass\
             << std::endl << "Requested Method: " << request.method << std::endl;
     #endif
+
     /* in this condition setup the position to upload the body of request */
     if(supportUpload(server.locations[_matchedLocationPosition])) {
 

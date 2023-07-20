@@ -105,7 +105,7 @@ void    run_servers(global & glob)
                 std::cout << "########### number of client:  " << server.client.size() << std::endl;
             }
             // std::cout << "########### FD_client:  " << server.client.fd_client << std::endl;
-            // std::cout << "num clients => " << server.client.size() << std::endl;
+            std::cout << "num clients => " << server.client.size() << std::endl;
 			for (size_t i = 0; i < server.client.size() ; i++) // in this i <= Just to evet loop
 			{
                 // std::cout << "++++++++++++++++++++++++++++++++\n";
@@ -122,9 +122,9 @@ void    run_servers(global & glob)
 					// fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
                     client.check = 1;
 				}
-                // std::cout << "Client -> " << client.fd_client << std::endl;
 				else if (FD_ISSET(client.fd_client, &writable) && client.check == 1)
                 {
+                    std::cout << "Client -> " << client.fd_client << std::endl;
                     if (resp > 0){
 
                         send(client.fd_client, GenerateResponseFromStatusCode(resp).c_str(), GenerateResponseFromStatusCode(resp).size(), 0);
@@ -137,16 +137,16 @@ void    run_servers(global & glob)
                         // ResponseReturned res(server, *client.request_client);
                         // client.request_client->resp = res;
                         // std::cout << "isFile: " << res.getIsFile() << std::endl << "BodyFile: " << res.getBody() << std::endl;
-                        if (res.getHeaders().empty())
-                            std::cout << "\n***** Response ***** \n" << (res.readfile()) << "\n----------------------------------\n";
-                        else
-                            std::cout << "\n***** Response ***** \n" << (res.getHeaders() + res.readfile()) << "\n----------------------------------\n";
+                        // if (res.getHeaders().empty())
+                        //     std::cout << "\n***** Response1 ***** \n" << (res.readfile()) << "\n----------------------------------\n";
+                        // else
+                            std::cout << "\n***** Response2 ***** \n" << (res.getHeaders() + res.readfile()) << "\n----------------------------------\n";
                         std::string chunck = res.GetChanckFromResponse(255);
 
                         while(!chunck.empty()) {
                             int sending = send(client.fd_client, chunck.c_str(), chunck.size(), 0);
                             (void)sending;
-                            // std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
+                            std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
                             chunck = res.GetChanckFromResponse(255);
                         }
 

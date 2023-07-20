@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 03:33:15 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/19 22:53:18 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/20 03:14:03 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ char* strdup98(const char* str) {
     size_t length = strlen(str);
     char* duplicate = new char[length + 1]; // Allocate memory for the duplicate string
     strcpy(duplicate, str); // Copy the string
-    return duplicate;
+    return duplicate; // hada tayrja3 malloce
 }
 
 std::string searchInRequestedHeader(const std::map<std::string, std::string>& Map, const std::string& key) {
@@ -134,12 +134,10 @@ void Cgi::fillEnvp(request request, server server, std::string requstedsource, s
 }
 
 std::string &Cgi::execut(std::string cgibin, char **argv, char **envp, std::string _requestedSource, int file) {
-	// int file = open(_requestedSource.c_str(), 666);
 	(void)_requestedSource;
 	int fd[2];
 	pipe(fd);
 	pid_t pid = fork();
-	// std::string cgiOutput;
 	if (pid == 0) {
 		close(fd[0]);
 		dup2(fd[1], 1);
@@ -179,7 +177,7 @@ std::string &Cgi::execut(std::string cgibin, char **argv, char **envp, std::stri
             	buffer[size_read] = '\0';
 				cgiOutput += std::string(buffer);
             	// int size_write = write(fd, buffer, size_read);
-            	std::cout << "I read this size to 0 :->> " << size_read << std::endl;
+            	// std::cout << "I read this size to 0 :->> " << size_read << std::endl;
         	}
 		// std::cout << "cgiOutput: " << cgiOutput << std::endl;
 		// read by char[] and close it by '\0'
