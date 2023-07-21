@@ -18,14 +18,18 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
-
+#include "client.hpp"
 #include "../response/includes/responsePart.hpp"
 
+
 #define BUFFER_SIZE 1024
+class client;
+class server;
 
 class locations
 {
 public:
+
 	locations(/* args */){}
 	std::string name;
 	std::string root;
@@ -42,38 +46,32 @@ public:
 };
 
 
+
 class request
 {
 	public:
 	request(){}
-	request(int max_size);
-	int	read_reqwest(int fd_client);
+	request(size_t max_size);
+	int	read_reqwest(client & client, std::vector<server> & servers, int index_client);
 	std::string method;
 	std::string url;
 	std::string query;
-	int max_body_size;
-
-	int bodyFile;
-
+	size_t max_body_size;
 	std::map<std::string, std::string> map_request;
-	~request(){}
-};
+	int tmp;
+	int ffd;
 
-class client
-{
-
-	public:
-	client(/* args */);
-
-	int fd_client;
-	int bytesrecv;
-	struct sockaddr_in client_address;
-	socklen_t clientaddrlenght;
-	int check;
-	int max_client_body_size;
-	request *request_client;
-	client(int maxBodySize);
-	~client();
+	int		parce_header(std::string header);
+	void	parce_chunks(std::string str, int ffd, client & client);
+	size_t		sizehex;
+	std::string	body2;
+	int size_hexa_string;
+	size_t lenght;
+	int add_it_to_body;
+	std::string string_to_add;
+	int bodyFile;
+	std::string bodyfile_name;
+	~request();
 };
 
 class server
@@ -81,15 +79,15 @@ class server
 	public:
 	server(){}
 	
-	int port;
+	std::string port;
 	std::string ip_address;
 	std::string server_name;
 	std::string root;
 	std::string index;
-	std::vector<client> client;
+ 	std::vector<client> client;
 	std::vector<locations> locations;
 	std::map<int, std::string> map_err_page;
-	int client_body_size;
+	size_t client_body_size;
 
 	struct sockaddr_in addr;
 	struct addrinfo hints;
@@ -112,9 +110,10 @@ public:
 	std::vector<server> server;
 };
 
+
 void    ft_parce_config(char **av, global &global);
-void    creat_socket_and_bind(global & glob);
-void    listen_new_connection(global & glob);
-void    run_servers(global & glob);
+void    creat_socket_and_bind(std::map<std::string, std::vector<server> > & map);
+void    listen_new_connection(std::map<std::string, std::vector<server> > & map);
+void    run_servers(std::map<std::string, std::vector<server> > & map);
 
 # endif

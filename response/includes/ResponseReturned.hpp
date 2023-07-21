@@ -16,11 +16,12 @@
 #include <string>
 #include <fstream>
 #include <vector>
-#include "responsePart.hpp"
 
-class request;
-class server;
-class locations;
+// #include "responsePart.hpp"
+
+// class request;
+// class server;
+// class locations;
 
 const std::string generatBody(std::string _requestedSource);
 

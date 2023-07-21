@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 03:33:15 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/20 05:26:12 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/21 00:44:25 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ std::string Cgi::getCgiPath(std::map<std::string, std::string> cgi_map, std::str
 		for(std::map<std::string, std::string>::iterator it = mime_map.begin(); it != mime_map.end(); it++) {
 			// std::cout << "mime_first: " << it->first << "| mime_second: " << it->second << std::endl;
 			if (it->second == _contentType) {
-				
 				extantion = it->first;
 				extantion.erase(0, 1);
 			}
@@ -60,8 +59,10 @@ std::string Cgi::getCgiPath(std::map<std::string, std::string> cgi_map, std::str
 		}
     }
 	// std::cout << "-------- -- -- - - - - - - -  - - - npato hna \n";
-    if (cgi_bin.empty())
+    if (cgi_bin.empty()) {
+		// std::cerr << "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\n";
         throw(500);
+	}
 	return (cgi_bin);
 }
 
@@ -70,9 +71,9 @@ char** Cgi::vectorToCharArray(std::vector<const char*> vec) {
     for (size_t i = 0; i < vec.size(); ++i) {
         arr[i] = const_cast<char *>(vec[i]);
     }
-    for (size_t i = 0; i < vec.size(); ++i) {
-        delete vec[i];
-    }
+    // for (size_t i = 0; i < vec.size(); ++i) {
+    //     delete vec[i];
+    // }
     return arr;
 }
 
@@ -157,7 +158,7 @@ std::string &Cgi::execut(std::string cgibin, char **argv, char **envp, std::stri
 		if (execve(cgibin.c_str(), argv, envp) == -1)
 		{
 			// perror("execve:");
-			// std::cout << "--------------------iiiiiii--------------\n";
+			// std::cerr << "--------------------iiiiiii--------------\n";
 			throw(500);
 		}
 	}
@@ -197,18 +198,19 @@ std::string &Cgi::execut(std::string cgibin, char **argv, char **envp, std::stri
 		// throw(cgiOutput); // ila ma7ayadtihach lmara jaya ayoub ghayssabak // pares cgi resp here and throw status code
 		// throw(std::string(buffer.begin(), buffer.begin() + size)); // ila ma7ayadtihach lmara jaya ayoub ghayssabak // pares cgi resp here and throw status code
 	}
+	std::cout << "CGI OUTPOUUUUT : \n" << cgiOutput << std::endl; /////////////// debug
 	return (cgiOutput);
 }
 
 Cgi::~Cgi() {
 	// this too function be to delete memory leak if exist after check
-	
+
     for (size_t i = 0; i < _envp.size(); ++i) {
-        delete[] _envp[i];
+        delete _envp[i];
     }
-	
+
     for (size_t i = 0; i < _argv.size(); ++i) {
-        delete[] _argv[i];
+        delete _argv[i];
     }
 
 	_envp.clear();

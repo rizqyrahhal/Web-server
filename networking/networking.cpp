@@ -1,48 +1,45 @@
 #include "web_serv.hpp" 
 #include <sys/socket.h>
-
-// size_t ResponseReturned::currentIndex;
-
-void    creat_socket_and_bind(global & glob)
+void    creat_socket_and_bind(std::map<std::string, std::vector<server> > & map)
 {
-    for (size_t i = 0; i < glob.server.size(); i++)
+    std::map<std::string, std::vector<server> >::iterator it;
+    for (it = map.begin(); it != map.end(); it++)
     {
-        server &serv = glob.server[i];
-        struct sockaddr_in addr;
+        std::cout<< "first server : "<< it->second[0].server_name<<std::endl;
         struct addrinfo hints;
         struct addrinfo* res;
         memset(&hints, 0, sizeof(hints));
         int use = 1;
-        serv.fd_server = socket(AF_INET, SOCK_STREAM, 0);
-        FD_SET(serv.fd_server,&server::current);
-        if (server::maxfd < serv.fd_server)
-            server::maxfd = serv.fd_server;
-        if (serv.fd_server == -1)
-        {
-            std::cout << "Failed to create socket" << std::endl;
-            continue;
-        }
-
         hints.ai_family = AF_INET;
         hints.ai_socktype = SOCK_STREAM;
-        int status = 0;
-        if ((status = getaddrinfo(serv.ip_address.c_str(), "http", &hints, &res)) != 0)
+        hints.ai_flags = AI_PASSIVE;
+        int status = getaddrinfo(it->second[0].ip_address.c_str(), it->second[0].port.c_str(), &hints, &res);
+        if (status == -1)
         {
             std::cout<<"getaddrinfo error: "<<std::endl;
             exit(0);
         }
+        it->second[0].fd_server = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+        FD_SET(it->second[0].fd_server,&server::current);
+        FD_SET(it->second[0].fd_server,&server::current2);
+        if (server::maxfd < it->second[0].fd_server)
+            server::maxfd = it->second[0].fd_server;
+        if (it->second[0].fd_server == -1)
+        {
+            std::cout << "Failed to create socket" << std::endl;
+            freeaddrinfo(res);
+            continue;
+        }
 
-        memset(&addr, 0, sizeof(addr));
-        addr.sin_family = AF_INET;
-        addr.sin_addr.s_addr = htonl(INADDR_ANY);
-        addr.sin_port = htons(serv.port);
-
-        setsockopt(serv.fd_server ,SOL_SOCKET,SO_REUSEADDR, &use,sizeof(use));
-        std::cout << "serv.fd_server " << serv.fd_server  << std::endl;
-        if (bind(serv.fd_server, reinterpret_cast<const sockaddr *>(&addr) , sizeof(addr)) == -1)
+        setsockopt(it->second[0].fd_server ,SOL_SOCKET,SO_REUSEADDR, &use,sizeof(use));
+        // setsockopt(serv.fd_server, SOL_SOCKET, SO_REUSEPORT, &use, sizeof(use));
+        // std::cout << "serv.fd_server " << it->second[0].fd_server  << std::endl;
+        status = bind(it->second[0].fd_server, res->ai_addr, res->ai_addrlen);
+        if (status == -1)
         {
             std::cout << "Failed to bind socket" << std::endl;
-            close(serv.fd_server);
+            close(it->second[0].fd_server);
+            freeaddrinfo(res);
             exit(1);
         }
         freeaddrinfo(res);
@@ -50,17 +47,18 @@ void    creat_socket_and_bind(global & glob)
    }
 }
 
-void     listen_new_connection(global & glob)
+void     listen_new_connection(std::map<std::string, std::vector<server> > & map)
 {
-    for (size_t i = 0; i < glob.server.size(); i++)
+    std::map<std::string, std::vector<server> >::iterator it;
+    for (it = map.begin(); it != map.end(); it++)
     {
-        if (listen(glob.server[i].fd_server, 100) == -1)
+        if (listen(it->second[0].fd_server, 100) == -1)
         {
             std::cerr << "Failed to listen for connections" << std::endl;
-            close(glob.server[i].fd_server);
+            close(it->second[0].fd_server);
             exit(1);
         }
-	    std::cout<<"the server "<< glob.server[i].fd_server << " in listen mode "<< "with port "<< glob.server[i].port <<" ..."<<std::endl;
+	    std::cout<<"the server "<< it->second[0].fd_server << " in listen mode "<< "with port "<<it->second[0].port <<" ..."<<std::endl;
     }
 }
 
@@ -70,107 +68,212 @@ client accept_new_connection(server& serv)
 	client.fd_client = accept(serv.fd_server, (struct sockaddr *)&client.client_address, &client.clientaddrlenght);
 	if (client.fd_client == -1)
 	{
-	   std::cerr<<"failed accept method."<<std::endl;
-		exit(EXIT_FAILURE);
+	    std::cerr<<"failed accept method."<<std::endl;
+	    exit(EXIT_FAILURE);
 	}
 	if (server::maxfd < client.fd_client)
 		server::maxfd = client.fd_client;
 	FD_SET(client.fd_client, &server::current);
+	FD_SET(client.fd_client, &server::current2);
 	return (client);
 }
 
-void    run_servers(global & glob)
+int    send_video(client & client)
+{
+
+    // std::cout <<" i want to send video --->>>"<<std::endl;
+    char readvideo[2025];
+    if (client.p == 0)
+    {
+
+        client.readFd = open("/Users/araysse/Desktop/video.mp4", 0);
+        if (client.readFd <= 0)
+        {
+            std::cout<<"open video failed"<<std::endl;
+            return (1);
+        }
+        std::string header = "HTTP/1.1 200 OK\r\n"
+                       "Content-Type: video/mp4\r\n"
+                       "Content-Length: 32457473\r\n"
+                       "Connection: closed\r\n\r\n";
+        if (send(client.fd_client, header.c_str(), header.size(), 0) <= 0)
+        {
+            std::cout<<"send 1 salat******"<<std::endl;
+            std::cout<<strerror(errno)<<"\n\n\n"<<std::endl;
+            close(client.readFd);
+            return (1);
+        }
+        client.p++;
+        return (0);
+    }
+    int rd = read(client.readFd, &readvideo, 2024);
+    if (rd <= 0)
+    {
+       std::cout<<"read salat"<<std::endl;
+       close(client.readFd);
+       return(1);
+    }
+    int snd = send(client.fd_client, &readvideo, rd, 0);
+    // std::cout<<"send == "<<snd<<std::endl;
+    if (snd <= 0)
+    {
+        std::cout<<"send salat******"<< "returned value : "<<snd<<std::endl;
+        std::cout<<strerror(errno)<<std::endl;
+        close(client.readFd);
+        return (1);
+    }
+    return (0);
+}
+
+void    run_servers(std::map<std::string, std::vector<server> > & map)
 {
     signal(SIGPIPE, SIG_IGN);
-    int resp = 0;
     int tmp = 0;
-    bool sen = false;
 	while (1)
 	{
 		fd_set writable = server::current;
-		fd_set readable = server::current;
+		fd_set readable = server::current2;
 		tmp = select(server::maxfd + 1, &readable, &writable, nullptr, 0);
-		if (tmp < 0) {
+		if (tmp < 0)
+        {
 			std::perror("select() Error ");
 			continue;
 		}
-		for (size_t  j = 0; j < glob.server.size(); j++)
+        std::map<std::string, std::vector<server> >::iterator it;
+		for (it = map.begin(); it != map.end(); it++)
 		{
-
-			server &server = glob.server[j];
-			if (FD_ISSET(server.fd_server, &readable))
+			if (FD_ISSET(it->second[0].fd_server, &readable))
 			{
-                std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  Pushing Clients @@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n";
-				server.client.push_back(accept_new_connection(server));
-                std::cout << "########### number of client:  " << server.client.size() << std::endl;
+                // std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  Pushing Clients @@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n";
+				it->second[0].client.push_back(accept_new_connection(it->second[0]));
+                // std::cout << "server socket ---->" << it->second[0].client.size() << std::endl;
             }
-            // std::cout << "########### FD_client:  " << server.client.fd_client << std::endl;
-            std::cout << "num clients => " << server.client.size() << std::endl;
-			for (size_t i = 0; i < server.client.size() ; i++) // in this i <= Just to evet loop
+
+			for (size_t i = 0; i < it->second[0].client.size() ; i++) // in this i <= Just to evet loop
 			{
-                // std::cout << "++++++++++++++++++++++++++++++++\n";
-                if (server.client.size() != 0)
+                // std::cout<<"loooop"<<std::endl;
+                if (it->second[0].client.size() != 0)
                 {
-				client &client = server.client[i];
-                // std::cout << "CLIENT CHECK => " << client.check << std::endl;
-				// IF statement for Request.
-				if (FD_ISSET(client.fd_client, &readable) && client.check == 0)
-				{
-                    resp = client.request_client->read_reqwest(client.fd_client);
-                    // std::cout<<client.request_client->max_body_size<<std::endl;
-                    // std::cout<<resp<<std::endl;
-					// fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
-                    client.check = 1;
-				}
-				else if (FD_ISSET(client.fd_client, &writable) && client.check == 1)
-                {
-                    std::cout << "Client -> " << client.fd_client << std::endl;
-                    if (resp > 0){
+				    client &client = it->second[0].client[i];
+				    if (FD_ISSET(client.fd_client, &readable) && client.check == 0)
+				    {
 
-                        send(client.fd_client, GenerateResponseFromStatusCode(resp).c_str(), GenerateResponseFromStatusCode(resp).size(), 0);
-                    }
-                    else if (resp == 0)
+                        client.resp = client.request_client->read_reqwest(client, it->second, i);
+                        // std::cout << "client fd set :" << FD_ISSET(client.fd_client, &readable) << std::endl;
+				        fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
+                        // client.check = 1;
+				    }
+				    else if (FD_ISSET(client.fd_client, &writable) && client.check == 1)
                     {
-                        std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
-                        Response response;
-                        ResponseReturned res = response.CreatResponse(server, *client.request_client);
-                        // ResponseReturned res(server, *client.request_client);
-                        // client.request_client->resp = res;
-                        // std::cout << "isFile: " << res.getIsFile() << std::endl << "BodyFile: " << res.getBody() << std::endl;
-                        // if (res.getHeaders().empty())
-                        //     std::cout << "\n***** Response1 ***** \n" << (res.readfile()) << "\n----------------------------------\n";
-                        // else
-                            std::cout << "\n***** Response2 ***** \n" << (res.getHeaders() + res.readfile()) << "\n----------------------------------\n";
-                        std::string chunck = res.GetChanckFromResponse(255);
-
-                        while(!chunck.empty()) {
-                            int sending = send(client.fd_client, chunck.c_str(), chunck.size(), 0);
-                            (void)sending;
-                            std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
-                            chunck = res.GetChanckFromResponse(255);
+                        
+                        if (client.resp > 0){
+                            std::cout<<"static code *-*"<<std::endl;
+                            send(client.fd_client, GenerateResponseFromStatusCode(client.resp, it->second[0]).c_str(), GenerateResponseFromStatusCode(client.resp, it->second[0]).size(), 0);
                         }
+                        else if (client.resp == 0) {
+                            // std::cout << "I WORK ON THIS CLIENT: " << client.fd_client << std::endl;
+                            std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
+                            if (!client.generateResponseObject) {
+                                Response response;
+                                client.response_client = response.CreatResponse(it->second[0], *client.request_client);
+                                client.generateResponseObject = true;
+                            }
+        
+                            
+                            std::string chunck = client.response_client.GetChanckFromResponse(1024);
+                            if (chunck.empty()) {
+                                client.pr = 1; // chof m3a hada 
+                                // sen = true; /// change with client_status_life
+                            }
+                            else {
+                                if (send(client.fd_client, chunck.c_str(), chunck.size(), 0) <= 0)
+                                {
+                                    // client.response_client.
+                                    client.pr = 1;
+                                }
+                            }
+                            
+                            // while(!chunck.empty()) {
+                            //     chunck = client.response_client.GetChanckFromResponse(255);
+                            // }
 
-                        std::cout << "\n###################################################################################################################################################\n\n";
-                        //send correct response
-                        sen = true; /// change with client_status_life
-                    }
-                    if (resp > 0 || sen) {
-                        close(client.fd_client);
-                        FD_CLR(client.fd_client, &server::current);
-                        server.client.erase(server.client.begin() + i);
 
-                        std::cout << "server.client.size() : " << server.client.size() << "   ) :)\n";
-                        // exit (0);
+
+
+
+
+                            // std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << std::endl;
+
+                            std::cout << "\n###################################################################################################################################################\n\n";
+                            // send correct response
+                            // client.pr = send_video(client);
+
+                        }
+                        if (client.resp == -1 || client.resp > 0 || client.pr) 
+                        {
+                            // std::cout<<"client "<<client.fd_client<<" dropped succesfolly and MAXFD == "<<server::maxfd<<std::endl;
+                            close(client.fd_client);
+                            FD_CLR(client.fd_client, &server::current);
+                            FD_CLR(client.fd_client, &server::current2);
+                            delete client.request_client;
+                            it->second[0].client.erase(it->second[0].client.begin() + i);
+                            // std::cout<<"number of client : "<<it->second[0].client.size()<<std::endl;
+
+                        }  
                     }
-                    //    exit(0);
                 }
-                }
-                else
-                    break;
 			}
 		}
-
     }
    
 }
 
+
+
+                        // else if (client.resp == 0)
+                        // {
+                        //     std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
+                        //     std::string res;
+                        //     if (client.siftna_response == true)
+                        //     {
+                        //     Response response;
+                        //     res = response.CreatResponse(it->second[0], *client.request_client);
+                        //     client.siftna_response = false;
+                        //     }
+                        //         // std::cout << "\n***** Response ***** \n" << res << "\n----------------------------------\n";
+                        //     int sending = send(client.fd_client, res.c_str(), res.size(), 0);
+                        //     std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
+                        //     std::cout << "\n###################################################################################################################################################\n\n";
+                        //     send(client.fd_client, GenerateResponseFromStatusCode(404).c_str(), GenerateResponseFromStatusCode(404).size(), 0);
+                        //     client.pr = 1; /// change with client_status_life
+                        //     // client.pr = send_video(client);
+                        // }
+/*
+
+
+ParseRequest(client, servers, int idxClientInDefaultServer) {
+    if (parsingHeader) {
+        parseHeader();
+        string host = getHoste();
+        for (int i = 1; i < servers.size(); i++) {
+            if (servers[i] == host) {
+                servers[0].earese(begin() + idxClientInDefaultServer);
+                servers[i].push_back(client);
+                break;
+            }
+        }
+    }
+}
+
+for (auto xs : map) {
+    firstServer = xs.second[0];
+    if (new client) {
+        firstServer.client.push_back(newClient);
+    }
+    for (int i = 0; i < xs.second.size(); i++) {
+        if (there is something to  read) {
+            ParseRequest(client, servers);
+        }
+    }
+}
+*/

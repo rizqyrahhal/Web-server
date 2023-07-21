@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/20 05:04:17 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/21 18:08:14 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,29 +15,21 @@
 size_t Response::_matchedLocationPosition;
 
 Response::Response() {
-    // fillMimeTypes(_mimeTypes); // this data move to initial it in the beginig of programe one time to evit time delia in any response {!!!!!!!}
-    // _mimeTypes(readMimeTypes("./template/mime.types"));
+    _envp = NULL;
+    _argv = NULL;
     _cgi_mimeTypes = readMimeTypes("./template/cgi-mime.types");
     _mimeTypes = readMimeTypes("./template/mime.types");  //this data move to initial it in the beginig of programe one time to evit time delia in any response {!!!!!!!}
 }
 
 ResponseReturned Response::CreatResponse(server server, request request) {
-    // it is a space in the begin of any headers value inside (request.map_request), remove it pleas
-    // and when requested a post have non behavoir functionalete
-
+    std::cout << "LOcation[0]  : allowedmethod size : " << server.locations[0].allow_methods.size() << std::endl;
+    std::cout << "THE ROOOT IN LOCATION : " << server.locations[0].root << std::endl; 
     // std::cout << "########## eenrtrer ###########" << std::endl;
     // for (std::map<std::string, std::string>::iterator it = request.map_request.begin(); it != request.map_request.end(); it++) {
-    //     it->second.erase(0, 1);
     //     std::cout << it->first << "=" << it->second << std::endl;
+    //     // it->second.erase(0, 1);
     // }
     // std::cout << "########## ssorteee ###########" << std::endl << std::endl;
-
-
-    // the use of open is forbiden, from that we need to use ifstream to handl files (if it is a way to get fd we steel use fd in bodyFile if not switch to pass the path of file)
-    // if  request a Post Method and have form-data need to be in Content-Type the Content-Type in the body
-    // the same behavoir with thae filename 
-
-    // request.bodyFile = open("bodyFile", 666); // Just hardecode change when recive it from parser
 
     Response response;
     try
@@ -72,6 +64,10 @@ ResponseReturned Response::CreatResponse(server server, request request) {
             // if (!isfile && statuscode == 200)
             //     setHeader("Content-Length", std::to_string(bodyfile.size()));
             delete res;
+            // if (resp.getHeaders().empty())
+            //     std::cout << "\n***** Response ***** \n" << (resp.readfile()) << "\n----------------------------------\n";
+            // else
+            std::cout << "\n***** Response ***** \n" << (resp.getHeaders() + resp.readfile()) << "\n----------------------------------\n";  /////////////
             return (resp);
     }
 
@@ -100,19 +96,22 @@ void Response::cgi(server server, request request, Response &response) {
     
 	cgi.fillEnvp(request, server, _requestedSource, _contentType);
     cgi.fillArgv(_cgiBinPath, _requestedSource);
-    char **envp = cgi.vectorToCharArray(cgi._envp);
-    char **argv = cgi.vectorToCharArray(cgi._argv);
+    // char **envp = cgi.vectorToCharArray(cgi._envp);
+    // char **argv = cgi.vectorToCharArray(cgi._argv);
+    _envp = cgi.vectorToCharArray(cgi._envp);
+    _argv = cgi.vectorToCharArray(cgi._argv);
     if (request.method == "GET") {
         file = open(_requestedSource.c_str(), 666);
     }
     else if (request.method == "POST") {
+        // std::cout << "IN POST CGI CONDITION THIS IS THE FILE DESCRIPTOR NUMBER: " << request.bodyFile << std::endl;
         file = request.bodyFile;
     }
 
-    response.parseCgiOutput(cgi.execut(argv[0], argv, envp, _requestedSource, file));
+    response.parseCgiOutput(cgi.execut(_argv[0], _argv, _envp, _requestedSource, file));
 
-    delete[] envp;
-    delete[] argv;
+    // delete[] envp;
+    // delete[] argv;
     close(file); // need to check if close remove this line
     throw(200);
 }
@@ -164,6 +163,10 @@ std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server ser
 }
 
 Response::~Response() {
+    if (_envp != NULL && _argv != NULL){
+        delete[] _envp;
+        delete[] _argv;
+    }
     // _requestedSource.clear();
 }
 
@@ -171,34 +174,25 @@ Response::~Response() {
 
     WHEN THE MEERG WORK AS NEED  REPLACE THE NETWORKIN FOLDER BY THE SAME ONE IN THE meerg REPO (THIS METHOD OF WORK BE ALL TIME OF WORKIN ON WEBSERV) 
 
-    STOP --> in check the floow of the too status 201 and 500 to be knew the position of error where (lme be the method of creation 500 correct then the 201)   the probleme is fixed in the new virsion of networking
 
 
-
-    in matched requset be to to close derectory this is the one fd lees open by me !!!!!!!!!!
-
+    function to creat tomporare file name
 
     
     the index.php and index.by   in dyrectory // not mandatory just a *hawas* 
 
     matched location and matched source need work blkhosos source
 
-    CGI rest test cokis and pars the header
 
     make more test in the matched location and the searching about requested source 
 
 
     
-
-
-
-
-
-    ** the problem in request.map_requset when Method Post and the space i talked beffor
     ** the write PIPE error from the accepet neeed SIGNAL TO egnor it
-    ** 
 
 
+
+    ** the 304 and 201 test it before push
 
 
 
@@ -209,6 +203,28 @@ Response::~Response() {
 
 
 // while true; do leaks webserv; sleep 1 ; done;
+
+
+
+
+
+/*
+   + problem in allow_methods directive insinde the location (this problem showen in test with one location ) {
+    THE TEST CASE :
+            location /www {
+        root ./www/app
+        allow_methods GET POST DELETE
+        autoindex on
+    }
+   }
+
+    +  THE same above problem with the root directive
+*/
+
+
+
+
+
 
 
 

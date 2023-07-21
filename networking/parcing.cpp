@@ -32,7 +32,7 @@ void    location_serv(std::string line, server & server)
         {
             tmp1 >> str;
             if (access(str.c_str(), F_OK) == -1) {
-                std::cout<<"Error : root path in location not exist!"<<std::endl;
+                std::cout<<"Error : root path in location "<< vector[0]<<" not exist!"<<std::endl;
                 exit(0);
             }
             location.root = str;
@@ -86,10 +86,10 @@ void    location_serv(std::string line, server & server)
             tmp1 >> str;
             std::string str1;
             tmp1 >> str1;
-            // if (access(str1.c_str(), F_OK) == -1) {
-            //     std::cout<<"Error : cgi path int locations not exist!"<<std::endl;
-            //     exit(0);
-            // }
+            if (access(str1.c_str(), F_OK) == -1) {
+                std::cout<<"Error : cgi path int locations not exist!"<<std::endl;
+                exit(0);
+            }
             location.cgi.insert(std::make_pair(str, str1));
         }
         else if(str == "redirect")
@@ -160,9 +160,8 @@ void    parce_server(std::string line, global & global)
 
         else if (str == "port")
         {
-            int port;
-            tmp1 >> port;
-            server.port = port;
+            tmp1 >> str;
+            server.port = str;
         }
         else if (str == "server_name")
         {
@@ -171,7 +170,7 @@ void    parce_server(std::string line, global & global)
         }
         else if (str == "client_body_size")
         {
-            int size;
+            size_t size;
             tmp1 >> size;
             server.client_body_size = size;
         }

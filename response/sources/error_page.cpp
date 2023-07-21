@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 21:10:59 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/14 02:48:15 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/20 23:47:57 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,10 @@ std::string ReadErrorPage(std::string errpage) {
 /* rest small choise not handling in headers !!!!!!!!!!!!! */
 //  the header in htis function is fixed for all time
 // this function need to add server to get from it the error page map
-std::string GenerateResponseFromStatusCode(int statuscode) { // adding argement to take server for the error page
+std::string GenerateResponseFromStatusCode(int statuscode, server server) { // adding argement to take server for the error page
     HttpResponse response;
 	// Request request;
-	Server	server;
+	// Server	server;
   
     	// CHECK_STATUS_CODE();
 	if (statuscode >= 400){
@@ -85,7 +85,7 @@ std::string GenerateResponseFromStatusCode(int statuscode) { // adding argement 
 		response.setHeader("Conection", "close"); // from map headers (request data)   request.getConection()
 
 		// search about error page in map_error page
-		std::string err_page = SearchAboutErrorPage(statuscode, server._map_err_page); // this function need to be SearchAboutErrorPageFormTowPlaces()
+		std::string err_page = SearchAboutErrorPage(statuscode, server.map_err_page); // this function need to be SearchAboutErrorPageFormTowPlaces()
         if (!err_page.empty())
         	response.setBody(ReadErrorPage(err_page));
         else

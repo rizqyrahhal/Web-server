@@ -1,5 +1,5 @@
 NAME = webserv
-CPPFLAGS = -Wall -Werror -Wextra -std=c++98 -fsanitize=address
+CPPFLAGS = -Wall -Werror -Wextra -std=c++98  -fsanitize=address
 CC = c++
 
 
@@ -7,6 +7,7 @@ SRCS = main.cpp \
 	networking/parcing.cpp \
 	networking/web_serv.cpp \
 	networking/networking.cpp \
+	networking/client.cpp \
 	response/sources/responsePart.cpp \
 	response/sources/HttpResponse.cpp \
 	response/sources/error_page.cpp \
