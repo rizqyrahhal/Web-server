@@ -114,6 +114,7 @@ void    parce_server(std::string line, global & global)
     server server;
     int ps = 0;
     int loc = 0;
+    int prt = 0;
     while(1)
     {
         std::string location;
@@ -172,6 +173,14 @@ void    parce_server(std::string line, global & global)
         else if (str == "port")
         {
             tmp1 >> str;
+            if (prt == 0){
+            server.port.erase(server.port.begin());
+            prt++;
+            }
+            if (str.size() > 4){
+                std::cout<<"Error: port not correct !"<<std::endl;
+                exit(1);
+            }
             std::vector<std::string>::iterator it = std::find(server.port.begin(), server.port.end(), str);
             if (it != server.port.end())
             {
