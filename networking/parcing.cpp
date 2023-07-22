@@ -39,6 +39,11 @@ void    location_serv(std::string line, server & server)
         }
         else if (str == "autoindex"){
             tmp1 >> str;
+            if (str != "on" && str != "off")
+            {
+                std::cout<<"Error : auto index not correct!!"<<std::endl;
+                exit(0);
+            }
             location.autoindex = str;
         }
         else if (str == "index")
