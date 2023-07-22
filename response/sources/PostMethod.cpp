@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PostMethod.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rizqy <rizqy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 16:45:33 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/20 19:43:25 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/22 16:14:38 by rizqy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ void Response::PostMethod(server server, request request) {
         // std::string tompprare_name = "www/tmp1";
         ////////////////////////////////////////////////// 
         std::string file_name = searchInRequestedHeader(request.map_request, "File-Name");   /// need to make this 
-
-        
+        if(!file_name.size())
+            file_name = getRandomString(5);
 
 
         #ifdef UPLOAD_DEBUG

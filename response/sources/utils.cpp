@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rizqy <rizqy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 00:10:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/19 23:05:32 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/22 16:11:37 by rizqy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,21 @@ std::pair<std::string, std::string> parseHeader( const std::string& line )  {
 	return std::make_pair(_key, _value);
 }
 
+std::string getRandomString(int length) {
+    const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const int charsetSize = sizeof(charset) - 1;
 
+    std::string randomString;
+    randomString.reserve(length);
+
+    std::srand(static_cast<unsigned int>(std::time(0)));
+
+    for (int i = 0; i < length; ++i) {
+        randomString += charset[std::rand() % charsetSize];
+    }
+
+    return randomString;
+}
 
 
 

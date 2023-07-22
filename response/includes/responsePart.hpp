@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   responsePart.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rizqy <rizqy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/22 05:26:11 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/22 16:12:06 by rizqy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,7 @@ std::string getCurrentDate();
 std::string trim(const std::string& str);
 std::pair<std::string, std::string> parseHeader(const std::string& line);
 std::string searchInRequestedHeader(const std::map<std::string, std::string>& Map, const std::string& key);
+std::string getRandomString(int length);
 
 template <typename T>
 T toNumber(const std::string& str) {
