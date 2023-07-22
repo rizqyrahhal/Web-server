@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error_page.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: araysse <araysse@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 21:10:59 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/20 23:47:57 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/21 23:29:45 by araysse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,9 @@ std::string GenerateResponseFromStatusCode(int statuscode, server server) { // a
 		response.setStatusMessage(getReason(statuscode));
 
         /* set default headers */
+		response.setHeader("Date", getCurrentDate());
+	    response.setHeader("Server", server._name);
+
 		// new_response.setHeader("Date: ", generateDate());
 		response.setHeader("Conection", "close"); // from map headers (request data)   request.getConection()
 

@@ -60,6 +60,11 @@ void    location_serv(std::string line, server & server)
                 std::cout<<"allow methods not correct---------"<<std::endl;
                 exit(0);
             }
+            if (location.allow_methods.size() < 1)
+            {
+                std::cout<<"you must have one method at least---------"<<std::endl;
+                exit(0);
+            }
             for (size_t i = 0; i < location.allow_methods.size(); i++)
             {
                 if (location.allow_methods[i] != "GET" && location.allow_methods[i] != "POST" && location.allow_methods[i] != "DELETE")
@@ -108,10 +113,17 @@ void    parce_server(std::string line, global & global)
 {   
     server server;
     int ps = 0;
+    int loc = 0;
     while(1)
     {
         std::string location;
         size_t pos = line.find("location ", ps);
+        if (pos == std::string::npos && loc == 0)
+        {
+            std::cout<<"Error: no location found in server block!"<<std::endl;
+            exit(0);
+        }
+        loc++;
         if (pos == std::string::npos) {
             break;
         }
@@ -129,7 +141,6 @@ void    parce_server(std::string line, global & global)
     {
         vector.push_back(str);
     }
-    
     for (size_t i = 0; i < vector.size(); i++)
     {
         std::stringstream tmp1(vector[i]);
@@ -161,12 +172,18 @@ void    parce_server(std::string line, global & global)
         else if (str == "port")
         {
             tmp1 >> str;
-            server.port = str;
+            std::vector<std::string>::iterator it = std::find(server.port.begin(), server.port.end(), str);
+            if (it != server.port.end())
+            {
+                std::cout<<"you should have one port! "<<std::endl;
+                exit(0);
+            }
+            server.port.push_back(str);
         }
         else if (str == "server_name")
         {
             tmp1 >> str;
-            server.server_name = str;
+            server._name = str;
         }
         else if (str == "client_body_size")
         {
@@ -205,9 +222,27 @@ void    ft_parce_config(char **av, global &global)
         std::cout<<"Unable to open file. "<<std::endl;
         exit(0);
     }
+    int acolad = 0;
+    for (size_t i = 0; i < line.size(); i++)
+    {
+        if (line[i] == '{')
+            acolad++;
+        else if (line[i] == '}')
+            acolad--;
+    }
+    if (acolad != 0)
+    {
+        std::cout<<"accolad not closed"<<std::endl;
+        exit(1);
+    }
+    
     int ps = 0;
     while(1)
     {
+        if (line.empty())
+        {
+            std::cout<<"Error: no config file found"<<std::endl;
+        }
         std::string server_conf;
         size_t pos = line.find("};", ps);
         if (pos == std::string::npos) {

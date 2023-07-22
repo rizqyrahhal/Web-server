@@ -56,6 +56,7 @@ class request
 	std::string method;
 	std::string url;
 	std::string query;
+	std::string version;
 	size_t max_body_size;
 	std::map<std::string, std::string> map_request;
 	int tmp;
@@ -77,11 +78,11 @@ class request
 class server
 {
 	public:
-	server(){}
+	server();
 	
-	std::string port;
+	std::vector<std::string> port;
 	std::string ip_address;
-	std::string server_name;
+	std::string _name;
 	std::string root;
 	std::string index;
  	std::vector<client> client;

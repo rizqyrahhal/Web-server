@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/21 01:02:08 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/22 05:26:11 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,8 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <algorithm>
-
-
 #include <sys/types.h>
 #include <sys/wait.h>
-
-
 #include "HttpResponse.hpp"
 #include "statuscode.hpp"
 #include "ResponseReturned.hpp"
@@ -42,7 +38,7 @@
 #endif
 
 #ifndef GET_DEBUG
-// #define GET_DEBUG
+#define GET_DEBUG
 #endif
 
 #ifndef POST_DEBUG

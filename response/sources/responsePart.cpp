@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/21 18:08:14 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/22 03:30:06 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ Response::Response() {
 }
 
 ResponseReturned Response::CreatResponse(server server, request request) {
-    std::cout << "LOcation[0]  : allowedmethod size : " << server.locations[0].allow_methods.size() << std::endl;
-    std::cout << "THE ROOOT IN LOCATION : " << server.locations[0].root << std::endl; 
+    // std::cout << "LOcation[0]  : allowedmethod size : " << server.locations[0].allow_methods.size() << std::endl;
+    // std::cout << "THE ROOOT IN LOCATION : " << server.locations[0].root << std::endl; 
     // std::cout << "########## eenrtrer ###########" << std::endl;
     // for (std::map<std::string, std::string>::iterator it = request.map_request.begin(); it != request.map_request.end(); it++) {
     //     std::cout << it->first << "=" << it->second << std::endl;
@@ -67,7 +67,7 @@ ResponseReturned Response::CreatResponse(server server, request request) {
             // if (resp.getHeaders().empty())
             //     std::cout << "\n***** Response ***** \n" << (resp.readfile()) << "\n----------------------------------\n";
             // else
-            std::cout << "\n***** Response ***** \n" << (resp.getHeaders() + resp.readfile()) << "\n----------------------------------\n";  /////////////
+            // std::cout << "\n***** Response ***** \n" << (resp.getHeaders() + resp.readfile()) << "\n----------------------------------\n";  /////////////
             return (resp);
     }
 
@@ -126,7 +126,7 @@ std::string Response::ResponseGeneratedFromStatusCode(int statuscode, server ser
 
     /* set default headers */
 	setHeader("Date", getCurrentDate());
-    setHeader("Server", server.server_name);
+    setHeader("Server", server._name);
 
 	// setHeader("Connection", searchInRequestedHeader(request.map_request, "Connection"));
 	setHeader("Connection", "close"); // from map headers (request data) use the line above when the request.map_request fixed

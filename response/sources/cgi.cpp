@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: araysse <araysse@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 03:33:15 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/21 00:44:25 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/21 22:03:24 by araysse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ void Cgi::fillEnvp(request request, server server, std::string requstedsource, s
 	_envp.push_back(strdup98(std::string("REMOTE_ADDR=" + server.ip_address).c_str()));
 	_envp.push_back(strdup98(std::string("SCRIPT_NAME=" + requstedsource).c_str()));
 	_envp.push_back(strdup98(std::string("SCRIPT_FILENAME=" + requstedsource).c_str()));
-	_envp.push_back(strdup98(std::string("SERVER_NAME=" + server.server_name).c_str()));
+	_envp.push_back(strdup98(std::string("SERVER_NAME=" + server._name).c_str()));
 	_envp.push_back(strdup98(std::string("REMOTE_HOST=" + searchInRequestedHeader(request.map_request, "Host")).c_str()));
 	_envp.push_back(strdup98(std::string("SERVER_PORT=").c_str()));
 	_envp.push_back(NULL);
