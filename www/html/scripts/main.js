@@ -17,14 +17,14 @@ function setUserName() {
     if (!myName)
         setUserName();
     localStorage.setItem("name", myName);
-    myHeading.textContent = `you are in my portfolyo web page, ${myName}`;
+    myHeading.textContent = `you are in our test web page, ${myName}`;
   }
 
   if (!localStorage.getItem("name")) {
     setUserName();
   } else {
     const storedName = localStorage.getItem("name");
-    myHeading.textContent = `you are in my portfolyo web page, ${storedName}`;
+    myHeading.textContent = `you are in our test web page, ${storedName}`;
   }
 
   myButton.onclick = () => {

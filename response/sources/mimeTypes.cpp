@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 13:49:31 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/20 03:12:32 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/22 19:58:44 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,10 @@ std::map<std::string, std::string> readMimeTypes(const std::string& filePath) {
 
 std::string getFileExtantion(std::string requestedsource) {
     size_t position = requestedsource.find_last_of(".");
-    return (requestedsource.substr(position, requestedsource.size()));
+    if (position != std::string::npos)
+        return (requestedsource.substr(position, requestedsource.size()));
+    else
+        return "";
 }
 
 std::string getMimeType(std::map<std::string, std::string> mimetypes, std::string fileextantion) {

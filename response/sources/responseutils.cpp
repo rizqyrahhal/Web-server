@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   responseutils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: araysse <araysse@student.42.fr>            +#+  +:+       +#+        */
+/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:28:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/22 17:48:57 by araysse          ###   ########.fr       */
+/*   Updated: 2023/07/22 20:00:35 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,78 +84,80 @@ void Response::parseCgiOutput( const std::string& cgioutput) {
 
 void Response::GetContentType(std::string requestedSource, std::map<std::string, std::string> mimetypes, std::string &contenttype) {
     contenttype = getMimeType(mimetypes, getFileExtantion(requestedSource));
+    if (contenttype.empty())
+        contenttype = "text/plain";
 }
 
 //   ../../../             ../   be like that / 
-// std::string Response::GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method) {
-//     // std::cout << "REQUESTED uri: " << requesturi << std::endl << std::endl;
+std::string Response::GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method) {
+    // std::cout << "REQUESTED uri: " << requesturi << std::endl << std::endl;
 
-//     DIR *dir;
-// 	std::string root = matchedlocation.root;
-//     std::string uriplusslash = requesturi + "/";
-// 	size_t position;
-// 	std::string requestedSource;
-	
+    DIR *dir;
+	std::string root = matchedlocation.root;
+    std::string uriplusslash = requesturi + "/";
+	size_t position;
+	std::string requestedSource;
 	
 
-//     // std::cout << "########## ENTREE INSIDE THE LOOP\n";
-//     while (root.size())
-//     {
-// 		requestedSource = root + requesturi;
-// 		// std::cout << "ROOT + URI : " << requestedSource << std::endl;
-//         if (requesturi == root || requesturi == "/")
-//         {
-//             /* check if exist */
-//             dir = opendir(requestedSource.c_str());
-//             if (dir != NULL) {
-//                 resourcetype = DRCT;
-//                 // if (requestedSource[requestedSource.size() - 1] != '/') {
-//                 //     if (method == "DELETE")
-//                 //         throw (409);
-//                 // response->setHeader("Location", uriplusslash);
-//                 // throw(301);
-//                 // }
-//                 closedir(dir);
-//         	    return (requestedSource);
-//             }
-//             else if (access(requestedSource.c_str(), 0) == 0) {
-//                 resourcetype = FILE;
-//         	    return (requestedSource);
-//             }
-//         }
+
+    // std::cout << "########## ENTREE INSIDE THE LOOP\n";
+    while (root.size())
+    {
+		requestedSource = root + requesturi;
+		// std::cout << "ROOT + URI : " << requestedSource << std::endl;
+        if (requesturi == root || requesturi == "/")
+        {
+            /* check if exist */
+            dir = opendir(requestedSource.c_str());
+            if (dir != NULL) {
+                resourcetype = DRCT;
+                // if (requestedSource[requestedSource.size() - 1] != '/') {
+                //     if (method == "DELETE")
+                //         throw (409);
+                // response->setHeader("Location", uriplusslash);
+                // throw(301);
+                // }
+                closedir(dir);
+        	    return (requestedSource);
+            }
+            else if (access(requestedSource.c_str(), 0) == 0) {
+                resourcetype = FILE;
+        	    return (requestedSource);
+            }
+        }
 		
-//         /* check if exist */
-//         dir = opendir(requestedSource.c_str());
-//         if (dir != NULL) {
-//             resourcetype = DRCT;
-//             if (requestedSource[requestedSource.size() - 1] != '/') {
-//                 if (method == "DELETE") {
-//                     closedir(dir);
-//                     throw (409);
-//                 }
-//                 response->setHeader("Location", uriplusslash);
-//                 closedir(dir);
-//                 throw(301);
-//             }
-//             closedir(dir);
-//         	return (requestedSource);
-//         }
-//         else if (access(requestedSource.c_str(), 0) == 0) {
-//             resourcetype = FILE;
-//         	return (requestedSource);
-//         }
-		
-// 		position = root.find_last_of("/");
-//     // std::cout << "positionINloop: " << position << std::endl << std::endl;
-// 		if (position == std::string::npos)
-//    			throw(404);	
-// 		root.erase(position, root.size());
-// 		// std::cout << "ROOT NEW: " << root << std::endl;
-//     }
-//     // std::cout << "########## GO OUT THE LOOP\n";
-//     // std::cout << "requestedSource: " << requestedSource << "\n";
-//     throw(404);
-// }
+        /* check if exist */
+        dir = opendir(requestedSource.c_str());
+        if (dir != NULL) {
+            resourcetype = DRCT;
+            if (requestedSource[requestedSource.size() - 1] != '/') {
+                if (method == "DELETE") {
+                    closedir(dir);
+                    throw (409);
+                }
+                response->setHeader("Location", uriplusslash);
+                closedir(dir);
+                throw(301);
+            }
+            closedir(dir);
+        	return (requestedSource);
+        }
+        else if (access(requestedSource.c_str(), 0) == 0) {
+            resourcetype = FILE;
+        	return (requestedSource);
+        }
+
+		position = root.find_last_of("/");
+    // std::cout << "positionINloop: " << position << std::endl << std::endl;
+		if (position == std::string::npos)
+   			throw(404);	
+		root.erase(position, root.size());
+		// std::cout << "ROOT NEW: " << root << std::endl;
+    }
+    // std::cout << "########## GO OUT THE LOOP\n";
+    std::cout << "requestedSource: " << requestedSource << "\n";
+    throw(404);
+}
 
 
 
@@ -294,140 +296,133 @@ void Response::GetContentType(std::string requestedSource, std::map<std::string,
 
 
 
+// std::string Response::GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method) {   // need to close the oppening directory and optemese the logic
+//     size_t position = requesturi.find_last_of("/");
+//     std::string checked, requestedSource, uriplusslash;
+//     uriplusslash = requesturi + "/";
+//     DIR *dir;
 
+//     #ifdef DEBUG
+//         std::cout << "matchedlocation.name: " << matchedlocation.name << std::endl;
+//         std::cout << "matchedlocation.root: " << matchedlocation.root << std::endl;
+//         std::cout << "requesturi: " << requesturi << std::endl;
+//         std::cout << "positionAFfterloop: " << position << std::endl << std::endl;
+//     #endif
 
+//         /* just hardcode to make "/" work as expected */
+//         if (matchedlocation.name == requesturi && requesturi == "/")
+//         {
+//             requestedSource = "." + matchedlocation.root;
+//             /* check if exist */
+//             dir = opendir(requestedSource.c_str());
+//             if (dir != NULL) {
+//                 resourcetype = DRCT;
+//                 // if (requestedSource[requestedSource.size() - 1] != '/') {
+//                 //     if (method == "DELETE")
+//                 //         throw (409);
+//                 // response->setHeader("Location", uriplusslash);
+//                 // throw(301);
+//                 // }
+//                 closedir(dir);
+//         	    return (requestedSource);
+//             }
+//             else if (access(requestedSource.c_str(), 0) == 0) {
+//                 resourcetype = FILE;
+//         	    return (requestedSource);
+//             }
+//         }
 
+//         requestedSource = "." + requesturi;
+//             // requestedSource = "." + matchedlocation.root;
 
+//         dir = opendir(requestedSource.c_str());
+//         if (dir != NULL) {
+//             resourcetype = DRCT;
+//             if (requestedSource[requestedSource.size() - 1] != '/') {
+//                 if (method == "DELETE"){
+//                     closedir(dir);
+//                     throw (409);
+//                 }
+//                 response->setHeader("Location", uriplusslash);
+//                 closedir(dir);
+//                 throw(301);
+//             }
+//             closedir(dir);
+//         	return (requestedSource);
+//         }
+//         else if (access(requestedSource.c_str(), 0) == 0) {
+//             resourcetype = FILE;
+//         	return (requestedSource);
+//         }
 
+//     while (position != 0)
+//     {
+//         checked = requesturi.substr(position, requesturi.size());
+//         requestedSource = "." + matchedlocation.root + checked;
 
-
-std::string Response::GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method) {   // need to close the oppening directory and optemese the logic
-    size_t position = requesturi.find_last_of("/");
-    std::string checked, requestedSource, uriplusslash;
-    uriplusslash = requesturi + "/";
-    DIR *dir;
-
-    #ifdef DEBUG
-        std::cout << "matchedlocation.name: " << matchedlocation.name << std::endl;
-        std::cout << "matchedlocation.root: " << matchedlocation.root << std::endl;
-        std::cout << "requesturi: " << requesturi << std::endl;
-        std::cout << "positionAFfterloop: " << position << std::endl << std::endl;
-    #endif
-
-        /* just hardcode to make "/" work as expected */
-        if (matchedlocation.name == requesturi && requesturi == "/")
-        {
-            requestedSource = "." + matchedlocation.root;
-            /* check if exist */
-            dir = opendir(requestedSource.c_str());
-            if (dir != NULL) {
-                resourcetype = DRCT;
-                // if (requestedSource[requestedSource.size() - 1] != '/') {
-                //     if (method == "DELETE")
-                //         throw (409);
-                // response->setHeader("Location", uriplusslash);
-                // throw(301);
-                // }
-                closedir(dir);
-        	    return (requestedSource);
-            }
-            else if (access(requestedSource.c_str(), 0) == 0) {
-                resourcetype = FILE;
-        	    return (requestedSource);
-            }
-        }
-
-        requestedSource = "." + requesturi;
-            // requestedSource = "." + matchedlocation.root;
-
-        dir = opendir(requestedSource.c_str());
-        if (dir != NULL) {
-            resourcetype = DRCT;
-            if (requestedSource[requestedSource.size() - 1] != '/') {
-                if (method == "DELETE"){
-                    closedir(dir);
-                    throw (409);
-                }
-                response->setHeader("Location", uriplusslash);
-                closedir(dir);
-                throw(301);
-            }
-            closedir(dir);
-        	return (requestedSource);
-        }
-        else if (access(requestedSource.c_str(), 0) == 0) {
-            resourcetype = FILE;
-        	return (requestedSource);
-        }
-
-    while (position != 0)
-    {
-        checked = requesturi.substr(position, requesturi.size());
-        requestedSource = "." + matchedlocation.root + checked;
-
-        #ifdef DEBUG
-        std::cout << "\n-------------------";
-        std::cout << "positionINloop: " << position << std::endl << std::endl;
-        std::cout << "checked: " << checked << "\n";
-        std::cout << "requestedSource: " << requestedSource << "\n";
-        std::cout << "uriplusslash: " << uriplusslash << "\n";
-        std::cout << "********************************************************\n";
-        #endif
+//         #ifdef DEBUG
+//         std::cout << "\n-------------------";
+//         std::cout << "positionINloop: " << position << std::endl << std::endl;
+//         std::cout << "checked: " << checked << "\n";
+//         std::cout << "requestedSource: " << requestedSource << "\n";
+//         std::cout << "uriplusslash: " << uriplusslash << "\n";
+//         std::cout << "********************************************************\n";
+//         #endif
     
-        /* check if exist */
-        dir = opendir(requestedSource.c_str());
-        if (dir != NULL) {
-            resourcetype = DRCT;
-            if (requestedSource[requestedSource.size() - 1] != '/') {
-                if (method == "DELETE") {
-                    closedir(dir);
-                    throw (409);
-                }
-                response->setHeader("Location", uriplusslash);
-                closedir(dir);
-                throw(301);
-            }
-            closedir(dir);
-        	return (requestedSource);
-        }
-        else if (access(requestedSource.c_str(), 0) == 0) {
-            resourcetype = FILE;
-        	return (requestedSource);
-        }
-		position = requesturi.find_last_of("/", position - 1);
-    }
-    if (matchedlocation.root == requesturi || matchedlocation.name == requesturi)
-    {
+//         /* check if exist */
+//         dir = opendir(requestedSource.c_str());
+//         if (dir != NULL) {
+//             resourcetype = DRCT;
+//             if (requestedSource[requestedSource.size() - 1] != '/') {
+//                 if (method == "DELETE") {
+//                     closedir(dir);
+//                     throw (409);
+//                 }
+//                 response->setHeader("Location", uriplusslash);
+//                 closedir(dir);
+//                 throw(301);
+//             }
+//             closedir(dir);
+//         	return (requestedSource);
+//         }
+//         else if (access(requestedSource.c_str(), 0) == 0) {
+//             resourcetype = FILE;
+//         	return (requestedSource);
+//         }
+// 		position = requesturi.find_last_of("/", position - 1);
+//     }
+//     if (matchedlocation.root == requesturi || matchedlocation.name == requesturi)
+//     {
     
-        requestedSource = "." + requesturi;
-        /* check if exist */
-        dir = opendir(requestedSource.c_str());
-        if (dir != NULL) {
-            resourcetype = DRCT;
-            if (requestedSource[requestedSource.size() - 1] != '/') {
-                if (method == "DELETE") {
-                    closedir(dir);
-                    throw (409);
-                }
-                response->setHeader("Location", uriplusslash);
-                closedir(dir);
-                throw(301);
-            }
-            closedir(dir);
-        	return (requestedSource);
-        }
-        else if (access(requestedSource.c_str(), 0) == 0) {
-            resourcetype = FILE;
-        	return (requestedSource);
-        }
-    }
-    // if (requesturi == "/tools/cgi-test/setCookie.py") {
-    //     resourcetype = FILE;
-    //     return ("/Users/rarahhal/Desktop/network_branch/tools/cgi-test/setCookie.py");
-    // }
+//         requestedSource = "." + requesturi;
+//         /* check if exist */
+//         dir = opendir(requestedSource.c_str());
+//         if (dir != NULL) {
+//             resourcetype = DRCT;
+//             if (requestedSource[requestedSource.size() - 1] != '/') {
+//                 if (method == "DELETE") {
+//                     closedir(dir);
+//                     throw (409);
+//                 }
+//                 response->setHeader("Location", uriplusslash);
+//                 closedir(dir);
+//                 throw(301);
+//             }
+//             closedir(dir);
+//         	return (requestedSource);
+//         }
+//         else if (access(requestedSource.c_str(), 0) == 0) {
+//             resourcetype = FILE;
+//         	return (requestedSource);
+//         }
+//     }
+//     // if (requesturi == "/tools/cgi-test/setCookie.py") {
+//     //     resourcetype = FILE;
+//     //     return ("/Users/rarahhal/Desktop/network_branch/tools/cgi-test/setCookie.py");
+//     // }
     
-    throw(404);
-}
+//     throw(404);
+// }
 
 
 
