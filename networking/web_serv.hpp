@@ -52,7 +52,7 @@ class request
 	public:
 	request(){}
 	request(size_t max_size);
-	int	read_reqwest(client & client, std::vector<server> & servers, int index_client);
+	int	read_reqwest(client & client, std::vector<server> & servers);
 	std::string method;
 	std::string url;
 	std::string query;

@@ -53,6 +53,8 @@ class client
 	// unsigned long size;
 	client(size_t maxBodySize);
 	bool siftna_response;
+
+	int client_in_serv;
 	~client();
 };
 

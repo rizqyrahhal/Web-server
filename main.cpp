@@ -11,10 +11,13 @@ void   check_servers(global & global)
     {
         server & s = global.server[i];
         std::string first = s.ip_address + s.port[0];
+        std::cout<<"first == "<<first<<std::endl;
         std::string name = s._name;
+        std::cout<<"name is : "<<name<<std::endl;
         std::vector<server> ser = map[first];
         for (size_t i = 0; i < ser.size(); i++)
-        {    
+        {
+            std::cout<<"chhal mn mera dkhelt l had loop "<<std::endl;
             if (ser[i]._name == name) {
                 std::cout << "this serverName already exist\n";
                 exit(1);

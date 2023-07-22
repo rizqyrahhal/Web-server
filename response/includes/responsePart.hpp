@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   responsePart.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: araysse <araysse@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/21 01:02:08 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/22 02:39:04 by araysse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ std::string getExtantion(std::map<std::string, std::string> mimetypes, std::stri
 /* utils */
 bool checkIndexInsidDerctory(std::string *path);
 const std::string generatBody(std::string _requestedSource);
-int calculeBodySize(std::string _requestedSource); // make this return long
+int calculeBodySize(std::string _requestedSource); // make this return long     ///////////////////////////////////
 std::string generateAutoindexFile(std::string requestedSource); /* in GET method */
 std::string getCurrentDate();
 std::string trim(const std::string& str);
