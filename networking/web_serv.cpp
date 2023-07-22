@@ -59,10 +59,11 @@ int request::parce_header(std::string header)
 		value = request_line[i].substr(sep + 2, r - (sep + 2));
 		map_request.insert(std::make_pair(key, value));
 	}
-
-	if (map_request.count("Transfer-Encoding") > 0 && map_request["Transfer-Encoding"] != "chunked")
+	std::map<std::string, std::string>::iterator it;
+	if (map_request.find("Transfer-Encoding") != map_request.end() && map_request["Transfer-Encoding"] != "chunked")
 		return(501);
-	if (method == "Post" && map_request.count("Transfer-Encoding") <= 0 && map_request.count("Content-Length") <= 0)
+	it = map_request.begin();
+	if (method == "POST" && map_request.find("Transfer-Encoding") != map_request.end() && map_request.find("Content-Length") != map_request.end())
 		return(400);
 	if (map_request.count("Content-Length") > 0)
 	{
@@ -170,7 +171,7 @@ void request::parce_chunks(std::string body, int ffd, client & client)
 	}
 }
 
-int request::read_reqwest(client & client, std::vector<server> & servers, int index_client)
+int request::read_reqwest(client & client, std::vector<server> & servers)
 {
 	std::vector<char> buffer(2024); // Adding by rarahhal
 	// std::cout<<"*********** before recive **************"<<std::endl;
@@ -190,10 +191,17 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 		lenght = 0;
 		std::string str1(buffer.begin(), buffer.begin() + bytesrecv);
 		int found1 = str1.find("\r\n\r\n", 0);
-		std::string header = str1.substr(0, found1);
+		std::cout<<"found1 = "<<found1<<std::endl;
+		std::string header;
+		std::string body;
+		if (found1 == -1)
+			header = str1;
+		else{
+			header = str1.substr(0, found1);
+			body = std::string(str1.c_str() + found1 + 4, bytesrecv - (found1 + 4));
+		}
 		std::cout<<"header : ***********************************************"<<std::endl;
 		std::cout<<header<<std::endl;
-		std::string body = std::string(str1.c_str() + found1 + 4, bytesrecv - (found1 + 4));
 		std::cout<<"body : ***********************************************"<<std::endl;
 		std::cout<<body<<std::endl;
 		// std::string str(buffer.begin(), buffer.end());
@@ -208,16 +216,16 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 		{
 			if (servers[i]._name == host)
 			{
-				servers[0].client.erase(servers[0].client.begin() + index_client);
-				servers[i].client.push_back(client);
+				client.client_in_serv = i;
 				break;
 			}
 		}
 		//check which method
 		if (method != "GET" && method != "DELETE")
 		{
+			std::cout<<"im here"<<std::endl;
 			std::string filename;
-			filename = "./upload/file";
+			filename = "/tmp/file";
 			int gen = 0;
 			while (access(filename.c_str(), F_OK) != -1)
 			{
@@ -235,7 +243,6 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 			// std::cout<<"bodydd receive : "<< body.size()<< std::endl;
 			if (map_request["Transfer-Encoding"] == "chunked")
 			{
-				// std::cout << "write : " << write(ffd, body.c_str(), body.size()) << std::endl;
 				std::cout<<"ana f chchunked"<<std::endl;
 				parce_chunks(body, bodyFile, client);
 				client.header_parced = false;
@@ -254,8 +261,10 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 		}
 		else
 		{
+			std::cout<<"im here 3awtany"<<std::endl;
 			client.check = 1;
 		}
+		std::cout<<"ana khrejt mn hna "<<std::endl;
 		return (0);
 	}
 	// i finish the header parcing and i go working for body ...
@@ -291,9 +300,8 @@ fd_set server::initializer()
 
 server::server()
 {
-// port[0] = "8080";
-ip_address = "127.0.0.1";
-_name = "serve00";
-
-
+	port.push_back("8080");
+	ip_address = "127.0.0.1";
+	_name = "serve00";
+	client_body_size = 100000000000000;
 }

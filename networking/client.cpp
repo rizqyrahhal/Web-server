@@ -24,4 +24,5 @@ client::client(size_t maxClientBodySize) {
 	pr = 0;
 	header_parced = true;
 	generateResponseObject = false;
+	client_in_serv = 0;
 } 

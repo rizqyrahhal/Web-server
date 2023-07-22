@@ -153,7 +153,7 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
 				    if (FD_ISSET(client.fd_client, &readable) && client.check == 0)
 				    {
 
-                        client.resp = client.request_client->read_reqwest(client, it->second, i);
+                        client.resp = client.request_client->read_reqwest(client, it->second);
                         std::cout << "client fd set :" << FD_ISSET(client.fd_client, &readable) << std::endl;
 				        fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
                         // client.check = 1;
@@ -163,17 +163,18 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
                         
                        if (client.resp > 0){
                             std::cout<<"static code *-*"<<client.resp<<std::endl;
-                            if (send(client.fd_client, GenerateResponseFromStatusCode(client.resp, it->second[0]).c_str(), GenerateResponseFromStatusCode(client.resp, it->second[0]).size(), 0) <= 0)
+                            if (send(client.fd_client, GenerateResponseFromStatusCode(client.resp, it->second[client.client_in_serv]).c_str(), GenerateResponseFromStatusCode(client.resp, it->second[client.client_in_serv]).size(), 0) <= 0)
                             {
                                 client.pr = 1;
                             }
                         }
                         else if (client.resp == 0) {
-                            // std::cout << "I WORK ON THIS CLIENT: " << client.fd_client << std::endl;
+                            std::cout << "I WORK ON THIS CLIENT: " << client.fd_client << std::endl;
                             std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
                             if (!client.generateResponseObject) {
                                 Response response;
-                                client.response_client = response.CreatResponse(it->second[0], *client.request_client);
+                                client.response_client = response.CreatResponse(it->second[client.client_in_serv], *client.request_client);
+                                // std::cout << client.response_client.getHeaders() << client.response_client.readfile() << std::endl;
                                 client.generateResponseObject = true;
                             }
         
@@ -215,6 +216,7 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
                             delete client.request_client;
                             it->second[0].client.erase(it->second[0].client.begin() + i);
                             std::cout<<"number of client : "<<it->second[0].client.size()<<std::endl;
+
                         }  
                     }
                 }

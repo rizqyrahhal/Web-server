@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: araysse <araysse@student.42.fr>            +#+  +:+       +#+        */
+/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 03:33:15 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/21 22:03:24 by araysse          ###   ########.fr       */
+/*   Updated: 2023/07/22 21:31:45 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,6 @@ std::string &Cgi::execut(std::string cgibin, char **argv, char **envp, std::stri
 		dup2(fd[0], 0);
 		close(fd[0]);
 
-		
 		char buffer[1025];
 		int size_read;
 		while((size_read = read(0, buffer, 1024)) > 0) {
