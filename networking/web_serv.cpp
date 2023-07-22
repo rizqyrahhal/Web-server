@@ -23,6 +23,8 @@ int request::parce_header(std::string header)
 	tmp1 >> s;
 	//check allow methods
 	method = s;
+	if (method != "GET" && method != "POST" && method != "DELETE")
+		return (400);
 	tmp1 >> s;
 	if (s.length() > 2048)
 		return(414);	//check for allow caracter
@@ -43,7 +45,10 @@ int request::parce_header(std::string header)
 	else {
 		url = s;
 	}
-	std::cout<<"parcing request"<<std::endl;
+	tmp1 >> s;
+	version = s;
+	if (version != "HTTP/1.1")
+		return(400);
 	std::string key;
 	std::string value;
 	for(size_t i = 1; i < request_line.size();i++)
@@ -67,7 +72,6 @@ int request::parce_header(std::string header)
 		if (lenght > max_body_size)
 			return(413);
 	}
-	std::cout<<"length original : "<<lenght<< std::endl;
 	return (0);
 }
 
@@ -76,7 +80,6 @@ int request::parce_header(std::string header)
 void request::parce_chunks(std::string body, int ffd, client & client)
 {
 	size_t i = 0;
-	// std::cout<<body.size()<<std::endl;
 	body2 = body;
 	
 	while (i < body.size())
@@ -88,16 +91,13 @@ void request::parce_chunks(std::string body, int ffd, client & client)
 				body2 = body2.substr(2);
 				rn = body2.find("\r\n");
 			}
-			// std::cout<<"rn == "<<rn<< " aa == " << body2[0] << std::endl;
 			std::string hexa = body2.substr(0, rn);
 			size_hexa_string = hexa.size();
 			std::stringstream hex;
 			hex << std::hex <<hexa;
 			hex >> sizehex;
-			std::cout<<"hexa == "<<sizehex<<std::endl;
 			if (sizehex == 0)
 				{
-					std::cout<<"saliinaa mn chunked\n";
 					close(bodyFile);
 					client.check = 1;
 					return ;
@@ -107,7 +107,6 @@ void request::parce_chunks(std::string body, int ffd, client & client)
 		}
 		else if (body2.size() < sizehex && add_it_to_body == 0)
 		{
-			std::cout<<"salam khouya ana sgher mn sizehexa"<<std::endl;
 			write(ffd, body2.c_str(), body2.size());
 			sizehex -= body2.size();
 			return ;
@@ -177,8 +176,7 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 	// std::cout<<"*********** before recive **************"<<std::endl;
 	int bytesrecv = recv(client.fd_client, &buffer[0], 2024, 0); // Adding by rarahhal
 	// std::cout<<"*********** after recive **************"<<std::endl;
-	// std::cout<<"read request for client : "<<client.fd_client<<"  byte recive = : "<<bytesrecv<<std::endl;
-	if (!bytesrecv)
+	if (bytesrecv <= 0)
 	{
 		std::cout<<"return from byte recive if "<<std::endl;
 		client.check = 1;
@@ -204,13 +202,11 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 		{
 			client.check = 1;
 			return (staticcode);
-			// std::cout<<"kayn chi mochkil f request"<<std::endl;
-			// exit(0);
 		}
 		std::string host =  map_request["Host"];
 		for (size_t i = 1; i < servers.size(); i++)
 		{
-			if (servers[i].server_name == host)
+			if (servers[i]._name == host)
 			{
 				servers[0].client.erase(servers[0].client.begin() + index_client);
 				servers[i].client.push_back(client);
@@ -221,7 +217,7 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 		if (method != "GET" && method != "DELETE")
 		{
 			std::string filename;
-			filename = "/Users/araysse/Desktop/master/upload/file";
+			filename = "./upload/file";
 			int gen = 0;
 			while (access(filename.c_str(), F_OK) != -1)
 			{
@@ -248,7 +244,6 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 				write(bodyFile, body.c_str(), body.size());
 				client.header_parced = false;
 				lenght = lenght - body.size();
-				// std::cout<<"lenght first == "<<lenght<<std::endl;
 				if (lenght <= 0)
 				{
 					std::cout<<"byte recive < 1024"<<std::endl;
@@ -259,10 +254,8 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 		}
 		else
 		{
-			std::cout<<"saliinaa mn get\n";
 			client.check = 1;
 		}
-		std::cout<<"return chi haja"<<::std::endl;
 		return (0);
 	}
 	// i finish the header parcing and i go working for body ...
@@ -271,23 +264,18 @@ int request::read_reqwest(client & client, std::vector<server> & servers, int in
 	// printf("str2 length ==  %lu\n",  str2.size());
 	if (map_request["Transfer-Encoding"] == "chunked")
 	{
-		std::cout<<"ana f chchunked 3awtany *_*"<<std::endl;
 		parce_chunks(str2, bodyFile, client);
 	}
 	else{
 		write(bodyFile, str2.c_str(), bytesrecv);
 		lenght = lenght - bytesrecv;
-		std::cout<<"lenght loop == "<<lenght<<std::endl;
-		std::cout<<"ffd after write"<<bodyFile<<std::endl;
   		if (lenght <= 0)
 		{
-			std::cout<<"saliinaa\n";
 			close(bodyFile); // Close the file
 			client.check = 1;
 		} // Append the string to the file
 
 	}
-	// std::cout<<str2<<std::endl;
 
 
 	return (0);
@@ -299,4 +287,13 @@ fd_set server::initializer()
 	FD_ZERO(&current);
 	FD_ZERO(&current2);
 	return (current);
+}
+
+server::server()
+{
+// port[0] = "8080";
+ip_address = "127.0.0.1";
+_name = "serve00";
+
+
 }

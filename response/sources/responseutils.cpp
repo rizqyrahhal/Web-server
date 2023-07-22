@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   responseutils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: araysse <araysse@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:28:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/20 05:12:50 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/21 22:10:25 by araysse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,12 @@ bool Response::isCgi() {
     return false;
 }
 
+// int getStatusCodeFromCgi(std::string start_line) {
+
+// }
+
+
+
 void Response::parseCgiOutput( const std::string& cgioutput) {
 	std::string _line;
 	size_t _seek = 0;
@@ -61,6 +67,8 @@ void Response::parseCgiOutput( const std::string& cgioutput) {
 		    if (_header.first == "Status")
 			    setStatusCode(toNumber<int>(_header.second));
 	    }
+        else if (_header.first == "Content-type")
+			_header.first  = "Content-Type";
 	    else
 			setHeader(_header.first, _header.second);
 	}
@@ -80,6 +88,63 @@ void Response::parseCgiOutput( const std::string& cgioutput) {
     isfile = false;
 }
 
+
+// void Response::parseCgiOutput( const std::string& cgioutput) {
+// 	std::string _line;
+// 	size_t _seek = 0;
+
+//     if (cgioutput.empty())
+//         throw(502);
+
+//     std::istringstream iss(cgioutput);
+
+// 	while (std::getline(iss, _line)) {
+// 		_seek += _line.length() + 1;
+// 		_line = trim(_line);
+// 		if (_line.size() <= 1)
+//             break;
+// 		std::pair<std::string, std::string> _header = parseHeader(_line);
+// 	    if (_header.first == "X-Powered-By" || _header.first == "Status") {
+// 		    if (_header.first == "Status")
+// 			    setStatusCode(toNumber<int>(_header.second));
+// 	    }
+// 	    else{
+//                 if (_header.first.find("HTTP/1.1") != std::string::npos) {
+//                 // std::cout << "CGI HEADER : " <<  _header.first << std::endl;
+//                     // std::cout << "HERERE ::   " << std::string(_header.first.begin() + 9, _header.first.begin() + 12);
+//                     setStatusCode(toNumber<int>(std::string(_header.first.begin() + 9, _header.first.begin() + 12)));
+//                     // setStatusCode(getStatusCodeFromCgi(_header.first));
+//                 }
+//                 // else if (_header.first == "Content-Type") {
+// 			    //     setHeader(_header.first, "text/plain");
+//                 // }
+//                 else
+//                 {
+//                     std::cout << "00-------------------------------------   " << _header.first << std::endl;
+
+// 			        setHeader(_header.first, _header.second);
+//                 }
+//             // else
+//         }
+// 	}
+
+    
+//     // if (!_status_code || _status_code == 200)
+//     //     _status_code = 200;
+//     // else {
+//     //     throw(502);
+//     // }
+
+// 	if (cgioutput.size() <= _seek + 3) {
+//         std::cout << "YYYYYYYYYYYYYYYYYY_______________\n";
+// 		setHeader("Content-Length", "0");
+// 		throw(_status_code);  /// when throw from here have a leaks in too char ** becous dont free
+// 	}
+
+//     setBody(std::string(cgioutput.begin() + _seek, cgioutput.end()));
+//     isfile = false;
+// }
+
 void Response::GetContentType(std::string requestedSource, std::map<std::string, std::string> mimetypes, std::string &contenttype) {
     contenttype = getMimeType(mimetypes, getFileExtantion(requestedSource));
 }
@@ -94,6 +159,7 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
     std::string checked, requestedSource, uriplusslash;
     uriplusslash = requesturi + "/";
     DIR *dir;
+
     #ifdef DEBUG
         std::cout << "matchedlocation.name: " << matchedlocation.name << std::endl;
         std::cout << "matchedlocation.root: " << matchedlocation.root << std::endl;
@@ -115,18 +181,18 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
                 // response->setHeader("Location", uriplusslash);
                 // throw(301);
                 // }
+                closedir(dir);
         	    return (requestedSource);
             }
             else if (access(requestedSource.c_str(), 0) == 0) {
                 resourcetype = FILE;
-            closedir(dir);
-        	return (requestedSource);
+        	    return (requestedSource);
             }
         }
 
         requestedSource = "." + requesturi;
             // requestedSource = "." + matchedlocation.root;
-        
+
         dir = opendir(requestedSource.c_str());
         if (dir != NULL) {
             resourcetype = DRCT;
@@ -208,6 +274,11 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
         	return (requestedSource);
         }
     }
+    // if (requesturi == "/tools/cgi-test/setCookie.py") {
+    //     resourcetype = FILE;
+    //     return ("/Users/rarahhal/Desktop/network_branch/tools/cgi-test/setCookie.py");
+    // }
+    
     throw(404);
 }
 /* in this above function thire is more and more hardcoding !!!! */

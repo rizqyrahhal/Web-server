@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:22:56 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/06/27 08:04:08 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/21 01:56:25 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,9 @@ std::string Response::GetMatchedLocationRequestUrl(std::vector<locations> locati
             }
         }
     }
-    // std::cout << "matchedLocationPosition: " << _matchedLocationPosition << "\nMatchedLocationStored: " << _matchedLocation << std::endl;
+    std::cout << "matchedLocationPosition: " << _matchedLocationPosition << "\nMatchedLocationStored: " << _matchedLocation << std::endl;
     if (why)
         return (matchedlocation);
-    // throw (GenerateResponseFromStatusCode(404));
     throw (404);
 }
 
@@ -58,25 +57,25 @@ void Response::IsLocationHaveRedirection(locations matchedlocation, Response &re
     std::map<int, std::string>::iterator it = matchedlocation.redirect.begin();
     if (matchedlocation.redirect.size())
     {
-    // HttpResponse response;
         response.setHeader("Location", it->second);
-        // throw (GenerateResponseFromStatusCode(it->first, response));
         throw (it->first);
     }
 }
 
 void Response::IsMethodAllowedInLocation(std::vector<std::string> allowedmethod, std::string requestmethod, Response &response) {
     std::string methods;
-    for(size_t i = 0; i < allowedmethod.size(); i++)
-    {
-        methods.append(allowedmethod[i]);
-        methods.append(", ");
-        if (allowedmethod[i] == requestmethod)
-            return;
+    // std::cout << "--------------     1  } allowed mathod size: " << allowedmethod.size() << std::endl;
+    if (allowedmethod.size()) {   
+        for(size_t i = 0; i < allowedmethod.size(); i++)
+        {
+            // std::cout << "allowd[" << i << "]: " << allowedmethod[i] << std::endl;
+            methods.append(allowedmethod[i]);
+            methods.append(", ");
+            if (allowedmethod[i] == requestmethod)
+                return;
+        }
+        methods.erase(methods.find_last_of(","));
+        response.setHeader("Allow", methods);
+        throw (405);
     }
-    // HttpResponse response;
-    methods.erase(methods.find_last_of(","));
-    response.setHeader("Allow", methods);
-    // throw (GenerateResponseFromStatusCode(405, response));
-    throw (405);
 }

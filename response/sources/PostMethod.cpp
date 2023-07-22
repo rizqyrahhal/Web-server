@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 16:45:33 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/20 03:19:33 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/20 19:43:25 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,14 @@ void Response::PostMethod(server server, request request) {
     if(supportUpload(server.locations[_matchedLocationPosition])) {
 
         //         data hardcoded  to upload            //
-        std::string content_type = "video/mp4";
-        std::string file_name = "upload_name";        // when test upload take in your maind that is hard code and the 201 have probleme
-        std::string tompprare_name = "www/tmp1";
+        // std::string content_type = "video/mp4";
+        // std::string file_name = "upload_name";        // when test upload take in your maind that is hard code and the 201 have probleme
+        // std::string tompprare_name = "www/tmp1";
         ////////////////////////////////////////////////// 
+        std::string file_name = searchInRequestedHeader(request.map_request, "File-Name");   /// need to make this 
+
+        
+
 
         #ifdef UPLOAD_DEBUG
             // std::cout << "Extantio: " << getExtantion(_mimeTypes, content_type) << std::endl;
@@ -50,8 +54,8 @@ void Response::PostMethod(server server, request request) {
             // std::cout << "New Name: " << creatNewName(server.locations[_matchedLocationPosition].upload_pass, (file_name + getExtantion(_mimeTypes, content_type))) << std::endl;
         #endif
 
-        // if (!rename(tompprare_name.c_str() , creatNewName(server.locations[_matchedLocationPosition].upload_pass, (file_name + getExtantion(_mimeTypes, searchInRequestedHeader(request.map_request, "Content-Type")))).c_str()))
-        if (!rename(tompprare_name.c_str() , creatNewName(server.locations[_matchedLocationPosition].upload_pass, (file_name + getExtantion(_mimeTypes, content_type))).c_str()))
+        // if (!rename(tompprare_name.c_str() , creatNewName(server.locations[_matchedLocationPosition].upload_pass, (file_name + getExtantion(_mimeTypes, content_type))).c_str()))
+        if (!rename(request.bodyfile_name.c_str() , creatNewName(server.locations[_matchedLocationPosition].upload_pass, (file_name + getExtantion(_mimeTypes, searchInRequestedHeader(request.map_request, "Content-Type")))).c_str()))
             throw(201);
         else
             throw(500);
@@ -59,7 +63,7 @@ void Response::PostMethod(server server, request request) {
 
         // std::ifstream infile("bodyFile",std::ifstream::binary);
         // std::ofstream outfile ("filename.mp4",std::ofstream::binary);
-        
+
         // int size = calculeBodySize("bodyFile");
 
         /* using vector becouse when use the char* the binry have an \0 in your content */

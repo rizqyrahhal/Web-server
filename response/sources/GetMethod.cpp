@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:24:42 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/20 04:03:59 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/21 00:27:21 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void Response::GetMethod(server server, request request, std::string &bodyfile, 
 
     if (isCgi()) {
         if (!server.locations[_matchedLocationPosition].cgi.empty()) {
+            std::cout << "WACH HNA :::::::::::::::::::::::::::::::::::::::::::::::\n";
             cgi(server, request, *this);
         }
         _contentType = "text/plain";

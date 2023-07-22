@@ -1,4 +1,8 @@
+<html>
+    <body>
 <?php
-header("Content-Type: text/plain");
-echo "Hello, World!";
-?>
+    echo "Hello, World!";
+    ?>
+</body>
+</html>
+    

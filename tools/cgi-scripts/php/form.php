@@ -1,12 +1,12 @@
+<html>
+    <body>
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    header("Content-Type: text/plain");
     $name = $_POST['name'] ?? '';
     $email = $_POST['email'] ?? '';
     echo "Name: $name\n";
     echo "Email: $email\n";
 } else {
-    header("Content-Type: text/html");
     ?>
     <form method="POST">
         <label for="name">Name:</label>
@@ -18,3 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php
 }
 ?>
+</body>
+</html>
+    

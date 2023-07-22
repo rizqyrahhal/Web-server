@@ -10,12 +10,12 @@ void   check_servers(global & global)
     for(size_t i = 0; i < global.server.size(); i++)
     {
         server & s = global.server[i];
-        std::string first = s.ip_address + s.port;
-        std::string name = s.server_name;
+        std::string first = s.ip_address + s.port[0];
+        std::string name = s._name;
         std::vector<server> ser = map[first];
         for (size_t i = 0; i < ser.size(); i++)
         {    
-            if (ser[i].server_name == name) {
+            if (ser[i]._name == name) {
                 std::cout << "this serverName already exist\n";
                 exit(1);
             }
@@ -46,7 +46,7 @@ int main(int ac, char **av)
         
         // for(size_t i = 0;i < global.server[0].locations.size();i++)
         // {
-        //     std::cout<<"location name : "<< global.server[0].locations[i].name<<std::endl;
+        //     std::cout<<"location name : "<< global.server[0].locations[i].allow_methods[1]<<std::endl;
         // }
     }
     catch(const std::exception& e)
@@ -55,6 +55,21 @@ int main(int ac, char **av)
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 
 
 
 
