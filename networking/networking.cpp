@@ -174,6 +174,7 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
                             if (!client.generateResponseObject) {
                                 Response response;
                                 client.response_client = response.CreatResponse(it->second[client.client_in_serv], *client.request_client);
+                                std::cout << client.response_client.getHeaders() << client.response_client.readfile() << std::endl;
                                 client.generateResponseObject = true;
                             }
         

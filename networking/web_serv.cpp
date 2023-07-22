@@ -300,9 +300,8 @@ fd_set server::initializer()
 
 server::server()
 {
-port.push_back("8080");
-ip_address = "127.0.0.1";
-_name = "serve00";
-
-
+	port.push_back("8080");
+	ip_address = "127.0.0.1";
+	_name = "serve00";
+	client_body_size = 0;
 }

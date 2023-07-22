@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   responsePart.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: araysse <araysse@student.42.fr>            +#+  +:+       +#+        */
+/*   By: rizqy <rizqy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/22 02:39:04 by araysse          ###   ########.fr       */
+/*   Updated: 2023/07/22 16:12:06 by rizqy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,8 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <algorithm>
-
-
 #include <sys/types.h>
 #include <sys/wait.h>
-
-
 #include "HttpResponse.hpp"
 #include "statuscode.hpp"
 #include "ResponseReturned.hpp"
@@ -42,7 +38,7 @@
 #endif
 
 #ifndef GET_DEBUG
-// #define GET_DEBUG
+#define GET_DEBUG
 #endif
 
 #ifndef POST_DEBUG
@@ -124,12 +120,13 @@ std::string getExtantion(std::map<std::string, std::string> mimetypes, std::stri
 /* utils */
 bool checkIndexInsidDerctory(std::string *path);
 const std::string generatBody(std::string _requestedSource);
-int calculeBodySize(std::string _requestedSource); // make this return long     ///////////////////////////////////
+int calculeBodySize(std::string _requestedSource); // make this return long
 std::string generateAutoindexFile(std::string requestedSource); /* in GET method */
 std::string getCurrentDate();
 std::string trim(const std::string& str);
 std::pair<std::string, std::string> parseHeader(const std::string& line);
 std::string searchInRequestedHeader(const std::map<std::string, std::string>& Map, const std::string& key);
+std::string getRandomString(int length);
 
 template <typename T>
 T toNumber(const std::string& str) {

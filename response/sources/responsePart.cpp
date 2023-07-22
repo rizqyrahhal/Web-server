@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   responsePart.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: araysse <araysse@student.42.fr>            +#+  +:+       +#+        */
+/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/21 23:02:33 by araysse          ###   ########.fr       */
+/*   Updated: 2023/07/22 03:30:06 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ Response::Response() {
 }
 
 ResponseReturned Response::CreatResponse(server server, request request) {
-    std::cout << "LOcation[0]  : allowedmethod size : " << server.locations[0].allow_methods.size() << std::endl;
-    std::cout << "THE ROOOT IN LOCATION : " << server.locations[0].root << std::endl; 
+    // std::cout << "LOcation[0]  : allowedmethod size : " << server.locations[0].allow_methods.size() << std::endl;
+    // std::cout << "THE ROOOT IN LOCATION : " << server.locations[0].root << std::endl; 
     // std::cout << "########## eenrtrer ###########" << std::endl;
     // for (std::map<std::string, std::string>::iterator it = request.map_request.begin(); it != request.map_request.end(); it++) {
     //     std::cout << it->first << "=" << it->second << std::endl;
