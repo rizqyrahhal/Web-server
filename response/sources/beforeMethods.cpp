@@ -6,23 +6,18 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:22:56 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/21 01:56:25 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/23 19:31:48 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/responsePart.hpp"
 
-/* Just basic location for new */
-/* this function get the matched location position in the vectors location if axisting, 
-   {!!!} but need more check if it is a location name without / in (begin/end) or something like that
-   {!!!} if uri:(/app/html) and location:(/www/app) */
 std::string Response::GetMatchedLocationRequestUrl(std::vector<locations> locations, std::string requesturi) {
     bool why = false;
     std::string matchedlocation;
 
     for(size_t i = 0; i < locations.size(); i++)
     {
-        // std::cout << "matchedLocation: " << locations[i]._name << "\nURi: " << requesturi << std::endl;
         if (locations[i].name == requesturi)
         {
             _matchedLocationPosition = i;
@@ -30,11 +25,9 @@ std::string Response::GetMatchedLocationRequestUrl(std::vector<locations> locati
         }
         if (locations[i].name.find(requesturi))
         {
-            // size_t locationPositionInUri = requesturi.find(locations[i]._name);
             /* check if uri begin with location name */
             if (requesturi.find(locations[i].name) == 0)
             {
-                // std::cout << "Location: " << locations[i]._name << "\nURI: " << requesturi << std::endl;
                 /* stor it to _matchedLocation if the length of its longer tnen last one */
                 if (locations[i].name.size() > matchedlocation.size())
                 {
@@ -64,11 +57,9 @@ void Response::IsLocationHaveRedirection(locations matchedlocation, Response &re
 
 void Response::IsMethodAllowedInLocation(std::vector<std::string> allowedmethod, std::string requestmethod, Response &response) {
     std::string methods;
-    // std::cout << "--------------     1  } allowed mathod size: " << allowedmethod.size() << std::endl;
     if (allowedmethod.size()) {   
         for(size_t i = 0; i < allowedmethod.size(); i++)
         {
-            // std::cout << "allowd[" << i << "]: " << allowedmethod[i] << std::endl;
             methods.append(allowedmethod[i]);
             methods.append(", ");
             if (allowedmethod[i] == requestmethod)

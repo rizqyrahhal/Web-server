@@ -225,7 +225,7 @@ int request::read_reqwest(client & client, std::vector<server> & servers)
 		{
 			std::cout<<"im here"<<std::endl;
 			std::string filename;
-			filename = "/tmp/file";
+			filename = "./www/file";
 			int gen = 0;
 			while (access(filename.c_str(), F_OK) != -1)
 			{

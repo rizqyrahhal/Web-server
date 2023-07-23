@@ -1,1 +1,0 @@
-if need to pass body to cgi dup it in stundard input

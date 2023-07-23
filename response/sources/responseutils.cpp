@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:28:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/22 22:36:11 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/23 19:45:47 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ void Response::parseCgiOutput( const std::string& cgioutput) {
 	    else
 			setHeader(_header.first, _header.second);
 	}
-
     setHeader("Content-Type", "text/html");
 
     if (!_status_code || _status_code == 200)
@@ -92,21 +91,15 @@ void Response::GetContentType(std::string requestedSource, std::map<std::string,
 }
 
 std::string Response::GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method) {
-    // std::cout << "REQUESTED uri: " << requesturi << std::endl << std::endl;
-
     DIR *dir;
 	std::string root = matchedlocation.root;
     std::string uriplusslash = requesturi + "/";
 	size_t position;
 	std::string requestedSource;
-	
 
-
-    // std::cout << "########## ENTREE INSIDE THE LOOP\n";
     while (root.size())
     {
 		requestedSource = root + requesturi;
-		// std::cout << "ROOT + URI : " << requestedSource << std::endl;
         if (requesturi == root || requesturi == "/")
         {
             /* check if exist */
@@ -127,7 +120,7 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
         	    return (requestedSource);
             }
         }
-		
+
         /* check if exist */
         dir = opendir(requestedSource.c_str());
         if (dir != NULL) {
@@ -150,13 +143,9 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
         }
 
 		position = root.find_last_of("/");
-        // std::cout << "positionINloop: " << position << std::endl << std::endl;
 		if (position == std::string::npos)
    			throw(404);	
 		root.erase(position, root.size());
-		// std::cout << "ROOT NEW: " << root << std::endl;
     }
-    // std::cout << "########## GO OUT THE LOOP\n";
-    // std::cout << "requestedSource: " << requestedSource << "\n";
     throw(404);
 }
