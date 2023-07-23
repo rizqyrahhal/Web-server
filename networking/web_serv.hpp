@@ -21,7 +21,6 @@
 #include "client.hpp"
 #include "../response/includes/responsePart.hpp"
 
-
 #define BUFFER_SIZE 1024
 class client;
 class server;
@@ -84,6 +83,7 @@ class server
 	std::string ip_address;
 	std::string _name;
 	std::string root;
+	std::vector<std::string> allow_methods;
 	std::string index;
  	std::vector<client> client;
 	std::vector<locations> locations;

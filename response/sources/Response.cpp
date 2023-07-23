@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 04:03:03 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/20 03:01:38 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/23 19:43:55 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ std::string readData(size_t size, std::string _body, bool _isFile, size_t &curre
         data = std::string(buffer, file.gcount());
         currentIndex = file.tellg();  /* Update current index with the file pointer position */
         delete[] buffer;
-        // if (data.empty())
         file.close();
     }
     return data;

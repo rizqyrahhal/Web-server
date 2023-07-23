@@ -3,7 +3,6 @@
 void    location_serv(std::string line, server & server)
 {
     locations location;
-
     std::vector<std::string> vector;
     std::stringstream tmp(line);
     std::string str;
@@ -154,6 +153,11 @@ void    parce_server(std::string line, global & global)
         if (str == "listen")
         {
             tmp1 >> str;
+            if (str != "localhost" && str != "127.0.0.1" && str != "10.11.4.4")
+            {
+                std::cout<<"Error : ip address not correct!"<<std::endl;
+                exit(1);
+            }
             server.ip_address = str;
         }
         if (str == "root")
@@ -236,6 +240,11 @@ void    ft_parce_config(char **av, global &global)
         std::cout<<"Unable to open file. "<<std::endl;
         exit(0);
     }
+    if (line.empty())
+    {
+        std::cout<<"Error: no config file found"<<std::endl;
+        exit(0);
+    }
     int acolad = 0;
     for (size_t i = 0; i < line.size(); i++)
     {
@@ -249,23 +258,17 @@ void    ft_parce_config(char **av, global &global)
         std::cout<<"accolad not closed"<<std::endl;
         exit(1);
     }
-    
+    (void)global;
     int ps = 0;
     while(1)
     {
-        if (line.empty())
-        {
-            std::cout<<"Error: no config file found"<<std::endl;
-        }
         std::string server_conf;
         size_t pos = line.find("};", ps);
         if (pos == std::string::npos) {
             break;
         }
         server_conf = line.substr(ps, pos + 2);
-        ps = pos + 2;
+        line = line.substr(pos + 2);
         parce_server(server_conf, global);
-
     }
-
 }

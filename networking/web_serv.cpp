@@ -24,7 +24,7 @@ int request::parce_header(std::string header)
 	//check allow methods
 	method = s;
 	if (method != "GET" && method != "POST" && method != "DELETE")
-		return (400);
+		return (405);
 	tmp1 >> s;
 	if (s.length() > 2048)
 		return(414);	//check for allow caracter
@@ -63,7 +63,7 @@ int request::parce_header(std::string header)
 	if (map_request.find("Transfer-Encoding") != map_request.end() && map_request["Transfer-Encoding"] != "chunked")
 		return(501);
 	it = map_request.begin();
-	if (method == "POST" && map_request.find("Transfer-Encoding") != map_request.end() && map_request.find("Content-Length") != map_request.end())
+	if ((method == "POST" && map_request.find("Transfer-Encoding") == map_request.end() && map_request.find("Content-Length") == map_request.end()) || (method == "POST" && map_request.find("Content-Type") == map_request.end()))
 		return(400);
 	if (map_request.count("Content-Length") > 0)
 	{
@@ -225,7 +225,7 @@ int request::read_reqwest(client & client, std::vector<server> & servers)
 		{
 			std::cout<<"im here"<<std::endl;
 			std::string filename;
-			filename = "./upload/file";
+			filename = "./www/file";
 			int gen = 0;
 			while (access(filename.c_str(), F_OK) != -1)
 			{
@@ -303,5 +303,9 @@ server::server()
 	port.push_back("8080");
 	ip_address = "127.0.0.1";
 	_name = "serve00";
-	client_body_size = 0;
+	root = "./www";
+	client_body_size = 100000000000000;
+	allow_methods.push_back("GET");
+	allow_methods.push_back("POST");
+	allow_methods.push_back("DELETE");
 }
