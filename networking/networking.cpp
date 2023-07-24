@@ -159,8 +159,7 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
                         // client.check = 1;
 				    }
 				    else if (FD_ISSET(client.fd_client, &writable) && client.check == 1)
-                    {
-                        
+                    { 
                        if (client.resp > 0){
                             std::cout<<"static code *-*"<<client.resp<<std::endl;
                             if (send(client.fd_client, GenerateResponseFromStatusCode(client.resp, it->second[client.client_in_serv]).c_str(), GenerateResponseFromStatusCode(client.resp, it->second[client.client_in_serv]).size(), 0) <= 0)

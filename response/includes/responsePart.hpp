@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   responsePart.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rizqy <rizqy@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/22 16:12:06 by rizqy            ###   ########.fr       */
+/*   Updated: 2023/07/24 21:13:12 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,8 @@ class Response : public  HttpResponse
 
 		/* response utilse */
 		static void GetContentType(std::string requestedSource, std::map<std::string, std::string> mimetypes, std::string &contenttype);
-		static std::string GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method);
+		static std::string GetRequestedSource(locations matchedlocation, locations rootlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method);
+		static std::string searchInRoot(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method);
 		static void checkForIndexFile(Response *response, server server, std::string &bodyfile, bool &isfile);
 	
 	public:
@@ -127,6 +128,8 @@ std::string trim(const std::string& str);
 std::pair<std::string, std::string> parseHeader(const std::string& line);
 std::string searchInRequestedHeader(const std::map<std::string, std::string>& Map, const std::string& key);
 std::string getRandomString(int length);
+
+std::string removeReturnBack(std::string url);
 
 template <typename T>
 T toNumber(const std::string& str) {

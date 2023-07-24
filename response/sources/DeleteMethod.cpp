@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 11:09:55 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/23 19:34:48 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/24 20:07:43 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ bool deleteDirectory(std::string requestedSource) {
 }
 
 void Response::DeleteMethod(server server, request request) { /* Delete Metthod dosn't support Cgi */
-    _requestedSource = Response::GetRequestedSource(server.locations[Response::_matchedLocationPosition], request.url, _resourceType, &(*this), request.method);
+    _requestedSource = Response::GetRequestedSource(server.locations[Response::_matchedLocationPosition], server.locations[0], request.url, _resourceType, &(*this), request.method);
     #ifdef DELETE_DEBUG
         std::cout << "_requestedSource: " << _requestedSource << std::endl;
         std::cout << "_resourceType: ";

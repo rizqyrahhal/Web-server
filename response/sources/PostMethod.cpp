@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/05 16:45:33 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/23 19:43:41 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/24 20:08:17 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void Response::PostMethod(server server, request request) {
     }
     /* here the other way, working on location dosn't support upload */
     else {
-        _requestedSource = Response::GetRequestedSource(server.locations[Response::_matchedLocationPosition], request.url, _resourceType, &(*this), request.method);
+        _requestedSource = Response::GetRequestedSource(server.locations[Response::_matchedLocationPosition], server.locations[0], request.url, _resourceType, &(*this), request.method);
         Response::GetContentType(_requestedSource, _mimeTypes, _contentType);
 
 		#ifdef POST_DEBUG

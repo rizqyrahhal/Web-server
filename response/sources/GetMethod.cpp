@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:24:42 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/23 19:38:59 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/24 20:08:12 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ std::string generateAutoindexFile(std::string requestedSource) {
 }
 
 void Response::GetMethod(server server, request request, std::string &bodyfile, bool &isfile) {
-    _requestedSource = Response::GetRequestedSource(server.locations[Response::_matchedLocationPosition], request.url, _resourceType, &(*this), request.method);
+    _requestedSource = Response::GetRequestedSource(server.locations[Response::_matchedLocationPosition], server.locations[0], request.url, _resourceType, &(*this), request.method);
 
     #ifdef GET_DEBUG
         std::cout << "_requestedSource: " << _requestedSource << std::endl;

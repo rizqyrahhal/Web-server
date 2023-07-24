@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 00:10:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/23 19:50:24 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/24 19:11:00 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,14 +61,15 @@ int calculeBodySize(std::string _requestedSource) {
     return (length);
 }
 
+
 std::string getCurrentDate() {
     std::time_t currentTime = std::time(nullptr);
     std::tm* localTime = std::localtime(&currentTime);
 
-    std::ostringstream oss;
-    oss << std::put_time(localTime, "%a, %d %b %Y %H:%M:%S %Z");
+    char buffer[80];
+    std::strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S %Z", localTime);
 
-    return oss.str();
+    return std::string(buffer);
 }
 
 std::string trim(const std::string& str) {

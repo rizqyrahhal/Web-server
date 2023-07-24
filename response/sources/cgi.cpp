@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 03:33:15 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/23 19:34:09 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/24 23:24:08 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,16 +140,16 @@ std::string &Cgi::execut(std::string cgibin, char **argv, char **envp, std::stri
 
 		if (execve(cgibin.c_str(), argv, envp) == -1)
 		{
-			throw(500);
+			throw(502);
 		}
 	}
 	else {
 		int status;
-		sleep(1);
+		sleep(2);
 		pid_t  wait_reat = waitpid(pid, &status, WNOHANG);
 		if (wait_reat == 0) {
 			kill(pid, SIGKILL);
-			throw(500);
+			throw(502);
 		}
 		close(fd[1]);
 		dup2(fd[0], 0);

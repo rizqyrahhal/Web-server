@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:28:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/23 19:45:47 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/25 00:23:06 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void Response::parseCgiOutput( const std::string& cgioutput) {
 		throw(_status_code);
 	}
 
-    setBody(std::string(cgioutput.begin() + _seek, cgioutput.end()));
+    setBody(std::string(cgioutput.begin() + _seek, cgioutput.end()) + "\0");
     setHeader("Content-Length", std::to_string(std::string(cgioutput.begin() + _seek, cgioutput.end()).size()));
     isfile = false;
 }
@@ -90,26 +90,36 @@ void Response::GetContentType(std::string requestedSource, std::map<std::string,
         contenttype = "text/plain";
 }
 
-std::string Response::GetRequestedSource(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method) {
+std::string Response::searchInRoot(locations matchedlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method) {
     DIR *dir;
 	std::string root = matchedlocation.root;
-    std::string uriplusslash = requesturi + "/";
+    // std::string uriplusslash = requesturi + "/";
 	size_t position;
 	std::string requestedSource;
 
-    while (root.size())
+    std::string uri = requesturi;
+
+    // std::cout << uri << " <--- in root url beffore erase\n"; //// print
+
+    uri.erase(0, matchedlocation.name.size());
+
+    // if (!uri.size())
+    //     uri = "/";
+    // std::cout << uri << " <--- in root url after erase\n"; /// print
+
+    while (uri.size())
     {
-		requestedSource = root + requesturi;
-        if (requesturi == root || requesturi == "/")
+        if (uri == root || uri == "/")
         {
+            requestedSource = root;
             /* check if exist */
             dir = opendir(requestedSource.c_str());
             if (dir != NULL) {
                 resourcetype = DRCT;
-                // if (requestedSource[requestedSource.size() - 1] != '/') {
+                // if (requestedSource[requestedSource.size()] != '/') {
                 //     if (method == "DELETE")
                 //         throw (409);
-                // response->setHeader("Location", uriplusslash);
+                // response->setHeader("Location", requesturi+"/");
                 // throw(301);
                 // }
                 closedir(dir);
@@ -120,6 +130,7 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
         	    return (requestedSource);
             }
         }
+		requestedSource = root + uri;
 
         /* check if exist */
         dir = opendir(requestedSource.c_str());
@@ -130,7 +141,7 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
                     closedir(dir);
                     throw (409);
                 }
-                response->setHeader("Location", uriplusslash);
+                response->setHeader("Location", requesturi+"/");
                 closedir(dir);
                 throw(301);
             }
@@ -142,10 +153,111 @@ std::string Response::GetRequestedSource(locations matchedlocation, std::string 
         	return (requestedSource);
         }
 
-		position = root.find_last_of("/");
+		position = uri.find_first_of("/");
 		if (position == std::string::npos)
-   			throw(404);	
-		root.erase(position, root.size());
+   			throw(404);
+		uri.erase(0, position+1);
+        // position = root.find_last_of("/");
+		// if (position == std::string::npos)
+   		// 	throw(404);	
+		// root.erase(position, root.size());
     }
+
+    throw(404);
+}
+
+std::string removeReturnBack(std::string url) {
+    const std::string target = "/..";
+    const std::string replacement = "";
+
+    while (url.find(target) == 0) {
+        url.replace(0, target.length(), replacement);
+    }
+
+    return url;
+}
+
+std::string Response::GetRequestedSource(locations matchedlocation, locations rootlocation, std::string requesturi, bool &resourcetype, Response *response, std::string method) {
+    DIR *dir;
+	std::string root = matchedlocation.root;
+    // std::string uriplusslash = requesturi + "/";
+	size_t position;
+	std::string requestedSource;
+
+    requesturi = removeReturnBack(requesturi);
+
+    std::string uri = requesturi;
+
+    // std::cout << uri << " <--- url beffore erase\n"; //// print
+
+    uri.erase(0, matchedlocation.name.size()-1);
+
+    // std::cout << uri << " <--- url after erase\n"; /// print
+
+    while (uri.size())
+    {
+        if (uri == root || uri == "/")
+        {
+            requestedSource = root;
+            /* check if exist */
+            dir = opendir(requestedSource.c_str());
+            if (dir != NULL) {
+                resourcetype = DRCT;
+                closedir(dir);
+        	    return (requestedSource);
+            }
+            else if (access(requestedSource.c_str(), 0) == 0) {
+                resourcetype = FILE;
+        	    return (requestedSource);
+            }
+        }
+    // std::cout << "----- : " << requestedSource << std::endl;
+		requestedSource = root + uri;
+
+        /* check if exist */
+        dir = opendir(requestedSource.c_str());
+        if (dir != NULL) {
+            resourcetype = DRCT;
+            if (requestedSource[requestedSource.size() - 1] != '/') {
+                if (method == "DELETE") {
+                    closedir(dir);
+                    throw (409);
+                }
+                response->setHeader("Location", requesturi+"/");
+                closedir(dir);
+                throw(301);
+            }
+            closedir(dir);
+        	return (requestedSource);
+        }
+        else if (access(requestedSource.c_str(), 0) == 0) {
+            resourcetype = FILE;
+        	return (requestedSource);
+        }
+
+		position = uri.find_first_of("/");
+		if (position == std::string::npos) {
+   			break;
+        }
+		uri.erase(0, position + 1);
+        // if (uri.size() == 1)
+        //     break;
+		// position = uri.last_first_of("/");
+		// if (position == std::string::npos) {
+        //     break;
+   		// 	// throw(404);
+        // }
+		// uri.erase(position, root.size());
+
+        
+        // position = root.find_last_of("/");
+		// if (position == std::string::npos)
+   		// 	throw(404);	
+		// root.erase(position, root.size());
+    }
+
+    std::string requestedSourceFromRoot = searchInRoot(rootlocation, requesturi, resourcetype, response, method);
+
+
     throw(404);
 }
