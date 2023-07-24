@@ -16,6 +16,11 @@ void    location_serv(std::string line, server & server)
         if (str == "location")
         {
             tmp1 >> str;
+            if (str == "{")
+            {
+                std::cout<<"Error : location name not exist!"<<std::endl;
+                exit(0);
+            }
             location.name = str;
         }
         else if (str == "upload_pass")
@@ -79,11 +84,12 @@ void    location_serv(std::string line, server & server)
             }
             
         }
-        if (str == "error_page")
+        else if (str == "error_pages")
         {
             int err;
             tmp1 >> err;
             tmp1 >> str;
+            std::cout<<"hello from error pages"<<std::endl;
             if (access(str.c_str(), F_OK) == -1) {
                 std::cout<<"Error : error page path int locations not exist!"<<std::endl;
                 exit(0);
@@ -105,8 +111,19 @@ void    location_serv(std::string line, server & server)
         {
             int req;
             tmp1 >> req;
+            if (req == 0)
+            {
+                std::cout<<"Error : redirect not correct !"<<std::endl;
+                exit(1);
+            }
             tmp1 >> str;
+            if (str == "redirect")
+            {
+                std::cout<<"Error : redirect not correct !"<<std::endl;
+                exit(1);
+            }
             location.redirect.insert(std::make_pair(req, str));
+            // if (location.redirect.size())
         }
     }
     server.locations.push_back(location);
@@ -209,12 +226,13 @@ void    parce_server(std::string line, global & global)
             tmp1 >> size;
             server.client_body_size = size;
         }
-        else if (str == "error_page")
+        else if (str == "error_pages")
         {
             int err;
             tmp1 >> err;
             tmp1 >> str;
             if (access(str.c_str(), F_OK) == -1) {
+                std::cout<<str<<std::endl;
                 std::cout<<"Error : path error page not exist!"<<std::endl;
                 exit(0);
             }

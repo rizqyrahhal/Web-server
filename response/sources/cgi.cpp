@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: araysse <araysse@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 03:33:15 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/23 19:34:09 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/23 14:52:52 by araysse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ char* strdup98(const char* str) {
     if (str == NULL)
         return NULL;
     size_t length = strlen(str);
-    char* duplicate = new char[length + 1];
-    strcpy(duplicate, str);
-    return duplicate;
+    char* duplicate = new char[length + 1]; // Allocate memory for the duplicate string
+    strcpy(duplicate, str); // Copy the string
+    return duplicate; // hada tayrja3 malloce
 }
 
 std::string searchInRequestedHeader(const std::map<std::string, std::string>& Map, const std::string& key) {
@@ -33,15 +33,16 @@ std::string searchInRequestedHeader(const std::map<std::string, std::string>& Ma
     if (it != Map.end()) {
         return it->second;
     }
-    return "";  /* Return an empty string if the key is not found */
+    return "";  // Return an empty string if the key is not found
 }
 
 std::string Cgi::getCgiPath(std::map<std::string, std::string> cgi_map, std::string _contentType) {
 	std::string cgi_bin;
 	std::string extantion;
-	std::map<std::string, std::string> mime_map  = readMimeTypes("template/cgi-mime.types");
+	std::map<std::string, std::string> mime_map  = readMimeTypes("template/cgi-mime.types"); // when make a mimeTypes global use it and not use this function 
     if (!cgi_map.empty()) {
 		for(std::map<std::string, std::string>::iterator it = mime_map.begin(); it != mime_map.end(); it++) {
+			// std::cout << "mime_first: " << it->first << "| mime_second: " << it->second << std::endl;
 			if (it->second == _contentType) {
 				extantion = it->first;
 				extantion.erase(0, 1);
@@ -49,6 +50,7 @@ std::string Cgi::getCgiPath(std::map<std::string, std::string> cgi_map, std::str
 		}
 		if (!extantion.empty()) {	
 			for(std::map<std::string, std::string>::iterator it = cgi_map.begin(); it != cgi_map.end(); it++) {
+			// std::cout << "cgi_first: " << it->first << "| cgi_second: " << it->second << std::endl;
 				if (it->first == extantion) {
 					cgi_bin = it->second;
 					break;
@@ -56,7 +58,9 @@ std::string Cgi::getCgiPath(std::map<std::string, std::string> cgi_map, std::str
 			}
 		}
     }
+	// std::cout << "-------- -- -- - - - - - - -  - - - npato hna \n";
     if (cgi_bin.empty()) {
+		// std::cerr << "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\n";
         throw(500);
 	}
 	return (cgi_bin);
@@ -67,6 +71,9 @@ char** Cgi::vectorToCharArray(std::vector<const char*> vec) {
     for (size_t i = 0; i < vec.size(); ++i) {
         arr[i] = const_cast<char *>(vec[i]);
     }
+    // for (size_t i = 0; i < vec.size(); ++i) {
+    //     delete vec[i];
+    // }
     return arr;
 }
 
@@ -83,11 +90,15 @@ void Cgi::fillEnvp(request request, server server, std::string requstedsource, s
 	_envp.push_back(strdup98(std::string("REQUEST_METHOD=" + request.method).c_str()));
 	_envp.push_back(strdup98(std::string("QUERY_STRING=" + request.query).c_str()));
 	_envp.push_back(strdup98(std::string("PATH_INFO=/Users/rarahhal/Desktop/mankhdmoch7na/tools/cgi-scripts/python/upload.py").c_str()));
+	// _envp.push_back(strdup98(std::string("PATH_INFO=" + requstedsource).c_str()));
 	_envp.push_back(strdup98(std::string("HTTP_COOKIE=" + searchInRequestedHeader(request.map_request, "Cookie")).c_str()));
 	if (!searchInRequestedHeader(request.map_request, "Content-Length").empty()){
+		// std::cout << " size-header: " << searchInRequestedHeader(request.map_request, "Content-Length") << std::endl;
 		_envp.push_back(strdup98(std::string("CONTENT_LENGTH=" + searchInRequestedHeader(request.map_request, "Content-Length")).c_str()));
+		// _envp.push_back(strdup98(std::string("CONTENT_LENGTH=2597").c_str()));
 	}
 	else if(!requstedsource.empty()){
+		// std::cout << " size-file: " << std::to_string(calculeBodySize(requstedsource)) << std::endl;
 		_envp.push_back(strdup98(std::string("CONTENT_LENGTH=" + std::to_string(calculeBodySize(requstedsource))).c_str()));
 	}
 	else
@@ -138,14 +149,22 @@ std::string &Cgi::execut(std::string cgibin, char **argv, char **envp, std::stri
 		dup2(file, 0);
 		close(file);
 
+		// char buffer[1024];
+		// int size = read(file, buffer, 1024);
+		// buffer[size] = '\0';
+		// std::cout << "\n\nThe content in the 0: \n" << buffer << std::endl;
+		
+		// execve(cgibin.c_str(), argv, envp);
 		if (execve(cgibin.c_str(), argv, envp) == -1)
 		{
+			// perror("execve:");
+			// std::cerr << "--------------------iiiiiii--------------\n";
 			throw(500);
 		}
 	}
 	else {
 		int status;
-		sleep(1);
+		sleep(2);
 		pid_t  wait_reat = waitpid(pid, &status, WNOHANG);
 		if (wait_reat == 0) {
 			kill(pid, SIGKILL);
@@ -158,14 +177,33 @@ std::string &Cgi::execut(std::string cgibin, char **argv, char **envp, std::stri
 		char buffer[1025];
 		int size_read;
 		while((size_read = read(0, buffer, 1024)) > 0) {
-            buffer[size_read] = '\0';
-			cgiOutput += std::string(buffer);
-        }
+            	buffer[size_read] = '\0';
+				cgiOutput += std::string(buffer);
+            	// int size_write = write(fd, buffer, size_read);
+            	// std::cout << "I read this size to 0 :->> " << size_read << std::endl;
+        	}
+		// std::cout << "cgiOutput: " << cgiOutput << std::endl;
+		// read by char[] and close it by '\0'
+		
+		// std::vector<char> buffer(2606); // calculate this size before all  !!!!!!!!!!!!!!!!!!!! this is Just hard code  (use getline() or some thing like this read pares andd assinge in string body)
+		// int size = read(0, &buffer[0], 2606);
+		// // buffer[size] = '\0';
+		// (void)size;
+        // #ifdef DEBUG
+		// std::cout << "************** Response Genarated by CGI **************\n Genarate this SIZE: " << size  \
+		// 			<< "\n" << std::string(buffer.begin(), buffer.begin() + size) << std::endl;
+        // #endif
+
+		// throw(cgiOutput); // ila ma7ayadtihach lmara jaya ayoub ghayssabak // pares cgi resp here and throw status code
+		// throw(std::string(buffer.begin(), buffer.begin() + size)); // ila ma7ayadtihach lmara jaya ayoub ghayssabak // pares cgi resp here and throw status code
 	}
+	std::cout << "CGI OUTPOUUUUT : \n" << cgiOutput << std::endl; /////////////// debug
 	return (cgiOutput);
 }
 
 Cgi::~Cgi() {
+	// this too function be to delete memory leak if exist after check
+
     for (size_t i = 0; i < _envp.size(); ++i) {
         delete _envp[i];
     }

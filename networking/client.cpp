@@ -9,7 +9,7 @@ client::client()
 
 client::~client()
 {
-	// delete this->request_client;
+	
 }
 
 client::client(size_t maxClientBodySize) {

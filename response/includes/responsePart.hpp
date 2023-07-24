@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   responsePart.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: araysse <araysse@student.42.fr>            +#+  +:+       +#+        */
+/*   By: rizqy <rizqy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/23 22:41:17 by araysse          ###   ########.fr       */
+/*   Updated: 2023/07/22 16:12:06 by rizqy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,11 @@
 #define DRCT false
 
 #ifndef DEBUG
-// #define DEBUG
+#define DEBUG
 #endif
 
 #ifndef GET_DEBUG
-// #define GET_DEBUG
+#define GET_DEBUG
 #endif
 
 #ifndef POST_DEBUG
@@ -139,5 +139,5 @@ T toNumber(const std::string& str) {
 /* Error Page */
 const std::string GenerateErrorPage(int statuscode, std::string statusmessage);
 std::string SearchAboutErrorPageFormTowPlaces(int statuscode, std::map<int, std::string> g_err_page, std::map<int, std::string> l_err_page);
-std::string ReadErrorPage(std::string errpage);
 std::string SearchAboutErrorPage(int statuscode, std::map<int, std::string> g_err_page);
+std::string ReadErrorPage(std::string errpage);

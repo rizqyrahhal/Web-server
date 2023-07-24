@@ -37,9 +37,8 @@ public:
 	std::map<std::string, std::string> cgi;
 	std::map<int, std::string> redirect;
 	std::string upload_pass;
-	std::string index;  //this line aadded by rarahhal
-	std::map<int, std::string> map_err_page; /// this line added by rarahhal
-	// need map to the error_page inside location
+	std::string index;
+	std::map<int, std::string> map_err_page;
 
 	~locations(){}
 };

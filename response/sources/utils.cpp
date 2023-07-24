@@ -3,17 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rizqy <rizqy@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 00:10:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/23 19:50:24 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/22 16:11:37 by rizqy            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/responsePart.hpp"
 
+
 bool checkIndexInsidDerctory(std::string *path) {
-    std::string indexhtml = *path + "index.html";
+    std::string indexhtml = *path + "index.html"; // this is hard code but work less like that
     std::string indexphp = *path + "index.php";
     std::string indexpy = *path + "index.py";
     if (access(indexhtml.c_str(), 0) == 0) {
@@ -61,7 +62,7 @@ int calculeBodySize(std::string _requestedSource) {
     return (length);
 }
 
-std::string getCurrentDate() {
+std::string getCurrentDate() { // this function is Just harde code it have an forbiden functionalite
     std::time_t currentTime = std::time(nullptr);
     std::tm* localTime = std::localtime(&currentTime);
 
@@ -83,13 +84,17 @@ std::string trim(const std::string& str) {
 std::pair<std::string, std::string> parseHeader( const std::string& line )  {
 	std::string _key, _value;
 	size_t _end = 0;
-	std::string _line = trim(line);
 
+	std::string _line = trim(line);
+	// key
 	while (_end < _line.length() && _line[_end] != ':')	++_end;
 	_key =  trim(_line.substr(0, _end));
 
+	// value
 	if (_end < _line.length())
 		_value = trim(_line.substr(++_end));
+
+    // std::cout << "_KEY: " << _key << " _VALUE: " << _value << std::endl;
 
 	return std::make_pair(_key, _value);
 }
@@ -109,3 +114,27 @@ std::string getRandomString(int length) {
 
     return randomString;
 }
+
+
+
+
+
+                    // else if (resp == 0)
+                    // {
+                    //     std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
+                    //     Response response;
+                    //     ResponseReturned res = response.CreatResponse(server, *client.request_client);
+                    //     // std::cout << "isFile: " << res.getIsFile() << std::endl << "BodyFile: " << res.getBody() << std::endl;
+                    //     //     std::cout << "\n***** Response ***** \n" << (res.getHeaders() + res.readfile()) << "\n----------------------------------\n";
+                    //     // int sending = send(client.fd_client, (res.getHeaders()).c_str(), (res.getHeaders()).size(), 0);
+                    //     std::string chunck = res.GetChanckFromResponse(255);
+                    //     while(!chunck.empty()) {
+                    //         int sending = send(client.fd_client, chunck.c_str(), chunck.size(), 0);
+                    //         (void)sending;
+                    //         // std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
+                    //         chunck = res.GetChanckFromResponse(255);
+                    //     }
+                    //     std::cout << "\n###################################################################################################################################################\n\n";
+                    //     //send correct response
+                    //     sen = true; /// change with client_status_life
+                    // }
