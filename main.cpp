@@ -21,8 +21,6 @@ void   check_servers(global & global)
             }
         }
         map[first].push_back(s);
-        std::cout<<" ip + port "<<first<<std::endl;
-        std::cout<<"map size : "<< map.size()<<std::endl;
     }
         creat_socket_and_bind(map);
         listen_new_connection(map);

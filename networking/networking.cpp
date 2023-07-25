@@ -31,7 +31,6 @@ void    creat_socket_and_bind(std::map<std::string, std::vector<server> > & map)
         }
 
         setsockopt(it->second[0].fd_server ,SOL_SOCKET,SO_REUSEADDR, &use,sizeof(use));
-        std::cout << "serv.fd_server " << it->second[0].fd_server  << std::endl;
         status = bind(it->second[0].fd_server, res->ai_addr, res->ai_addrlen);
         if (status == -1)
         {
@@ -41,7 +40,6 @@ void    creat_socket_and_bind(std::map<std::string, std::vector<server> > & map)
             exit(1);
         }
         freeaddrinfo(res);
-        std::cout<<"---------finish----------"<<std::endl;
    }
 }
 
@@ -107,16 +105,15 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
 				    {
 
                         client.resp = client.request_client->read_reqwest(client, it->second);
-                        std::cout << "client fd set :" << FD_ISSET(client.fd_client, &readable) << std::endl;
 				        fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
 				    }
 				    else if (FD_ISSET(client.fd_client, &writable) && client.check == 1)
                     {
                         
                        if (client.resp > 0){
-                            std::cout<<"static code *-*"<<client.resp<<std::endl;
                             if (send(client.fd_client, GenerateResponseFromStatusCode(client.resp, it->second[client.client_in_serv]).c_str(), GenerateResponseFromStatusCode(client.resp, it->second[client.client_in_serv]).size(), 0) <= 0)
                             {
+                                std::cout<<"********send status code*********"<<std::endl;
                                 client.pr = 1;
                             }
                         }

@@ -24,7 +24,7 @@ int request::parce_header(std::string header)
 	//check allow methods
 	method = s;
 	if (method != "GET" && method != "POST" && method != "DELETE")
-		return (400);
+		return (501);
 	tmp1 >> s;
 	if (s.length() > 2048)
 		return(414);
@@ -196,7 +196,6 @@ int request::read_reqwest(client & client, std::vector<server> & servers)
 		client.check = 1;
 		return(0);
 	}
-	std::cout<<"byte receive : "<< bytesrecv<<std::endl;
 	if (client.header_parced)
 	{
 		sizehex = 0;
@@ -204,7 +203,6 @@ int request::read_reqwest(client & client, std::vector<server> & servers)
 		lenght = 0;
 		std::string str1(buffer.begin(), buffer.begin() + bytesrecv);
 		int found1 = str1.find("\r\n\r\n", 0);
-		std::cout<<"found1 = "<<found1<<std::endl;
 		std::string header;
 		std::string body;
 		if (found1 == -1)
