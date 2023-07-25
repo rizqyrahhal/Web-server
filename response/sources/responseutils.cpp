@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   responseutils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: araysse <araysse@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:28:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/25 01:36:25 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/25 15:21:38 by araysse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,7 +184,7 @@ std::string Response::GetRequestedSource(locations matchedlocation, locations ro
         dir = opendir(requestedSource.c_str());
         if (dir != NULL) {
             resourcetype = DRCT;
-            if (requestedSource[requestedSource.size() - 1] != '/') {
+            if (requestedSource[requestedSource.size() -1] != '/') {
                 if (method == "DELETE") {
                     closedir(dir);
                     throw (409);
@@ -207,7 +207,6 @@ std::string Response::GetRequestedSource(locations matchedlocation, locations ro
         }
 		uri.erase(0, position + 1);
     }
-
     std::string requestedSourceFromRoot = searchInRoot(rootlocation, requesturi, resourcetype, response, method);
 
     throw(404);

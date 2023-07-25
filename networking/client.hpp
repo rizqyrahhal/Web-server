@@ -34,7 +34,7 @@ class client
 {
 
 	public:
-	client(/* args */);
+	client();
 	bool header_parced;
 	int fd_client;
 	int bytesrecv;

@@ -21,7 +21,6 @@
 #include "client.hpp"
 #include "../response/includes/responsePart.hpp"
 
-
 #define BUFFER_SIZE 1024
 class client;
 class server;
@@ -38,9 +37,8 @@ public:
 	std::map<std::string, std::string> cgi;
 	std::map<int, std::string> redirect;
 	std::string upload_pass;
-	std::string index;  //this line aadded by rarahhal
-	std::map<int, std::string> map_err_page; /// this line added by rarahhal
-	// need map to the error_page inside location
+	std::string index;
+	std::map<int, std::string> map_err_page;
 
 	~locations(){}
 };
@@ -84,6 +82,7 @@ class server
 	std::string ip_address;
 	std::string _name;
 	std::string root;
+	std::vector<std::string> allow_methods;
 	std::string index;
  	std::vector<client> client;
 	std::vector<locations> locations;

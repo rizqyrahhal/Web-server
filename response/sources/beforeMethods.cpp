@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   beforeMethods.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
+/*   By: araysse <araysse@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/22 15:22:56 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/24 21:12:47 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/25 15:22:19 by araysse          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ std::string Response::GetMatchedLocationRequestUrl(std::vector<locations> locati
             }
         }
     }
-    std::cout << "matchedLocationPosition: " << _matchedLocationPosition << "\nMatchedLocationStored: " << _matchedLocation << std::endl;
     if (why)
         return (matchedlocation);
     throw (404);

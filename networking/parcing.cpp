@@ -3,7 +3,6 @@
 void    location_serv(std::string line, server & server)
 {
     locations location;
-
     std::vector<std::string> vector;
     std::stringstream tmp(line);
     std::string str;
@@ -17,6 +16,11 @@ void    location_serv(std::string line, server & server)
         if (str == "location")
         {
             tmp1 >> str;
+            if (str == "{")
+            {
+                std::cout<<"Error : location name not exist!"<<std::endl;
+                exit(0);
+            }
             location.name = str;
         }
         else if (str == "upload_pass")
@@ -39,6 +43,11 @@ void    location_serv(std::string line, server & server)
         }
         else if (str == "autoindex"){
             tmp1 >> str;
+            if (str != "on" && str != "off")
+            {
+                std::cout<<"Error : auto index not correct!!"<<std::endl;
+                exit(0);
+            }
             location.autoindex = str;
         }
         else if (str == "index")
@@ -75,11 +84,12 @@ void    location_serv(std::string line, server & server)
             }
             
         }
-        if (str == "error_page")
+        else if (str == "error_pages")
         {
             int err;
             tmp1 >> err;
             tmp1 >> str;
+            std::cout<<"hello from error pages"<<std::endl;
             if (access(str.c_str(), F_OK) == -1) {
                 std::cout<<"Error : error page path int locations not exist!"<<std::endl;
                 exit(0);
@@ -101,8 +111,19 @@ void    location_serv(std::string line, server & server)
         {
             int req;
             tmp1 >> req;
+            if (req == 0)
+            {
+                std::cout<<"Error : redirect not correct !"<<std::endl;
+                exit(1);
+            }
             tmp1 >> str;
+            if (str == "redirect")
+            {
+                std::cout<<"Error : redirect not correct !"<<std::endl;
+                exit(1);
+            }
             location.redirect.insert(std::make_pair(req, str));
+            // if (location.redirect.size())
         }
     }
     server.locations.push_back(location);
@@ -149,6 +170,11 @@ void    parce_server(std::string line, global & global)
         if (str == "listen")
         {
             tmp1 >> str;
+            if (str != "localhost" && str != "127.0.0.1" && str != "10.11.4.4")
+            {
+                std::cout<<"Error : ip address not correct!"<<std::endl;
+                exit(1);
+            }
             server.ip_address = str;
         }
         if (str == "root")
@@ -189,7 +215,7 @@ void    parce_server(std::string line, global & global)
             }
             server.port.push_back(str);
         }
-        else if (str == "server_name")
+        else if (str == "server_names")
         {
             tmp1 >> str;
             server._name = str;
@@ -200,12 +226,13 @@ void    parce_server(std::string line, global & global)
             tmp1 >> size;
             server.client_body_size = size;
         }
-        else if (str == "error_page")
+        else if (str == "error_pages")
         {
             int err;
             tmp1 >> err;
             tmp1 >> str;
             if (access(str.c_str(), F_OK) == -1) {
+                std::cout<<str<<std::endl;
                 std::cout<<"Error : path error page not exist!"<<std::endl;
                 exit(0);
             }
@@ -231,6 +258,11 @@ void    ft_parce_config(char **av, global &global)
         std::cout<<"Unable to open file. "<<std::endl;
         exit(0);
     }
+    if (line.empty())
+    {
+        std::cout<<"Error: no config file found"<<std::endl;
+        exit(0);
+    }
     int acolad = 0;
     for (size_t i = 0; i < line.size(); i++)
     {
@@ -244,23 +276,17 @@ void    ft_parce_config(char **av, global &global)
         std::cout<<"accolad not closed"<<std::endl;
         exit(1);
     }
-    
+    (void)global;
     int ps = 0;
     while(1)
     {
-        if (line.empty())
-        {
-            std::cout<<"Error: no config file found"<<std::endl;
-        }
         std::string server_conf;
         size_t pos = line.find("};", ps);
         if (pos == std::string::npos) {
             break;
         }
         server_conf = line.substr(ps, pos + 2);
-        ps = pos + 2;
+        line = line.substr(pos + 2);
         parce_server(server_conf, global);
-
     }
-
 }

@@ -31,7 +31,6 @@ void    creat_socket_and_bind(std::map<std::string, std::vector<server> > & map)
         }
 
         setsockopt(it->second[0].fd_server ,SOL_SOCKET,SO_REUSEADDR, &use,sizeof(use));
-        std::cout << "serv.fd_server " << it->second[0].fd_server  << std::endl;
         status = bind(it->second[0].fd_server, res->ai_addr, res->ai_addrlen);
         if (status == -1)
         {
@@ -41,7 +40,6 @@ void    creat_socket_and_bind(std::map<std::string, std::vector<server> > & map)
             exit(1);
         }
         freeaddrinfo(res);
-        std::cout<<"---------finish----------"<<std::endl;
    }
 }
 
@@ -76,51 +74,6 @@ client accept_new_connection(server& serv)
 	return (client);
 }
 
-int    send_video(client & client)
-{
-    char readvideo[2025];
-    if (client.p == 0)
-    {
-
-        client.readFd = open("/Users/araysse/Desktop/video.mp4", 0);
-        if (client.readFd <= 0)
-        {
-            std::cout<<"open video failed"<<std::endl;
-            return (1);
-        }
-        std::string header = "HTTP/1.1 200 OK\r\n"
-                       "Content-Type: video/mp4\r\n"
-                       "Content-Length: 32457473\r\n"
-                       "Connection: closed\r\n\r\n";
-        if (send(client.fd_client, header.c_str(), header.size(), 0) <= 0)
-        {
-            std::cout<<"send 1 salat******"<<std::endl;
-            std::cout<<strerror(errno)<<"\n\n\n"<<std::endl;
-            close(client.readFd);
-            return (1);
-        }
-        client.p++;
-        return (0);
-    }
-    int rd = read(client.readFd, &readvideo, 2024);
-    if (rd <= 0)
-    {
-       std::cout<<"read salat"<<std::endl;
-       close(client.readFd);
-       return(1);
-    }
-    int snd = send(client.fd_client, &readvideo, rd, 0);
-    // std::cout<<"send == "<<snd<<std::endl;
-    if (snd <= 0)
-    {
-        std::cout<<"send salat******"<< "returned value : "<<snd<<std::endl;
-        std::cout<<strerror(errno)<<std::endl;
-        close(client.readFd);
-        return (1);
-    }
-    return (0);
-}
-
 void    run_servers(std::map<std::string, std::vector<server> > & map)
 {
     signal(SIGPIPE, SIG_IGN);
@@ -140,12 +93,10 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
 		{
 			if (FD_ISSET(it->second[0].fd_server, &readable))
 			{
-                std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  Pushing Clients @@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n";
 				it->second[0].client.push_back(accept_new_connection(it->second[0]));
-                std::cout << "server socket ---->" << it->second[0].client.size() << std::endl;
             }
 
-			for (size_t i = 0; i < it->second[0].client.size() ; i++) // in this i <= Just to evet loop
+			for (size_t i = 0; i < it->second[0].client.size() ; i++)
 			{
                 if (it->second[0].client.size() != 0)
                 {
@@ -154,57 +105,35 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
 				    {
 
                         client.resp = client.request_client->read_reqwest(client, it->second);
-                        std::cout << "client fd set :" << FD_ISSET(client.fd_client, &readable) << std::endl;
 				        fcntl(client.fd_client, F_SETFL, O_NONBLOCK);
-                        // client.check = 1;
 				    }
 				    else if (FD_ISSET(client.fd_client, &writable) && client.check == 1)
-                    { 
+                    {
+                        
                        if (client.resp > 0){
-                            std::cout<<"static code *-*"<<client.resp<<std::endl;
                             if (send(client.fd_client, GenerateResponseFromStatusCode(client.resp, it->second[client.client_in_serv]).c_str(), GenerateResponseFromStatusCode(client.resp, it->second[client.client_in_serv]).size(), 0) <= 0)
                             {
                                 client.pr = 1;
                             }
                         }
                         else if (client.resp == 0) {
-                            std::cout << "I WORK ON THIS CLIENT: " << client.fd_client << std::endl;
-                            std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
                             if (!client.generateResponseObject) {
                                 Response response;
                                 client.response_client = response.CreatResponse(it->second[client.client_in_serv], *client.request_client);
-                                // std::cout << client.response_client.getHeaders() << client.response_client.readfile() << std::endl;
                                 client.generateResponseObject = true;
                             }
         
                             
                             std::string chunck = client.response_client.GetChanckFromResponse(1024);
                             if (chunck.empty()) {
-                                client.pr = 1; // chof m3a hada 
-                                // sen = true; /// change with client_status_life
+                                client.pr = 1;
                             }
                             else {
                                 if (send(client.fd_client, chunck.c_str(), chunck.size(), 0) <= 0)
                                 {
-                                    // client.response_client.
                                     client.pr = 1;
                                 }
                             }
-                            
-                            // while(!chunck.empty()) {
-                            //     chunck = client.response_client.GetChanckFromResponse(255);
-                            // }
-
-
-
-
-
-
-                            // std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << std::endl;
-
-                            std::cout << "\n###################################################################################################################################################\n\n";
-                            // send correct response
-                            // client.pr = send_video(client);
                         }
                         if (client.resp == -1 || client.resp > 0 || client.pr) 
                         {
@@ -224,53 +153,3 @@ void    run_servers(std::map<std::string, std::vector<server> > & map)
     }
    
 }
-
-
-
-                        // else if (client.resp == 0)
-                        // {
-                        //     std::cout << "\n\n************************************************************ SWITCH TO RESPNSE PART ************************************************************\n";
-                        //     std::string res;
-                        //     if (client.siftna_response == true)
-                        //     {
-                        //     Response response;
-                        //     res = response.CreatResponse(it->second[0], *client.request_client);
-                        //     client.siftna_response = false;
-                        //     }
-                        //         // std::cout << "\n***** Response ***** \n" << res << "\n----------------------------------\n";
-                        //     int sending = send(client.fd_client, res.c_str(), res.size(), 0);
-                        //     std::cout << "I SEND RESP TO THIS USER: " << client.fd_client << "\nSENDING: " <<  sending << std::endl;
-                        //     std::cout << "\n###################################################################################################################################################\n\n";
-                        //     send(client.fd_client, GenerateResponseFromStatusCode(404).c_str(), GenerateResponseFromStatusCode(404).size(), 0);
-                        //     client.pr = 1; /// change with client_status_life
-                        //     // client.pr = send_video(client);
-                        // }
-/*
-
-
-ParseRequest(client, servers, int idxClientInDefaultServer) {
-    if (parsingHeader) {
-        parseHeader();
-        string host = getHoste();
-        for (int i = 1; i < servers.size(); i++) {
-            if (servers[i] == host) {
-                servers[0].earese(begin() + idxClientInDefaultServer);
-                servers[i].push_back(client);
-                break;
-            }
-        }
-    }
-}
-
-for (auto xs : map) {
-    firstServer = xs.second[0];
-    if (new client) {
-        firstServer.client.push_back(newClient);
-    }
-    for (int i = 0; i < xs.second.size(); i++) {
-        if (there is something to  read) {
-            ParseRequest(client, servers);
-        }
-    }
-}
-*/
