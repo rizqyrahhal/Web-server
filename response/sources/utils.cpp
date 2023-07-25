@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/27 00:10:22 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/24 19:11:00 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/25 01:19:15 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,4 +109,22 @@ std::string getRandomString(int length) {
     }
 
     return randomString;
+}
+
+int toNumber(const std::string& str) {
+    int result;
+    std::istringstream iss(str);
+    iss >> result;
+    return result;
+}
+
+std::string removeReturnBack(std::string url) {
+    const std::string target = "/..";
+    const std::string replacement = "";
+
+    while (url.find(target) == 0) {
+        url.replace(0, target.length(), replacement);
+    }
+
+    return url;
 }

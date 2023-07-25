@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:46 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/24 22:25:46 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/25 01:53:56 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,7 @@ size_t Response::_matchedLocationPosition;
 Response::Response() {
     _envp = NULL;
     _argv = NULL;
-    ///////////////////////     this to mime types need to fill if manule to evite any crash frome the file is //////////////////////
-    ////////////////////////   check the matchig location by stret test and the same with requsted source ///////////////////////////
-    ///////////////////////    check the content length and content type if exist in all responses have a body //////////////////////
-    //////////////////////        check for /dir1 with non / if roturn 301      ///////////////////////////////////////////////////
-    ///////////////////////////       remove the forbidan function from generate date //////////////////////////////////////////////////////////////////
-
-
-/* Just basic location for new */
-/* this function get the matched location position in the vectors location if axisting, 
-   {!!!} but need more check if it is a location name without / in (begin/end) or something like that
-   {!!!} if uri:(/app/html) and location:(/www/app) */
-
-    _cgi_mimeTypes = readMimeTypes("./template/cgi-mime.types");
+	fillMimeTypes(_cgi_mimeTypes);
     _mimeTypes = readMimeTypes("./template/mime.types");
 }
 
@@ -109,7 +97,7 @@ void Response::cgi(server server, request request, Response &response) {
         file = request.bodyFile;
     }
 
-    response.parseCgiOutput(cgi.execut(_argv[0], _argv, _envp, _requestedSource, file));
+    response.parseCgiOutput(cgi.execut(_argv[0], _argv, _envp, file));
 
     close(file);
     throw(200);

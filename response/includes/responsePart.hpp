@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 15:35:12 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/24 21:13:12 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/25 01:18:36 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,11 @@
 #define DRCT false
 
 #ifndef DEBUG
-#define DEBUG
+// #define DEBUG
 #endif
 
 #ifndef GET_DEBUG
-#define GET_DEBUG
+// #define GET_DEBUG
 #endif
 
 #ifndef POST_DEBUG
@@ -128,16 +128,10 @@ std::string trim(const std::string& str);
 std::pair<std::string, std::string> parseHeader(const std::string& line);
 std::string searchInRequestedHeader(const std::map<std::string, std::string>& Map, const std::string& key);
 std::string getRandomString(int length);
-
+int toNumber(const std::string& str);
 std::string removeReturnBack(std::string url);
 
-template <typename T>
-T toNumber(const std::string& str) {
-    T result;
-    std::istringstream iss(str);
-    iss >> result;
-    return result;
-}
+
 
 /* Error Page */
 const std::string GenerateErrorPage(int statuscode, std::string statusmessage);

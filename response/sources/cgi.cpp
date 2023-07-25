@@ -6,7 +6,7 @@
 /*   By: rarahhal <rarahhal@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/13 03:33:15 by rarahhal          #+#    #+#             */
-/*   Updated: 2023/07/24 23:24:08 by rarahhal         ###   ########.fr       */
+/*   Updated: 2023/07/25 01:54:21 by rarahhal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,9 @@ std::string searchInRequestedHeader(const std::map<std::string, std::string>& Ma
 std::string Cgi::getCgiPath(std::map<std::string, std::string> cgi_map, std::string _contentType) {
 	std::string cgi_bin;
 	std::string extantion;
-	std::map<std::string, std::string> mime_map  = readMimeTypes("template/cgi-mime.types");
+	std::map<std::string, std::string> mime_map;
+
+	fillMimeTypes(mime_map);
     if (!cgi_map.empty()) {
 		for(std::map<std::string, std::string>::iterator it = mime_map.begin(); it != mime_map.end(); it++) {
 			if (it->second == _contentType) {
@@ -106,28 +108,9 @@ void Cgi::fillEnvp(request request, server server, std::string requstedsource, s
 	_envp.push_back(strdup98(std::string("REMOTE_HOST=" + searchInRequestedHeader(request.map_request, "Host")).c_str()));
 	_envp.push_back(strdup98(std::string("SERVER_PORT=").c_str()));
 	_envp.push_back(NULL);
-
-
-	
-	// std::cout << "Vector[0]: " << _envp[0] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[1] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[2] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[3] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[4] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[5] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[6] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[7] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[8] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[9] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[10] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[11] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[12] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[13] << std::endl;
-	// std::cout << "Vector[0]: " << _envp[14] << std::endl;
 }
 
-std::string &Cgi::execut(std::string cgibin, char **argv, char **envp, std::string _requestedSource, int file) {
-	(void)_requestedSource;
+std::string &Cgi::execut(std::string cgibin, char **argv, char **envp, int file) {
 	int fd[2];
 	pipe(fd);
 	pid_t pid = fork();
